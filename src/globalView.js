@@ -165,7 +165,7 @@ function GlobalView() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Ir a Applus Group
+            Saber más
           </a>
         </div>
         <div className="col-md-3">

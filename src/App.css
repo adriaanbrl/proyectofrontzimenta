@@ -4,6 +4,33 @@
   --text-color: #333;
 }
 
+/* Para la fuente OpenSans-VariableFont_wdth,wght */
+@font-face {
+  font-family: 'Open Sans Variable';
+  src: url('/src/assets/fonts/OpenSans/OpenSans-VariableFont_wdth,wght.ttf') format('truetype');
+  font-weight: 100 900; /* Rango de pesos, puedes ajustarlo según los pesos disponibles */
+  font-style: normal;
+}
+
+/* Para la fuente OpenSans_Condensed-Bold */
+@font-face {
+  font-family: 'Open Sans Condensed';
+  src: url('/src/assets/fonts/OpenSans/OpenSans_Condensed-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+
+body {
+  font-family: 'Open Sans Variable', sans-serif;
+}
+
+/* Si quieres usar la versión Condensed Bold */
+h1, h2, h3 {
+  font-family: 'Open Sans Variable', sans-serif;
+}
+
+
 .App {
   text-align: center;
 }

@@ -261,12 +261,14 @@ function GlobalView() {
         </div>
       </div>
 
-       {/* TextoFinal */}
-       <div className="row  align-items-center ">
+      {/* TextoFinal */}
+      <div className="row  align-items-center ">
         <h2 className="modern-title mt-5 ">MOTIVACIÓN Y EXPERIENCIA</h2>
         <div className="col-md-12">
           <p className="modern-text text-start ">
-          Somos un equipo humano joven, cohesionado y motivado, convenientemente formado y con una amplia experiencia que nos permite acometer el mejor servicio
+            Somos un equipo humano joven, cohesionado y motivado,
+            convenientemente formado y con una amplia experiencia que nos
+            permite acometer el mejor servicio
           </p>
         </div>
 
@@ -311,7 +313,11 @@ function GlobalView() {
         <h2 className="modern-title mt-5 ">CLIENTES Y SIN EMBARGO AMIGOS</h2>
         <div className="col-md-12">
           <p className="modern-text text-start ">
-          Desde nuestros orígenes, nuestro objetivo es trabajar con profesionalidad y al mismo tiempo mantener una estrecha relación con nuestros clientes. Un objetivo que conseguimos gracias a un servicio de calidad basado en la transparencia, con precios ajustados y un riguroso compromiso con los plazos de ejecución acordados
+            Desde nuestros orígenes, nuestro objetivo es trabajar con
+            profesionalidad y al mismo tiempo mantener una estrecha relación con
+            nuestros clientes. Un objetivo que conseguimos gracias a un servicio
+            de calidad basado en la transparencia, con precios ajustados y un
+            riguroso compromiso con los plazos de ejecución acordados
           </p>
         </div>
       </div>
@@ -321,6 +327,26 @@ function GlobalView() {
         <p>Descripción de la página</p>
         <button className="btn btn-primary">Eres cliente</button>
       </section>
+
+      {/* Footer */}
+      <div className="especialidades-section mt-5 w-100">
+      <div className="text-center text-white">
+        <h3 className="fw-light text-uppercase">
+          Con el lema de aprovechar al máximo todos los materiales
+        </h3>
+        <h1 className="fw-bold display-3 mt-3">ZIMENTA</h1>
+        <p className="mt-3">
+          ZIMENTA OBRAS Y PROYECTOS, S.L. <br />
+          C/ PALMERAS 4 - NAVE A6. POL. IND. LA SENDILLA - 28350, CIEMPOZUELOS
+          (MADRID) <br />
+          918093601 · 918093579 <br />
+          <a href="mailto:info@zimenta.com" className="text-white fw-bold">
+            info@zimenta.com
+          </a>
+        </p>
+      </div>
+    </div>
+
     </div>
   );
 }

@@ -3,7 +3,7 @@ import "./App.css";
 
 function GlobalView() {
   return (
-    <div className="container">
+    <div className="container-fluid">
       {/* Logo más pequeño */}
       <header className="text-center mt-5">
         <img
@@ -191,6 +191,128 @@ function GlobalView() {
               borderRadius: "10px",
             }}
           />
+        </div>
+      </div>
+
+      {/* ImagenSeparadora */}
+      <div className="w-100">
+        <img
+          src="/img/separador.jpg"
+          className="img-fluid w-100"
+          alt="Imagen Intermedia"
+          style={{
+            height: "800px",
+            objectFit: "cover",
+          }}
+        />
+      </div>
+
+      {/* Especialidades */}
+      <div className="row  align-items-center especialidades-section">
+        <h2 className="modern-title mt-5 text-white">NUESTROS ESPACIOS</h2>
+        <div className="col-md-12">
+          <p className="modern-text text-start text-white">
+            Zimenta se ha especializado en la ejecución de edificaciones
+            singulares, reformas y rehabilitaciones de espacios con encanto, así
+            como ejecución de obras comerciales.
+          </p>
+        </div>
+
+        {/* Imagen 1 */}
+        <div className="col-md-4 col-sm-4">
+          <img
+            src="/img/esp1.jpg" // Cambia por la imagen correspondiente
+            className="d-block w-100"
+            alt="Imagen 1"
+            style={{
+              height: "700px",
+              objectFit: "cover",
+            }}
+          />
+          <p className="text-white">OBRA NUEVA</p>
+        </div>
+
+        {/* Imagen 2 */}
+        <div className="col-md-4  col-sm-4">
+          <img
+            src="/img/esp2.jpg" // Cambia por la imagen correspondiente
+            className="d-block w-100"
+            alt="Imagen 2"
+            style={{
+              height: "700px",
+              objectFit: "cover",
+            }}
+          />
+          <p className="text-white">REFORMA Y REHABILITACIÓN</p>
+        </div>
+
+        {/* Imagen 3 */}
+        <div className="col-md-4  col-sm-4">
+          <img
+            src="/img/esp3.jpg" // Cambia por la imagen correspondiente
+            className="d-block w-100"
+            alt="Imagen 3"
+            style={{
+              height: "700px",
+              objectFit: "cover",
+            }}
+          />
+          <p className="text-white">COMERCIAL-RETAIL</p>
+        </div>
+      </div>
+
+       {/* TextoFinal */}
+       <div className="row  align-items-center ">
+        <h2 className="modern-title mt-5 ">MOTIVACIÓN Y EXPERIENCIA</h2>
+        <div className="col-md-12">
+          <p className="modern-text text-start ">
+          Somos un equipo humano joven, cohesionado y motivado, convenientemente formado y con una amplia experiencia que nos permite acometer el mejor servicio
+          </p>
+        </div>
+
+        {/* Imagen 1 */}
+        <div className="col-md-4">
+          <img
+            src="/img/esp1.jpg" // Cambia por la imagen correspondiente
+            className="d-block w-100"
+            alt="Imagen 1"
+            style={{
+              height: "700px",
+              objectFit: "cover",
+            }}
+          />
+        </div>
+
+        {/* Imagen 2 */}
+        <div className="col-md-4">
+          <img
+            src="/img/esp2.jpg" // Cambia por la imagen correspondiente
+            className="d-block w-100"
+            alt="Imagen 2"
+            style={{
+              height: "700px",
+              objectFit: "cover",
+            }}
+          />
+        </div>
+
+        {/* Imagen 3 */}
+        <div className="col-md-4">
+          <img
+            src="/img/esp3.jpg" // Cambia por la imagen correspondiente
+            className="d-block w-100"
+            alt="Imagen 3"
+            style={{
+              height: "700px",
+              objectFit: "cover",
+            }}
+          />
+        </div>
+        <h2 className="modern-title mt-5 ">CLIENTES Y SIN EMBARGO AMIGOS</h2>
+        <div className="col-md-12">
+          <p className="modern-text text-start ">
+          Desde nuestros orígenes, nuestro objetivo es trabajar con profesionalidad y al mismo tiempo mantener una estrecha relación con nuestros clientes. Un objetivo que conseguimos gracias a un servicio de calidad basado en la transparencia, con precios ajustados y un riguroso compromiso con los plazos de ejecución acordados
+          </p>
         </div>
       </div>
 

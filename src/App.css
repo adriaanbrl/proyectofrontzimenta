@@ -21,8 +21,9 @@
 }
 
 
-body {
+body,html {
   font-family: 'Open Sans Variable', sans-serif;
+  
 }
 
 /* Si quieres usar la versión Condensed Bold */
@@ -109,6 +110,12 @@ body {
 .modern-text {
   animation: fadeInUp 1.5s ease-out;
 }
+
+.especialidades-section {
+  background-color: #f5922c;
+  padding: 20px;
+}
+
 
 @keyframes fadeInUp {
   from {

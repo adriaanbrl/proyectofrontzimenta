@@ -1,5 +1,6 @@
 import React from "react";
 import "./App.css";
+import { Link } from 'react-router-dom';
 
 function GlobalView() {
   return (
@@ -325,7 +326,8 @@ function GlobalView() {
       {/* Sección inferior */}
       <section className="text-center mt-5">
         <p>Descripción de la página</p>
-        <button className="btn btn-primary">Eres cliente</button>
+        <button className="btn btn-primary "><Link to="/login" className="text-white">Eres cliente</Link></button>
+        
       </section>
 
       {/* Footer */}

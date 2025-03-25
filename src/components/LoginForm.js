@@ -11,7 +11,7 @@ function LoginForm() {
     <div className="container d-flex justify-content-center align-items-center vh-100">
       <div
         className="card p-4"
-        style={{
+        style={{ 
           maxWidth: "400px",
           borderRadius: "10px",
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
@@ -56,11 +56,9 @@ function LoginForm() {
           </button>
         </form>
 
-        <div className="mt-3 text-center row">
-          <a href="#" className="col-6">
-            Problemas para iniciar sesión?
-          </a>
-          <a href="#" className="col-6">
+        <div className="mt-3 text-center">
+          
+          <a href="#">
             Olvidé mi contraseña
           </a>
         </div>

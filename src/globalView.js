@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 function GlobalView() {
   return (
@@ -162,7 +162,7 @@ function GlobalView() {
           </p>
           <a
             href="https://www.appluscertification.com/global/es/about-us/applus-group"
-            class="btn btn-primary"
+            class="btn btn-primary mb-5"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -175,7 +175,7 @@ function GlobalView() {
             className="d-block w-100"
             alt="Second slide"
             style={{
-              height: "500px",
+              height: "200px",
               objectFit: "cover",
               borderRadius: "10px",
             }}
@@ -187,7 +187,7 @@ function GlobalView() {
             className="d-block w-100"
             alt="Second slide"
             style={{
-              height: "500px",
+              height: "200px",
               objectFit: "cover",
               borderRadius: "10px",
             }}
@@ -196,7 +196,7 @@ function GlobalView() {
       </div>
 
       {/* ImagenSeparadora */}
-      <div className="w-100">
+      <div className="w-100 mt-5">
         <img
           src="/img/separador.jpg"
           className="img-fluid w-100"
@@ -221,6 +221,7 @@ function GlobalView() {
 
         {/* Imagen 1 */}
         <div className="col-md-4 col-sm-4">
+        <Link to="/gallery">
           <img
             src="/img/esp1.jpg" // Cambia por la imagen correspondiente
             className="d-block w-100"
@@ -230,7 +231,9 @@ function GlobalView() {
               objectFit: "cover",
             }}
           />
+            </Link>
           <p className="text-white">OBRA NUEVA</p>
+          
         </div>
 
         {/* Imagen 2 */}
@@ -262,93 +265,105 @@ function GlobalView() {
         </div>
       </div>
 
-      {/* TextoFinal */}
-      <div className="row  align-items-center ">
-        <h2 className="modern-title mt-5 ">MOTIVACIÓN Y EXPERIENCIA</h2>
-        <div className="col-md-12">
-          <p className="modern-text text-start ">
-            Somos un equipo humano joven, cohesionado y motivado,
-            convenientemente formado y con una amplia experiencia que nos
-            permite acometer el mejor servicio
-          </p>
+
+      {/* 2 Columnas Imagenes con Texto */}
+      <div className="row  align-items-center mt-5 ">
+
+         {/* Columna 1*/}
+        <div className="col-6 mt-5">
+          {/* Imagen 1 */}
+          <div className="col-md-4 ">
+            <img
+              src="/img/collage1.jpg" // Cambia por la imagen correspondiente
+              className="d-block "
+              alt="Imagen 1"
+              style={{
+                height: "700px",
+                width : "740px",
+                objectFit: "cover",
+              }}
+            />
+          </div>
+          <div className="col-md-12">
+          <h2 className="modern-title mt-5 col-8 text-start">CLIENTES Y SIN EMBARGO AMIGOS</h2>
+            <p className="modern-text text-start ">
+              Desde nuestros orígenes, nuestro objetivo es trabajar con
+              profesionalidad y al mismo tiempo mantener una estrecha relación
+              con nuestros clientes. Un objetivo que conseguimos gracias a un
+              servicio de calidad basado en la transparencia, con precios
+              ajustados y un riguroso compromiso con los plazos de ejecución
+              acordados
+            </p>
+          </div>
         </div>
 
-        {/* Imagen 1 */}
-        <div className="col-md-4">
-          <img
-            src="/img/esp1.jpg" // Cambia por la imagen correspondiente
-            className="d-block w-100"
-            alt="Imagen 1"
-            style={{
-              height: "700px",
-              objectFit: "cover",
-            }}
-          />
-        </div>
-
-        {/* Imagen 2 */}
-        <div className="col-md-4">
-          <img
-            src="/img/esp2.jpg" // Cambia por la imagen correspondiente
-            className="d-block w-100"
-            alt="Imagen 2"
-            style={{
-              height: "700px",
-              objectFit: "cover",
-            }}
-          />
-        </div>
-
-        {/* Imagen 3 */}
-        <div className="col-md-4">
-          <img
-            src="/img/esp3.jpg" // Cambia por la imagen correspondiente
-            className="d-block w-100"
-            alt="Imagen 3"
-            style={{
-              height: "700px",
-              objectFit: "cover",
-            }}
-          />
-        </div>
-        <h2 className="modern-title mt-5 ">CLIENTES Y SIN EMBARGO AMIGOS</h2>
-        <div className="col-md-12">
-          <p className="modern-text text-start ">
-            Desde nuestros orígenes, nuestro objetivo es trabajar con
-            profesionalidad y al mismo tiempo mantener una estrecha relación con
-            nuestros clientes. Un objetivo que conseguimos gracias a un servicio
-            de calidad basado en la transparencia, con precios ajustados y un
-            riguroso compromiso con los plazos de ejecución acordados
-          </p>
+        {/* Columna 2*/}
+        <div className="col-6 mt-5">
+          <div className="col-md-12">
+          <h2 className="modern-title mt-5  text-start ">MOTIVACIÓN Y EXPERIENCIA IMPULSANDO EL APRENDIZAJE Y LA INOVACIÓN</h2>
+            <p className="modern-text text-start mb-5 ">
+              Somos un equipo humano joven, cohesionado y motivado,
+              convenientemente formado y con una amplia experiencia que nos
+              permite acometer el mejor servicio
+            </p>
+          </div>
+          {/* Imagen 2 */}
+          <div className="col-md-4">
+            <img
+              src="/img/collage2.jpg" // Cambia por la imagen correspondiente
+              className="d-block"
+              alt="Imagen 2"
+              style={{
+                height: "400px",
+                width : "700px",
+                objectFit: "cover",
+              }}
+            />
+          </div>
+          {/* Imagen 3 */}
+          <div className="col-md-4">
+            <img
+              src="/img/collage3.jpg" 
+              className="d-block mt-4"
+              alt="Imagen 3"
+              style={{
+                height: "500px",
+                width : "400px",
+                objectFit: "cover",
+              }}
+            />
+          </div>
         </div>
       </div>
 
       {/* Sección inferior */}
       <section className="text-center mt-5">
         <p>Descripción de la página</p>
-        <button className="btn btn-primary "><Link to="/login" className="text-white">Eres cliente</Link></button>
-        
+        <button className="btn btn-primary ">
+          <Link to="/login" className="text-white">
+            Eres cliente
+          </Link>
+        </button>
       </section>
 
       {/* Footer */}
       <div className="especialidades-section mt-5 w-100">
-      <div className="text-center text-white">
-        <h3 className="fw-light text-uppercase">
-          Con el lema de aprovechar al máximo todos los materiales
-        </h3>
-        <h1 className="fw-bold display-3 mt-3">ZIMENTA</h1>
-        <p className="mt-3">
-          ZIMENTA OBRAS Y PROYECTOS, S.L. <br />
-          C/ PALMERAS 4 - NAVE A6. POL. IND. LA SENDILLA - 28350, CIEMPOZUELOS
-          (MADRID) <br />
-          918093601 · 918093579 <br />
-          <a href="mailto:info@zimenta.com" className="text-white fw-bold">
-            info@zimenta.com
-          </a>
-        </p>
+        <div className="text-center text-white">
+          <h3 className="fw-light text-uppercase">
+            Con el lema de aprovechar al máximo todos los materiales
+          </h3>
+          <h1 className="fw-bold display-3 mt-3">ZIMENTA</h1>
+          <p className="mt-3">
+            ZIMENTA OBRAS Y PROYECTOS, S.L. <br />
+            C/ PALMERAS 4 - NAVE A6. POL. IND. LA SENDILLA - 28350, CIEMPOZUELOS
+            (MADRID) <br />
+            918093601 · 918093579 <br />
+            <a href="mailto:info@zimenta.com" className="text-white fw-bold">
+              info@zimenta.com
+            </a>
+          </p>
+        </div>
       </div>
-    </div>
-
     </div>
   );
 }

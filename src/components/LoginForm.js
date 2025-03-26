@@ -18,6 +18,7 @@ function LoginForm() {
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         }}
       >
+        
         <h2 className="text-center mb-4" style={{ color: "#ff9800" }}>
           zimenta
         </h2>
@@ -65,7 +66,7 @@ function LoginForm() {
         </div>
 
         <p className="mt-3 text-center">
-          By continuing, you agree to the <a href="#">Terms of Use</a> and{" "}
+          By continuing, you agree to the <Link to="/terms-use">Terms of Use</Link> and{" "}
           <Link to="/privacy-policy">Privacy Policy</Link>
         </p>
       </div>

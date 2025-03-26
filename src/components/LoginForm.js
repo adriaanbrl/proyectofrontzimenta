@@ -12,24 +12,21 @@ function LoginForm() {
     <div className="container d-flex justify-content-center align-items-center vh-100">
       <div
         className="card p-4"
-        style={{ 
+        style={{
           maxWidth: "400px",
           borderRadius: "10px",
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         }}
       >
-        
-        <h2 className="text-center mb-4" style={{ color: "#ff9800" }}>
+        <Link to="/"  style={{ color: "#ff9800" ,  textDecoration: "none" }}>
+        <h2 className="text-center mb-4 ">
           zimenta
         </h2>
+        </Link>
         <h4 className="text-center mb-4">Inicia Sesión</h4>
         <form>
           <div className="form-group mb-2">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Usuario"
-            />
+            <input type="text" className="form-control" placeholder="Usuario" />
           </div>
           <div className="form-group mb-4">
             <div className="input-group">
@@ -59,14 +56,12 @@ function LoginForm() {
         </form>
 
         <div className="mt-3 text-center">
-          
-          <a href="#">
-            Olvidé mi contraseña
-          </a>
+          <a href="#">Olvidé mi contraseña</a>
         </div>
 
         <p className="mt-3 text-center">
-          By continuing, you agree to the <Link to="/terms-use">Terms of Use</Link> and{" "}
+          By continuing, you agree to the{" "}
+          <Link to="/terms-use">Terms of Use</Link> and{" "}
           <Link to="/privacy-policy">Privacy Policy</Link>
         </p>
       </div>

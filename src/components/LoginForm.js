@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 function LoginForm() {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -24,9 +25,9 @@ function LoginForm() {
         <form>
           <div className="form-group mb-2">
             <input
-              type="email"
+              type="text"
               className="form-control"
-              placeholder="Correo Electrónico"
+              placeholder="Usuario"
             />
           </div>
           <div className="form-group mb-4">
@@ -65,7 +66,7 @@ function LoginForm() {
 
         <p className="mt-3 text-center">
           By continuing, you agree to the <a href="#">Terms of Use</a> and{" "}
-          <a href="#">Privacy Policy</a>.
+          <Link to="/privacy-policy">Privacy Policy</Link>
         </p>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import './App.css';
 import GlobalView from "./globalView";
-import LoginForm from "./components/LoginForm"; //
+import LoginForm from "./components/LoginForm";
+import PrivacyPolicy from "./components/PrivacyPolicy"; 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App() {
@@ -8,8 +9,9 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/" element={<GlobalView />} /> {/* Ruta para la vista global */}
-          <Route path="/login" element={<LoginForm />} /> {/* Ruta para el formulario de inicio de sesión */}
+          <Route path="/" element={<GlobalView />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} /> 
         </Routes>
       </div>
     </Router>

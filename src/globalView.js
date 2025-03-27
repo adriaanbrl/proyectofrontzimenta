@@ -353,49 +353,47 @@ function GlobalView() {
         </div>
       </section>
 
-{/* Fila con tres videos de Instagram con más márgenes */}
-<div className="row mt-5 p-5">
-  {/* Video 1 */}
-  <div className="col-4 mb-4">
-    <iframe
-      src="https://www.instagram.com/reel/C4PzRX2teBA/embed"
-      width="100%"
-      height="500"
-      allowFullScreen
-      className="border rounded"
-      title="Video de Instagram 1"
-      style={{ maxWidth: "100%" }}
-    ></iframe>
-  </div>
+      {/* Fila con tres videos de Instagram con más márgenes */}
+      <div className="row mt-5 p-5">
+        {/* Video 1 */}
+        <div className="col-4 mb-4">
+          <iframe
+            src="https://www.instagram.com/reel/C4PzRX2teBA/embed"
+            width="100%"
+            height="500"
+            allowFullScreen
+            className="border rounded"
+            title="Video de Instagram 1"
+            style={{ maxWidth: "100%" }}
+          ></iframe>
+        </div>
 
-  {/* Video 2 */}
-  <div className="col-4 mb-4">
-    <iframe
-      src="https://www.instagram.com/reel/C4GF6e8gZg2/embed"
-      width="100%"
-      height="500"
-      allowFullScreen
-      className="border rounded"
-      title="Video de Instagram 2"
-      style={{ maxWidth: "100%" }}
-    ></iframe>
-  </div>
+        {/* Video 2 */}
+        <div className="col-4 mb-4">
+          <iframe
+            src="https://www.instagram.com/reel/C4GF6e8gZg2/embed"
+            width="100%"
+            height="500"
+            allowFullScreen
+            className="border rounded"
+            title="Video de Instagram 2"
+            style={{ maxWidth: "100%" }}
+          ></iframe>
+        </div>
 
-  {/* Video 3 */}
-  <div className="col-4 mb-4">
-    <iframe
-      src="https://www.instagram.com/reel/C37E8TyAgYb/embed"
-      width="100%"
-      height="500"
-      allowFullScreen
-      className="border rounded"
-      title="Video de Instagram 3"
-      style={{ maxWidth: "100%" }}
-    ></iframe>
-  </div>
-</div>
-
-
+        {/* Video 3 */}
+        <div className="col-4 mb-4">
+          <iframe
+            src="https://www.instagram.com/reel/C37E8TyAgYb/embed"
+            width="100%"
+            height="500"
+            allowFullScreen
+            className="border rounded"
+            title="Video de Instagram 3"
+            style={{ maxWidth: "100%" }}
+          ></iframe>
+        </div>
+      </div>
 
       {/* Footer */}
       <div className="especialidades-section mt-5 w-100">

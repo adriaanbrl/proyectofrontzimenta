@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import "../App.css";
 import { Link } from "react-router-dom";
+
 
 function LoginForm() {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -48,7 +50,7 @@ function LoginForm() {
           </div>
           <button
             type="submit"
-            className="btn btn-primary btn-block"
+            className="btn-zimenta btn-block"
             style={{ backgroundColor: "#ff9800", borderColor: "#ff9800" }}
           >
             Iniciar Sesión

@@ -221,9 +221,9 @@ function GlobalView() {
 
         {/* Imagen 1 */}
         <div className="col-md-4 col-sm-4">
-        <Link to="/gallery">
+        <Link to="/gallery?section=obra-nueva">
           <img
-            src="/img/esp1.jpg" // Cambia por la imagen correspondiente
+            src="/img/esp1.jpg" 
             className="d-block w-100"
             alt="Imagen 1"
             style={{
@@ -238,6 +238,7 @@ function GlobalView() {
 
         {/* Imagen 2 */}
         <div className="col-md-4  col-sm-4">
+        <Link to="/gallery?section=reforma-rehabilitacion">
           <img
             src="/img/esp2.jpg" // Cambia por la imagen correspondiente
             className="d-block w-100"
@@ -247,11 +248,13 @@ function GlobalView() {
               objectFit: "cover",
             }}
           />
+          </Link>
           <p className="text-white">REFORMA Y REHABILITACIÓN</p>
         </div>
 
         {/* Imagen 3 */}
         <div className="col-md-4  col-sm-4">
+        <Link to="/gallery?section=comercial-retail">
           <img
             src="/img/esp3.jpg" // Cambia por la imagen correspondiente
             className="d-block w-100"
@@ -261,6 +264,7 @@ function GlobalView() {
               objectFit: "cover",
             }}
           />
+          </Link>
           <p className="text-white">COMERCIAL-RETAIL</p>
         </div>
       </div>

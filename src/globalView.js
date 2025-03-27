@@ -162,7 +162,7 @@ function GlobalView() {
           </p>
           <a
             href="https://www.appluscertification.com/global/es/about-us/applus-group"
-            class="btn btn-primary mb-5"
+            class="btn-zimenta text-decoration-none  mb-5"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -209,7 +209,10 @@ function GlobalView() {
       </div>
 
       {/* Especialidades */}
-      <div className="row  align-items-center especialidades-section">
+      <div
+        className="row  align-items-center especialidades-section"
+        id="gallery-links"
+      >
         <h2 className="modern-title mt-5 text-white">NUESTROS ESPACIOS</h2>
         <div className="col-md-12">
           <p className="modern-text text-start text-white">
@@ -221,134 +224,178 @@ function GlobalView() {
 
         {/* Imagen 1 */}
         <div className="col-md-4 col-sm-4">
-        <Link to="/gallery?section=obra-nueva">
-          <img
-            src="/img/esp1.jpg" 
-            className="d-block w-100"
-            alt="Imagen 1"
-            style={{
-              height: "700px",
-              objectFit: "cover",
-            }}
-          />
-            </Link>
+          <Link to="/gallery?section=obra-nueva">
+            <img
+              src="/img/esp1.jpg"
+              className="d-block w-100"
+              alt="Imagen 1"
+              style={{
+                height: "700px",
+                objectFit: "cover",
+              }}
+            />
+          </Link>
           <p className="text-white">OBRA NUEVA</p>
-          
         </div>
 
         {/* Imagen 2 */}
         <div className="col-md-4  col-sm-4">
-        <Link to="/gallery?section=reforma-rehabilitacion">
-          <img
-            src="/img/esp2.jpg" // Cambia por la imagen correspondiente
-            className="d-block w-100"
-            alt="Imagen 2"
-            style={{
-              height: "700px",
-              objectFit: "cover",
-            }}
-          />
+          <Link to="/gallery?section=reforma-rehabilitacion">
+            <img
+              src="/img/esp2.jpg" // Cambia por la imagen correspondiente
+              className="d-block w-100"
+              alt="Imagen 2"
+              style={{
+                height: "700px",
+                objectFit: "cover",
+              }}
+            />
           </Link>
           <p className="text-white">REFORMA Y REHABILITACIÓN</p>
         </div>
 
         {/* Imagen 3 */}
         <div className="col-md-4  col-sm-4">
-        <Link to="/gallery?section=comercial-retail">
-          <img
-            src="/img/esp3.jpg" // Cambia por la imagen correspondiente
-            className="d-block w-100"
-            alt="Imagen 3"
-            style={{
-              height: "700px",
-              objectFit: "cover",
-            }}
-          />
+          <Link to="/gallery?section=comercial-retail">
+            <img
+              src="/img/esp3.jpg" // Cambia por la imagen correspondiente
+              className="d-block w-100"
+              alt="Imagen 3"
+              style={{
+                height: "700px",
+                objectFit: "cover",
+              }}
+            />
           </Link>
           <p className="text-white">COMERCIAL-RETAIL</p>
         </div>
       </div>
 
-
       {/* 2 Columnas Imagenes con Texto */}
-      <div className="row  align-items-center mt-5 ">
-
-         {/* Columna 1*/}
-        <div className="col-6 mt-5">
+      <div className="row align-items-center mt-5 g-4">
+        {/* Columna 1 */}
+        <div className="col-md-6">
           {/* Imagen 1 */}
-          <div className="col-md-4 ">
-            <img
-              src="/img/collage1.jpg" // Cambia por la imagen correspondiente
-              className="d-block "
-              alt="Imagen 1"
-              style={{
-                height: "700px",
-                width : "740px",
-                objectFit: "cover",
-              }}
-            />
-          </div>
-          <div className="col-md-12">
-          <h2 className="modern-title mt-5 col-8 text-start">CLIENTES Y SIN EMBARGO AMIGOS</h2>
-            <p className="modern-text text-start ">
+          <img
+            src="/img/collage1.jpg"
+            className="img-fluid w-100"
+            alt="Imagen 1"
+            style={{ height: "700px", objectFit: "cover" }}
+          />
+
+          <div className="p-5">
+            <h2 className="modern-title mt-5 text-start">
+              CLIENTES Y SIN EMBARGO AMIGOS
+            </h2>
+            <p className="modern-text text-start">
               Desde nuestros orígenes, nuestro objetivo es trabajar con
               profesionalidad y al mismo tiempo mantener una estrecha relación
               con nuestros clientes. Un objetivo que conseguimos gracias a un
               servicio de calidad basado en la transparencia, con precios
               ajustados y un riguroso compromiso con los plazos de ejecución
-              acordados
+              acordados.
             </p>
           </div>
         </div>
 
-        {/* Columna 2*/}
-        <div className="col-6 mt-5">
-          <div className="col-md-12">
-          <h2 className="modern-title mt-5  text-start ">MOTIVACIÓN Y EXPERIENCIA IMPULSANDO EL APRENDIZAJE Y LA INOVACIÓN</h2>
-            <p className="modern-text text-start mb-5 ">
+        {/* Columna 2 */}
+        <div className="col-md-6">
+          <div className="p-5">
+            <h2 className="modern-title mt-5 text-start">
+              MOTIVACIÓN Y EXPERIENCIA IMPULSANDO EL APRENDIZAJE Y LA INNOVACIÓN
+            </h2>
+            <p className="modern-text text-start mb-4">
               Somos un equipo humano joven, cohesionado y motivado,
               convenientemente formado y con una amplia experiencia que nos
-              permite acometer el mejor servicio
+              permite acometer el mejor servicio.
             </p>
           </div>
-          {/* Imagen 2 */}
-          <div className="col-md-4">
-            <img
-              src="/img/collage2.jpg" // Cambia por la imagen correspondiente
-              className="d-block"
-              alt="Imagen 2"
-              style={{
-                height: "400px",
-                width : "700px",
-                objectFit: "cover",
-              }}
-            />
-          </div>
-          {/* Imagen 3 */}
-          <div className="col-md-4">
-            <img
-              src="/img/collage3.jpg" 
-              className="d-block mt-4"
-              alt="Imagen 3"
-              style={{
-                height: "500px",
-                width : "400px",
-                objectFit: "cover",
-              }}
-            />
+          <div className="row">
+            {/* Imagen 2 */}
+            <div className="col-12">
+              <img
+                src="/img/collage2.jpg"
+                className="img-fluid w-100"
+                alt="Imagen 2"
+                style={{ height: "400px", objectFit: "cover" }}
+              />
+            </div>
+
+            {/* Imagen 3 */}
+            <div className="col-6 mt-4">
+              <img
+                src="/img/collage3.jpg"
+                className="img-fluid w-100"
+                alt="Imagen 3"
+                style={{ height: "500px", objectFit: "cover" }}
+              />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Sección inferior */}
-      <section className="text-center mt-5">
-        <p>Descripción de la página</p>
-        <button className="btn btn-primary ">
-          <Link to="/login" className="text-white">
-            Eres cliente
+      <section className="text-center bg-dark text-white py-5 mt-5 mb-4">
+        <div className="container">
+          <h2 className="display-4 fw-bold">
+            ¡Únete a la experiencia Zimenta!
+          </h2>
+          <p className="fs-5 mt-3">
+            Descubre el mejor servicio en construcción de lujo con un
+            seguimiento exclusivo de tu proyecto.
+          </p>
+
+          <Link to="/login" className="text-decoration-none">
+            <button className=" btn-zimenta btn-lg mt-4 px-5 shadow-lg">
+              Eres Cliente
+            </button>
           </Link>
-        </button>
+        </div>
       </section>
+
+{/* Fila con tres videos de Instagram con más márgenes */}
+<div className="row mt-5 p-5">
+  {/* Video 1 */}
+  <div className="col-4 mb-4">
+    <iframe
+      src="https://www.instagram.com/reel/C4PzRX2teBA/embed"
+      width="100%"
+      height="500"
+      allowFullScreen
+      className="border rounded"
+      title="Video de Instagram 1"
+      style={{ maxWidth: "100%" }}
+    ></iframe>
+  </div>
+
+  {/* Video 2 */}
+  <div className="col-4 mb-4">
+    <iframe
+      src="https://www.instagram.com/reel/C4GF6e8gZg2/embed"
+      width="100%"
+      height="500"
+      allowFullScreen
+      className="border rounded"
+      title="Video de Instagram 2"
+      style={{ maxWidth: "100%" }}
+    ></iframe>
+  </div>
+
+  {/* Video 3 */}
+  <div className="col-4 mb-4">
+    <iframe
+      src="https://www.instagram.com/reel/C37E8TyAgYb/embed"
+      width="100%"
+      height="500"
+      allowFullScreen
+      className="border rounded"
+      title="Video de Instagram 3"
+      style={{ maxWidth: "100%" }}
+    ></iframe>
+  </div>
+</div>
+
+
 
       {/* Footer */}
       <div className="especialidades-section mt-5 w-100">

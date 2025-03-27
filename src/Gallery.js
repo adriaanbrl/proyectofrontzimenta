@@ -36,7 +36,7 @@ const obraNueva = {
     "/img/Madroños/6.jpg",
     "/img/Madroños/7.jpg",
   ],
-  "ARAVACA": [
+  ARAVACA: [
     "/img/Aravaca2/1.jpg",
     "/img/Aravaca2/2.jpg",
     "/img/Aravaca2/3.jpg",
@@ -62,7 +62,6 @@ const reformaRehabilitacion = {
     "/img/Loft Aranjuez/8.jpg",
     "/img/Loft Aranjuez/9.jpg",
     "/img/Loft Aranjuez/10.jpg",
-    
   ],
   "Oficinas Madrid": [
     "/img/Oficinas Madrid/1.jpg",
@@ -75,9 +74,8 @@ const reformaRehabilitacion = {
     "/img/Oficinas Madrid/8.jpg",
     "/img/Oficinas Madrid/9.jpg",
     "/img/Oficinas Madrid/10.jpg",
-    
   ],
-  "Ayala": [
+  Ayala: [
     "/img/Ayala/1.jpg",
     "/img/Ayala/2.jpg",
     "/img/Ayala/3.jpg",
@@ -87,7 +85,7 @@ const reformaRehabilitacion = {
     "/img/Ayala/7.jpg",
     "/img/Ayala/8.jpg",
   ],
-  "Chamberi": [
+  Chamberi: [
     "/img/Chamberi/1.jpg",
     "/img/Chamberi/2.jpg",
     "/img/Chamberi/3.jpg",
@@ -139,7 +137,6 @@ const comercialRetail = {
     "/img/Dry Martini/7.jpg",
     "/img/Dry Martini/8.jpg",
   ],
-  
 };
 
 const allGalleries = {
@@ -153,6 +150,8 @@ function Gallery() {
   const [searchParams] = useSearchParams();
   const [selectedGallery, setSelectedGallery] = useState([]);
   const [filteredGalleries, setFilteredGalleries] = useState(allGalleries);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     const section = searchParams.get("section");
@@ -167,8 +166,13 @@ function Gallery() {
     }
 
     // Establecer la galería inicial si viene un nombre específico en la URL
-    if (galleryName && allGalleries[galleryName?.toUpperCase()?.replace(/-/g, ' ')]) {
-      setSelectedGallery(allGalleries[galleryName?.toUpperCase()?.replace(/-/g, ' ')]);
+    if (
+      galleryName &&
+      allGalleries[galleryName?.toUpperCase()?.replace(/-/g, " ")]
+    ) {
+      setSelectedGallery(
+        allGalleries[galleryName?.toUpperCase()?.replace(/-/g, " ")]
+      );
     } else {
       setSelectedGallery(allGalleries[Object.keys(allGalleries)[0]] || []);
     }
@@ -176,14 +180,22 @@ function Gallery() {
 
   const handleClick = (name) => {
     setSelectedGallery(allGalleries[name]);
-    // Opcional: Actualizar la URL al hacer clic en la sidebar
-    // navigate(`/gallery/${name.toLowerCase().replace(/ /g, '-')}`);
+  };
+
+  const handleImageClick = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+    setSelectedImage(null);
   };
 
   return (
     <div className="container mt-4">
       <header className="text-center mt-5">
-        <Link to="/">
+        <Link to="/#gallery-links">
           <img
             src="/img/logo_zimenta.png"
             alt="Logo"
@@ -194,7 +206,10 @@ function Gallery() {
       </header>
       <div className="row mt-5">
         {/* Sidebar */}
-        <div className="col-md-3 p-3 position-sticky" style={{ backgroundColor: "#f5922c" }}>
+        <div
+          className="col-md-3 p-3 position-sticky"
+          style={{ backgroundColor: "#f5922c" }}
+        >
           <ul className="list-unstyled text-white">
             {Object.keys(filteredGalleries).map((name) => (
               <li
@@ -217,12 +232,42 @@ function Gallery() {
                   src={src}
                   alt={`Obra ${index + 1}`}
                   className="img-fluid rounded"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => handleImageClick(src)}
                 />
               </div>
             ))}
           </div>
         </div>
       </div>
+
+      {/* Modal */}
+      {modalVisible && (
+        <div
+          className="modal fade show"
+          style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+        >
+          <div className="modal-dialog modal-dialog-centered modal-lg">
+            <div className="modal-content">
+              <div className="modal-header">
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={closeModal}
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div className="modal-body d-flex justify-content-center">
+                <img
+                  src={selectedImage}
+                  alt="Imagen grande"
+                  className="img-fluid"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

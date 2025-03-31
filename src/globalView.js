@@ -196,7 +196,7 @@ function GlobalView() {
       </div>
 
       {/* ImagenSeparadora */}
-      <div className="w-100 mt-5">
+      <div className="w-100 mt-5 pt-5">
         <img
           src="/img/separador.jpg"
           className="img-fluid w-100"
@@ -235,7 +235,7 @@ function GlobalView() {
               }}
             />
           </Link>
-          <p className="text-white">OBRA NUEVA</p>
+          <p className="text-white p-5 fs-5">OBRA NUEVA</p>
         </div>
 
         {/* Imagen 2 */}
@@ -251,7 +251,7 @@ function GlobalView() {
               }}
             />
           </Link>
-          <p className="text-white">REFORMA Y REHABILITACIÓN</p>
+          <p className="text-white p-5 fs-5">REFORMA Y REHABILITACIÓN</p>
         </div>
 
         {/* Imagen 3 */}
@@ -267,7 +267,7 @@ function GlobalView() {
               }}
             />
           </Link>
-          <p className="text-white">COMERCIAL-RETAIL</p>
+          <p className="text-white p-5 fs-5">COMERCIAL-RETAIL</p>
         </div>
       </div>
 

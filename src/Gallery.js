@@ -208,14 +208,20 @@ function Gallery() {
         {/* Sidebar */}
         <div
           className="col-md-3 p-3 position-sticky"
-          style={{ backgroundColor: "#f5922c" }}
+          style={{ backgroundColor: "#f5922c", borderRadius: "10px", padding: "20px" }}
         >
-          <ul className="list-unstyled text-white">
+          <ul className="list-unstyled text-white fs-5">
             {Object.keys(filteredGalleries).map((name) => (
               <li
                 key={name}
                 onClick={() => handleClick(name)}
-                style={{ cursor: "pointer" }}
+                style={{
+                  cursor: "pointer",
+                  padding: "10px",
+                  borderRadius: "8px",
+                  transition: "background-color 0.3s",
+                }}
+                className="hover-effect"
               >
                 {name}
               </li>

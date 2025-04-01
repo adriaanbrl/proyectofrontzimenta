@@ -1,12 +1,16 @@
 import './App.css';
-import GlobalView from "./globalView";
-import LoginForm from "./components/LoginForm";
-import PrivacyPolicy from "./components/PrivacyPolicy"; 
-import TermsUse from "./components/TermsUse";
-import Gallery from './Gallery';
+import GlobalView from "./components/global/GlobalView";
+import ClientView from './components/client/ClientView';
+import LoginForm from "./components/shared/LoginForm";
+import PrivacyPolicy from "./components/shared/PrivacyPolicy"; 
+import TermsUse from "./components/shared/TermsUse";
+import Gallery from './components/global/Gallery';
+import Sidebar from "./components/shared/Sidebar";
+import Profile from "./components/client/Profile";
+import Chat from "./components/client/Chat";
+import EventCalendar from './components/client/EventCalendar';
+import ClientGallery from './components/client/ClientGallery';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Sidebar from "./components/Sidebar";
-import Profile from "./components/Profile";
 
 
 function App() {
@@ -14,13 +18,22 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/" element={<GlobalView />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-use" element={<TermsUse />} />  
+
+           {/* Rutas de Vista Global */}
+           <Route path="/" element={<GlobalView />} />
           <Route path="/gallery" element={<Gallery />} />  
           <Route path="/gallery/:galleryName" element={<Gallery />} />
+
+           {/* Rutas de Vista Cliente */}
+          <Route path="/inicio" element={<ClientView />} />
+          <Route path="/galeriaCliente" element={<ClientGallery />} />
+          <Route path="/calendar" element={<EventCalendar />} />
           <Route path="/perfil" element={<Profile />} />
+          <Route path="/chat" element={<Chat />} />
+          
         </Routes>
         <Sidebar />
       </div>

@@ -5,6 +5,9 @@ import PrivacyPolicy from "./components/PrivacyPolicy";
 import TermsUse from "./components/TermsUse";
 import Gallery from './Gallery';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Sidebar from "./components/Sidebar";
+import Profile from "./components/Profile";
+
 
 function App() {
   return (
@@ -16,8 +19,10 @@ function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-use" element={<TermsUse />} />  
           <Route path="/gallery" element={<Gallery />} />  
-          <Route path="/gallery/:galleryName" element={<Gallery />} /> 
+          <Route path="/gallery/:galleryName" element={<Gallery />} />
+          <Route path="/perfil" element={<Profile />} />
         </Routes>
+        <Sidebar />
       </div>
     </Router>
   );

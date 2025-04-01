@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Navbar, Nav } from "react-bootstrap";
 import { House, Image, Calendar, ChatDots, Person } from "react-bootstrap-icons";
+import "./Sidebar.css";
 
 export default function Sidebar() {
   const [active, setActive] = useState("Inicio");
@@ -14,11 +15,11 @@ export default function Sidebar() {
   ];
 
   return (
-    <Navbar fixed="bottom" className="bg-white shadow-lg p-2 d-flex justify-content-around">
+    <Navbar fixed="bottom" className="sidebar-nav bg-white shadow-lg p-2 d-flex justify-content-around">
       {menuItems.map((item) => (
         <Nav.Link
           key={item.name}
-          className={`text-center ${active === item.name ? "text-warning" : "text-secondary"}`}
+          className={`text-center ${active === item.name ? "active" : "text-secondary"}`}
           onClick={() => setActive(item.name)}
         >
           <div>{item.icon}</div>

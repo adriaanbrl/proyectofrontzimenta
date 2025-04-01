@@ -1,0 +1,23 @@
+.card-custom {
+    border: 2px solid #f5922c !important;
+}
+
+.text-custom {
+    color: #f5922c !important;
+}
+
+.btn-custom:hover {
+    background-color: #f5922c;
+    color: #fff;
+}
+
+
+.btn-outline-custom {
+    border-color: #f5922c !important;
+    color: #f5922c !important;
+}
+
+.btn-outline-custom:hover {
+    background-color: #f5922c !important;
+    color: #fff !important;
+}

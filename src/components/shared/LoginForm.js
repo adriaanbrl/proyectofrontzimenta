@@ -1,13 +1,53 @@
 import React, { useState } from "react";
 import "../../App.css";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 function LoginForm() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const navigate = useNavigate();
+
+  const handleUsernameChange = (event) => {
+    setUsername(event.target.value);
+  };
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+  };
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError('');
+
+    try {
+      const response = await axios.post('http://localhost:8080/auth/login', {
+        username: username,
+        password: password,
+      });
+
+      if (response.status === 200) {
+        const token = response.data.token;
+        localStorage.setItem('authToken', token);
+        navigate('/inicio'); 
+      } else {
+        setError('Error al iniciar sesión. Inténtalo de nuevo.');
+      }
+    } catch (error) {
+      console.error('Error al iniciar sesión:', error);
+      if (error.response && error.response.status === 401) {
+        console.log("Respuesta 401 del backend:", error.response.data);
+        setError('Credenciales incorrectas.');
+      } else {
+        setError('Error al conectar con el servidor.');
+      }
+    }
   };
 
   return (
@@ -20,15 +60,22 @@ function LoginForm() {
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         }}
       >
-        <Link to="/"  style={{ color: "#ff9800" ,  textDecoration: "none" }}>
+        <Link to="/" style={{ color: "#ff9800" ,  textDecoration: "none" }}>
         <h2 className="text-center mb-4 ">
           zimenta
         </h2>
         </Link>
         <h4 className="text-center mb-4">Inicia Sesión</h4>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="form-group mb-2">
-            <input type="text" className="form-control" placeholder="Usuario" />
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Usuario"
+              value={username}
+              onChange={handleUsernameChange}
+              required
+            />
           </div>
           <div className="form-group mb-4">
             <div className="input-group">
@@ -36,6 +83,9 @@ function LoginForm() {
                 type={passwordVisible ? "text" : "password"}
                 className="form-control"
                 placeholder="Contraseña"
+                value={password}
+                onChange={handlePasswordChange}
+                required
               />
               <div className="input-group-append">
                 <button

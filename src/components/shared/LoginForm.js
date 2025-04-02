@@ -35,14 +35,13 @@ function LoginForm() {
       if (response.status === 200) {
         const token = response.data.token;
         localStorage.setItem('authToken', token);
-        navigate('/inicio'); 
+        navigate('/perfil'); 
       } else {
         setError('Error al iniciar sesión. Inténtalo de nuevo.');
       }
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
       if (error.response && error.response.status === 401) {
-        console.log("Respuesta 401 del backend:", error.response.data);
         setError('Credenciales incorrectas.');
       } else {
         setError('Error al conectar con el servidor.');

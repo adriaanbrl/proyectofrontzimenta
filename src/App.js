@@ -10,7 +10,7 @@ import Profile from "./components/client/Profile";
 import Chat from "./components/client/Chat";
 import EventCalendar from './components/client/EventCalendar';
 import ClientGallery from './components/client/ClientGallery';
-import TestProfileImage from './testprofileimage.js';
+import TestProfileImage from './TestProfileImage.js';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 

@@ -10,6 +10,7 @@ import Profile from "./components/client/Profile";
 import Chat from "./components/client/Chat";
 import EventCalendar from './components/client/EventCalendar';
 import ClientGallery from './components/client/ClientGallery';
+import TestProfileImage from './testprofileimage.js';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 
@@ -20,7 +21,8 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginForm />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/terms-use" element={<TermsUse />} />  
+          <Route path="/terms-use" element={<TermsUse />} />
+          <Route path="/test-profile-image" element={<TestProfileImage />} />
 
            {/* Rutas de Vista Global */}
            <Route path="/" element={<GlobalView />} />

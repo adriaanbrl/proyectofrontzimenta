@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Imagenes" />
+    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Imagenes">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ProfileImage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/ProfileImage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/TestProfileImage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/TestProfileImage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/client/Profile.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/Profile.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

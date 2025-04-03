@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import { PersonCircle } from 'react-bootstrap-icons'; // Import the icon
 
 function ProfileImage({ username }) {
     const [profileImageUrl, setProfileImageUrl] = useState('');
@@ -16,8 +16,7 @@ function ProfileImage({ username }) {
                     setProfileImageUrl(imageUrl);
                 } else if (response.status === 404) {
                     console.log('Imagen de perfil no encontrada para este usuario.');
-                    // Puedes establecer una imagen por defecto aquí si lo deseas
-                    // setProfileImageUrl('/ruta/a/imagen-por-defecto.png');
+                    setProfileImageUrl(''); // Set to empty to trigger the icon
                 } else {
                     console.error('Error al cargar la imagen de perfil:', response.status);
                 }
@@ -41,6 +40,9 @@ function ProfileImage({ username }) {
                 borderRadius: '50%',
                 overflow: 'hidden',
                 border: '2px solid #ccc', // Opcional: borde circular
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
             }}
         >
             {profileImageUrl ? (
@@ -64,8 +66,8 @@ function ProfileImage({ username }) {
                         backgroundColor: '#f0f0f0', // Opcional: color de fondo si no hay imagen
                     }}
                 >
-                    {/* Puedes mostrar un icono o texto indicando que no hay imagen */}
-                    Sin imagen
+                    {/* Mostrar el icono de usuario */}
+                    <PersonCircle size={100} color="orange" />
                 </div>
             )}
         </div>

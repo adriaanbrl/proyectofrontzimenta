@@ -1,9 +1,28 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Card, ListGroup, Button } from "react-bootstrap";
 import { PersonCircle, PencilSquare, FileEarmarkText, Receipt, Clipboard, Shield, Book, Clock } from "react-bootstrap-icons";
 import "./Profile.css";
+import { jwtDecode } from "jwt-decode"; // Importación correcta
 
 export default function Profile() {
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    const token = localStorage.getItem("jwtToken");
+  
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        setUsername(decodedToken.name || "Usuario"); // Cambia a decodedToken.name
+      } catch (error) {
+        console.error("Error al decodificar el token:", error);
+        setUsername("Usuario");
+      }
+    } else {
+      setUsername("Usuario");
+    }
+  }, []);
+
   return (
     <Container className="py-4">
       {/* Sección del usuario */}
@@ -12,7 +31,7 @@ export default function Profile() {
           <div className="d-flex align-items-center justify-content-between">
             <PersonCircle size={50}/>
             <div className="flex-grow-1 ms-3">
-              <h4 className="mb-0">Tomás Miranda</h4>
+              <h4 className="mb-0">{username}</h4>
             </div>
             <PencilSquare size={24} className="text-custom" />
           </div>

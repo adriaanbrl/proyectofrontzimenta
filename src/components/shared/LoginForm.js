@@ -35,7 +35,7 @@ function LoginForm() {
       if (response.status === 200) {
         const token = response.data.token;
         localStorage.setItem('authToken', token);
-        navigate('/perfil'); 
+        navigate('/inicio'); 
       } else {
         setError('Error al iniciar sesión. Inténtalo de nuevo.');
       }

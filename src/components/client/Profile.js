@@ -4,6 +4,7 @@ import { PencilSquare, FileEarmarkText, Receipt, Clipboard, Shield, Book, Clock 
 import "./Profile.css";
 import { jwtDecode } from "jwt-decode";
 import ProfileImage from "../../TestProfileImage.js";
+import { Link } from 'react-router-dom'; 
 
 export default function Profile() {
   const [username, setUsername] = useState("");
@@ -41,10 +42,12 @@ export default function Profile() {
 
         {/* Lista de opciones */}
         <ListGroup variant="flush">
+        <Link to="/documentacion">
           <ListGroup.Item className="d-flex align-items-center">
             <FileEarmarkText size={20} className="text-custom me-2" />
             Documentación Legal
           </ListGroup.Item>
+          </Link>
           <ListGroup.Item className="d-flex align-items-center">
             <Receipt size={20} className="text-custom me-2" />
             Facturas

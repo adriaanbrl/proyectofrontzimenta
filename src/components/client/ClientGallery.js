@@ -9,4 +9,4 @@ function ClientGallery() {
   );
 }
 
-export default ClientGallery; // ¡Asegúrate de tener esta línea!
+export default ClientGallery; 

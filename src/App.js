@@ -12,6 +12,7 @@ import EventCalendar from "./components/client/EventCalendar";
 import ClientGallery from "./components/client/ClientGallery";
 import TestProfileImage from "./TestProfileImage.js";
 import ClientLayout from "./components/client/ClientLayout";
+import LegDoc from "./components/client/ProfileElements/LegDoc.js";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
             <Route path="/calendar" element={<EventCalendar />} />
             <Route path="/perfil" element={<Profile />} />
             <Route path="/chat" element={<Chat />} />
+            <Route path="/documentacion" element={<LegDoc />} />
           </Route>
         </Routes>
       </div>

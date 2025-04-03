@@ -125,6 +125,19 @@ body {
   padding: 20px;
 }
 
+.error-message {
+  color: red;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.input-error {
+  border: 2px solid red !important;
+  background-color: #ffe6e6 !important; 
+  border-radius: 5px; 
+}
 
 @keyframes fadeInUp {
   from {

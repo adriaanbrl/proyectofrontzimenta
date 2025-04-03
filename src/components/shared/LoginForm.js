@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import "../../App.css";
 import { Link, useNavigate } from "react-router-dom";
-import axios from 'axios';
+import axios from "axios";
 
 function LoginForm() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [usernameError, setUsernameError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [error, setError] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
 
@@ -24,27 +26,31 @@ function LoginForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setError('');
+    setError("");
 
     try {
-      const response = await axios.post('http://localhost:8080/auth/login', {
+      const response = await axios.post("http://localhost:8080/auth/login", {
         username: username,
         password: password,
       });
 
       if (response.status === 200) {
         const token = response.data.token;
-        localStorage.setItem('authToken', token);
-        navigate('/inicio'); 
+        localStorage.setItem("authToken", token);
+        navigate("/inicio");
+        setUsernameError(false);
+        setPasswordError(false);
       } else {
-        setError('Error al iniciar sesión. Inténtalo de nuevo.');
+        setError("Error al iniciar sesión. Inténtalo de nuevo.");
       }
     } catch (error) {
-      console.error('Error al iniciar sesión:', error);
+      console.error("Error al iniciar sesión:", error);
       if (error.response && error.response.status === 401) {
-        setError('Credenciales incorrectas.');
+        setError("Usuario o Contraseña Incorrecta.");
+        setUsernameError(true);
+        setPasswordError(true);
       } else {
-        setError('Error al conectar con el servidor.');
+        setError("Error al conectar con el servidor.");
       }
     }
   };
@@ -59,17 +65,15 @@ function LoginForm() {
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         }}
       >
-        <Link to="/" style={{ color: "#ff9800" ,  textDecoration: "none" }}>
-        <h2 className="text-center mb-4 ">
-          zimenta
-        </h2>
+        <Link to="/" style={{ color: "#ff9800", textDecoration: "none" }}>
+          <h2 className="text-center mb-4 ">zimenta</h2>
         </Link>
         <h4 className="text-center mb-4">Inicia Sesión</h4>
         <form onSubmit={handleSubmit}>
           <div className="form-group mb-2">
             <input
               type="text"
-              className="form-control"
+              className={`form-control ${usernameError ? "input-error" : ""}`}
               placeholder="Usuario"
               value={username}
               onChange={handleUsernameChange}
@@ -80,7 +84,7 @@ function LoginForm() {
             <div className="input-group">
               <input
                 type={passwordVisible ? "text" : "password"}
-                className="form-control"
+                className={`form-control ${passwordError ? "input-error" : ""}`}
                 placeholder="Contraseña"
                 value={password}
                 onChange={handlePasswordChange}
@@ -97,6 +101,10 @@ function LoginForm() {
               </div>
             </div>
           </div>
+
+          {/* Mensaje de error en rojo */}
+          {error && <p className="error-message">{error}</p>}
+
           <button
             type="submit"
             className="btn-zimenta btn-block"

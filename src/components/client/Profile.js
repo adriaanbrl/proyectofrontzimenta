@@ -5,6 +5,7 @@ import "./Profile.css";
 import { jwtDecode } from "jwt-decode";
 import ProfileImage from "../../TestProfileImage.js";
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios'; // Import axios
 
 export default function Profile() {
   const [username, setUsername] = useState("");
@@ -12,6 +13,27 @@ export default function Profile() {
   const [buildingId, setBuildingId] = useState("");
   const [building, setBuilding] = useState("");
   const navigate = useNavigate();
+
+  const fetchBuildingData = async (building_id) => {
+    try {
+      const token = localStorage.getItem('authToken'); // Obtener el token
+
+      if (!token) {
+        console.error("No se encontró el token de autenticación.");
+        return;
+      }
+
+      const response = await axios.get(`http://localhost:8080/auth/building/${building_id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`, // Añadir el token al encabezado
+        },
+      });
+      setBuilding(response.data);
+      console.log("Building Data:", response.data); // Log the building data
+    } catch (error) {
+      console.error("Error al obtener los datos del edificio:", error);
+    }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
@@ -22,6 +44,8 @@ export default function Profile() {
         setUsername(decodedToken.name || "Usuario");
         setSurname(decodedToken.surname || "");
         setBuildingId(decodedToken.building_id || ""); // Assuming buildingId is in the JWT
+
+        console.log("building_id recibido del customer (JWT):", decodedToken.building_id); // <-------------------- AÑADIDO CONSOLE LOG
 
         // Fetch building data if buildingId is available
         if (decodedToken.building_id) {
@@ -40,20 +64,7 @@ export default function Profile() {
     }
   }, []);
 
-  const fetchBuildingData = async (building_id) => {
-    try {
-      const response = await fetch(`http://localhost:8080/auth/building/${building_id}`); // Replace with your backend API URL
-      if (response.ok) {
-        const data = await response.json();
-        setBuilding(data);
-        console.log("Building Data:", data); // Log the building data
-      } else {
-        console.error("Error al obtener los datos del edificio:", response.status);
-      }
-    } catch (error) {
-      console.error("Error de red al obtener los datos del edificio:", error);
-    }
-  };
+
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");

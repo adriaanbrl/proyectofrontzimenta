@@ -27,7 +27,7 @@ function LegDoc() {
                 return;
             }
 
-            const response = await fetch(`http://localhost:8080/auth/buildings/${id}/documentacionLegal`, {
+            const response = await fetch(`http://localhost:8080/auth/building/${id}/documentacionLegal`, {
                 headers: {
                     'Authorization': `Bearer ${token}`, // Añadir el token al encabezado Authorization
                 },

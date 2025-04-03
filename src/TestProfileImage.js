@@ -10,9 +10,8 @@ function TestProfileImage() {
         if (token) {
             try {
                 const decodedToken = jwtDecode(token);
-                // Assuming your JWT payload has a 'name' or similar field for the username
-                // Adjust the key based on your actual JWT payload structure
-                setLoggedInUsername(decodedToken.name || decodedToken.sub || 'Usuario');
+
+                setLoggedInUsername(decodedToken.username || decodedToken.sub || 'Usuario');
             } catch (error) {
                 console.error('Error decoding JWT:', error);
                 setLoggedInUsername('Usuario'); // Fallback username

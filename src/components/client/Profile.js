@@ -9,8 +9,8 @@ import { Link, useNavigate } from 'react-router-dom';
 export default function Profile() {
   const [username, setUsername] = useState("");
   const [surname, setSurname] = useState("");
-  const [buildingId, setBuildingId] = useState(null);
-  const [building, setBuilding] = useState(null);
+  const [buildingId, setBuildingId] = useState("");
+  const [building, setBuilding] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,28 +21,28 @@ export default function Profile() {
         const decodedToken = jwtDecode(token);
         setUsername(decodedToken.name || "Usuario");
         setSurname(decodedToken.surname || "");
-        setBuildingId(decodedToken.buildingId || null); // Assuming buildingId is in the JWT
+        setBuildingId(decodedToken.building_id || ""); // Assuming buildingId is in the JWT
 
         // Fetch building data if buildingId is available
-        if (decodedToken.buildingId) {
-          fetchBuildingData(decodedToken.buildingId);
+        if (decodedToken.building_id) {
+          fetchBuildingData(decodedToken.building_id);
         }
       } catch (error) {
         console.error("Error al decodificar el token:", error);
         setUsername("Usuario");
         setSurname("");
-        setBuildingId(null);
+        setBuildingId("");
       }
     } else {
       setUsername("Usuario");
       setSurname("");
-      setBuildingId(null);
+      setBuildingId("");
     }
   }, []);
 
-  const fetchBuildingData = async (buildingId) => {
+  const fetchBuildingData = async (building_id) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/buildings/${buildingId}`); // Replace with your backend API URL
+      const response = await fetch(`http://localhost:8080/auth/building/${building_id}`); // Replace with your backend API URL
       if (response.ok) {
         const data = await response.json();
         setBuilding(data);

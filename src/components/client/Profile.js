@@ -29,7 +29,6 @@ export default function Profile() {
         },
       });
       setBuilding(response.data);
-      console.log("Building Data:", response.data); // Log the building data
     } catch (error) {
       console.error("Error al obtener los datos del edificio:", error);
     }
@@ -80,7 +79,7 @@ export default function Profile() {
               <ProfileImage username={username} />
               <div className="flex-grow-1 ms-3">
                 <h4 className="mb-0">{username} {surname}</h4> {/* Display username and surname */}
-                {building && <p className="mb-0 text-muted">Edificio ID: {building.id}</p>} {/* Optional: Display building ID */}
+                {building && <p className="mb-0 text-muted">Edificio ID: {buildingId}</p>} {/* Optional: Display building ID */}
               </div>
               <PencilSquare size={24} className="text-custom" />
             </div>
@@ -89,7 +88,7 @@ export default function Profile() {
 
         {/* Lista de opciones */}
         <ListGroup variant="flush">
-          <Link to="/documentacion" state={{ buildingId: buildingId }}> {/* Pass buildingId as state */}
+          <Link to="/documentacion" state={{ building_id: buildingId }}> {/* Pass buildingId as state */}
             <ListGroup.Item className="d-flex align-items-center">
               <FileEarmarkText size={20} className="text-custom me-2" />
               Documentación Legal

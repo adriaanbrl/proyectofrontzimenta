@@ -10,9 +10,10 @@ function LegDoc() {
 
     useEffect(() => {
         document.title = "Documentación Legal";
-        if (buildingId) {
+        if (buildingId !== null) {
             fetchDocumentacionLegal(buildingId);
         } else {
+            console.log("building recibido :", location.state.building_id); // <-------------------- AÑADIDO CONSOLE LOG
             setError("No se proporcionó el ID del edificio.");
         }
     }, [buildingId]);

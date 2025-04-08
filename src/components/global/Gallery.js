@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Container, Row, Col, Image, Modal } from "react-bootstrap";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 
 const obraNueva = {
@@ -193,22 +194,27 @@ function Gallery() {
   };
 
   return (
-    <div className="container mt-4">
+    <Container className="mt-4">
       <header className="text-center mt-5">
         <Link to="/#gallery-links">
-          <img
+          <Image
             src="/img/logo_zimenta.png"
             alt="Logo"
-            className="img-fluid"
+            fluid
             style={{ maxWidth: "150px", height: "auto" }}
           />
         </Link>
       </header>
-      <div className="row mt-5">
+      <Row className="mt-5">
         {/* Sidebar */}
-        <div
-          className="col-md-3 p-3 position-sticky"
-          style={{ backgroundColor: "#f5922c", borderRadius: "10px", padding: "20px" }}
+        <Col
+          md={3}
+          className="p-3 position-sticky"
+          style={{
+            backgroundColor: "#f5922c",
+            borderRadius: "10px",
+            padding: "20px",
+          }}
         >
           <ul className="list-unstyled text-white fs-5">
             {Object.keys(filteredGalleries).map((name) => (
@@ -227,54 +233,41 @@ function Gallery() {
               </li>
             ))}
           </ul>
-        </div>
+        </Col>
 
         {/* Galeria */}
-        <div className="col-md-9">
-          <div className="row g-2">
+        <Col md={9}>
+          <Row className="g-2">
             {selectedGallery.map((src, index) => (
-              <div className="col-4" key={index}>
-                <img
+              <Col xs={4} key={index}>
+                <Image
                   src={src}
                   alt={`Obra ${index + 1}`}
-                  className="img-fluid rounded"
+                  fluid
+                  rounded
                   style={{ cursor: "pointer" }}
                   onClick={() => handleImageClick(src)}
                 />
-              </div>
+              </Col>
             ))}
-          </div>
-        </div>
-      </div>
+          </Row>
+        </Col>
+      </Row>
 
       {/* Modal */}
-      {modalVisible && (
-        <div
-          className="modal fade show"
-          style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-        >
-          <div className="modal-dialog modal-dialog-centered modal-lg">
-            <div className="modal-content">
-              <div className="modal-header">
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={closeModal}
-                  aria-label="Close"
-                ></button>
-              </div>
-              <div className="modal-body d-flex justify-content-center">
-                <img
-                  src={selectedImage}
-                  alt="Imagen grande"
-                  className="img-fluid"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+      <Modal
+        show={modalVisible}
+        onHide={closeModal}
+        style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+        centered
+        size="lg"
+      >
+        <Modal.Header closeButton />
+        <Modal.Body className="d-flex justify-content-center">
+          <Image src={selectedImage} alt="Imagen grande" fluid />
+        </Modal.Body>
+      </Modal>
+    </Container>
   );
 }
 

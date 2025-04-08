@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "../../App.css";
 import { Link, useNavigate } from "react-router-dom";
+import { Container, Row, Col, Card, Form, Button, InputGroup } from "react-bootstrap";
 import axios from "axios";
 
 function LoginForm() {
@@ -56,63 +57,60 @@ function LoginForm() {
   };
 
   return (
-    <div className="container d-flex justify-content-center align-items-center vh-100">
-      <div
-        className="card p-4"
-        style={{
-          maxWidth: "400px",
-          borderRadius: "10px",
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-        }}
-      >
+    <Container fluid className="d-flex justify-content-center align-items-center vh-100">
+    <Card
+      className="p-4"
+      style={{
+        maxWidth: "400px",
+        borderRadius: "10px",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+      }}
+    >
+      <Card.Body>
         <Link to="/" style={{ color: "#ff9800", textDecoration: "none" }}>
-          <h2 className="text-center mb-4 ">zimenta</h2>
+          <h2 className="text-center mb-4">zimenta</h2>
         </Link>
         <h4 className="text-center mb-4">Inicia Sesión</h4>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group mb-2">
-            <input
+        <Form onSubmit={handleSubmit}>
+          <Form.Group className="mb-2">
+            <Form.Control
               type="text"
-              className={`form-control ${usernameError ? "input-error" : ""}`}
+              className={usernameError ? "is-invalid" : ""}
               placeholder="Usuario"
               value={username}
               onChange={handleUsernameChange}
               required
             />
-          </div>
-          <div className="form-group mb-4">
-            <div className="input-group">
-              <input
+          </Form.Group>
+          <Form.Group className="mb-4">
+            <InputGroup>
+              <Form.Control
                 type={passwordVisible ? "text" : "password"}
-                className={`form-control ${passwordError ? "input-error" : ""}`}
+                className={passwordError ? "is-invalid" : ""}
                 placeholder="Contraseña"
                 value={password}
                 onChange={handlePasswordChange}
                 required
               />
-              <div className="input-group-append">
-                <button
-                  className="btn btn-outline-warning"
-                  type="button"
-                  onClick={togglePasswordVisibility}
-                >
-                  {passwordVisible ? "Ocultar" : "Mostrar"}
-                </button>
-              </div>
-            </div>
-          </div>
+              <Button
+                variant="outline-warning"
+                onClick={togglePasswordVisibility}
+              >
+                {passwordVisible ? "Ocultar" : "Mostrar"}
+              </Button>
+            </InputGroup>
+             {passwordError && <Form.Control.Feedback type="invalid">Porfavor ponga un usuario y contraseña correctos.</Form.Control.Feedback>}
+          </Form.Group>
 
-          {/* Mensaje de error en rojo */}
-          {error && <p className="error-message">{error}</p>}
+          {error && <p className="text-danger">{error}</p>}
 
-          <button
+          <Button
             type="submit"
-            className="btn-zimenta btn-block"
-            style={{ backgroundColor: "#ff9800", borderColor: "#ff9800" }}
+            className="btn-block btn-zimenta"
           >
             Iniciar Sesión
-          </button>
-        </form>
+          </Button>
+        </Form>
 
         <div className="mt-3 text-center">
           <a href="#">Olvidé mi contraseña</a>
@@ -123,8 +121,9 @@ function LoginForm() {
           <Link to="/terms-use">Terms of Use</Link> and{" "}
           <Link to="/privacy-policy">Privacy Policy</Link>
         </p>
-      </div>
-    </div>
+      </Card.Body>
+    </Card>
+  </Container>
   );
 }
 

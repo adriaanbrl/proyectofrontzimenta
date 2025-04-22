@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../../App.css";
 import { Link, useNavigate } from "react-router-dom";
-import { Container, Row, Col, Card, Form, Button, InputGroup } from "react-bootstrap";
+import { Container, Col, Card, Form, Button, InputGroup } from "react-bootstrap";
 import axios from "axios";
 
 function LoginForm() {

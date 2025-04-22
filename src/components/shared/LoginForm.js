@@ -111,6 +111,7 @@ function LoginForm() {
 
           <Button
             type="submit"
+            variant="btn-zimenta"
             className="btn-block btn-zimenta"
           >
             Iniciar Sesión

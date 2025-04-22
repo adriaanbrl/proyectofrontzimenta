@@ -1,0 +1,31 @@
+/* Cambiar el color de fondo y borde de los botones primarios */
+.btn-primary {
+    background-color: #f5922c !important;
+    border-color: #f5922c !important;
+  }
+ 
+  /* Cambiar el color de fondo de los botones primarios cuando están activos o enfocados */
+  .btn-primary:hover,
+  .btn-primary:focus,
+  .btn-primary:active,
+  .btn-primary.active,
+  .show > .btn-primary.dropdown-toggle {
+    background-color: #d67e24 !important; /* Un tono más oscuro para el hover/active */
+    border-color: #d67e24 !important;
+  }
+ 
+  /* Cambiar el color de fondo de los botones primarios cuando están deshabilitados */
+  .btn-primary:disabled,
+  .btn-primary.disabled {
+    background-color: #f5922c !important;
+    border-color: #f5922c !important;
+    opacity: 0.65; /* Puedes ajustar la opacidad */
+  }
+ 
+  /* Opcional: Si el día seleccionado usa la variante 'primary', también se aplicará */
+  .btn.primary { /* Asegúrate de que este selector sea específico si es necesario */
+    background-color: #f5922c !important;
+    border-color: #f5922c !important;
+  }
+
+  

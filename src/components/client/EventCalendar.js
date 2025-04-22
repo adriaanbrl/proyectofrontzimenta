@@ -40,16 +40,15 @@ const EventCalendar = () => {
   );
   const numeroDeDias = ultimoDiaDelMes.getDate();
   const primerDiaSemana = primerDiaDelMes.getDay();
+
   const diasDelMes = [];
-  const espaciosNecesarios = primerDiaSemana === 0 ? 6 : primerDiaSemana - 1; // Ajuste para Domingo (0)
+  const espaciosNecesarios = primerDiaSemana === 0 ? 6 : primerDiaSemana - 1;
   for (let i = 0; i < espaciosNecesarios; i++) {
     diasDelMes.push("");
   }
   for (let i = 1; i <= numeroDeDias; i++) {
     diasDelMes.push(i);
   }
-
- 
 
   const cambiarMes = (direccion) => {
     const nuevoMes = new Date(mesActual);

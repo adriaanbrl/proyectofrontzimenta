@@ -1,9 +1,44 @@
-/* Cambiar el color de fondo y borde de los botones primarios */
-.btn-primary {
+/* EventCalendar.css */
+.calendario-eventos .row {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los días pasen a la siguiente fila */
+  }
+  
+  .calendario-eventos .row > div {
+    flex-basis: calc(100% / 7); /* 7 columnas para los días de la semana */
+    max-width: calc(100% / 7);
+    text-align: center;
+    padding: 2px; /* Ajusta el espaciado si es necesario */
+    display: flex; /* Añadimos flex para centrar el botón */
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente (opcional, pero puede ayudar) */
+  }
+  
+  .calendario-eventos .row > div button {
+    width: 50px; /* Ajusta el tamaño de los botones de los días */
+    height: 50px;
+    border-radius: 100%; /* Para que sean circulares */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: 0.8rem; /* Ajusta el tamaño de la fuente */
+    border: 1px solid transparent; /* Para evitar cambios de tamaño al enfocar */
+    line-height: 50px;
+  }
+  
+  .calendario-eventos .row > div button.fw-bold {
+    font-weight: bold; /* Resalta el día actual */
+  }
+  
+  
+  
+  /* Cambiar el color de fondo y borde de los botones primarios */
+  .btn-primary {
     background-color: #f5922c !important;
     border-color: #f5922c !important;
   }
- 
+  
   /* Cambiar el color de fondo de los botones primarios cuando están activos o enfocados */
   .btn-primary:hover,
   .btn-primary:focus,
@@ -13,7 +48,7 @@
     background-color: #d67e24 !important; /* Un tono más oscuro para el hover/active */
     border-color: #d67e24 !important;
   }
- 
+  
   /* Cambiar el color de fondo de los botones primarios cuando están deshabilitados */
   .btn-primary:disabled,
   .btn-primary.disabled {
@@ -21,11 +56,9 @@
     border-color: #f5922c !important;
     opacity: 0.65; /* Puedes ajustar la opacidad */
   }
- 
+  
   /* Opcional: Si el día seleccionado usa la variante 'primary', también se aplicará */
   .btn.primary { /* Asegúrate de que este selector sea específico si es necesario */
     background-color: #f5922c !important;
     border-color: #f5922c !important;
   }
-
-  

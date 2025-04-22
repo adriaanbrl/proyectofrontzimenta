@@ -13,7 +13,15 @@ import ClientGallery from "./components/client/ClientGallery";
 import TestProfileImage from "./TestProfileImage.js";
 import ClientLayout from "./components/client/ClientLayout";
 import LegDoc from "./components/client/ProfileElements/LegDoc.js";
+import Invoice from "./components/client/ProfileElements/Invoice.js";
+import Budget from "./components/client/ProfileElements/Budget.js";
+import Warranty from "./components/client/ProfileElements/Warranty.js";
+import Manual from "./components/client/ProfileElements/Manual.js";
+import Historic from "./components/client/ProfileElements/Historic.js";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+
+
 
 function App() {
   return (
@@ -38,6 +46,11 @@ function App() {
             <Route path="/perfil" element={<Profile />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/documentacion" element={<LegDoc />} />
+            <Route path="/factura" element={<Invoice />} />
+            <Route path="/presupuesto" element={<Budget />} />
+            <Route path="/garantia" element={<Warranty />} />
+            <Route path="/manual" element={<Manual />} />
+            <Route path="/historial" element={<Historic />} />
           </Route>
         </Routes>
       </div>

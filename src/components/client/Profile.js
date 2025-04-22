@@ -115,32 +115,46 @@ export default function Profile() {
       <ListGroup variant="flush">
         <Link to="/documentacion" state={{ building_id: buildingId }}>
           {" "}
-          {/* Pass buildingId as state */}
           <ListGroup.Item className="d-flex align-items-center">
             <FileEarmarkText size={20} className="text-custom me-2" />
             Documentación Legal
           </ListGroup.Item>
         </Link>
-        <ListGroup.Item className="d-flex align-items-center">
-          <Receipt size={20} className="text-custom me-2" />
-          Facturas
-        </ListGroup.Item>
-        <ListGroup.Item className="d-flex align-items-center">
-          <Clipboard size={20} className="text-custom me-2" />
-          Presupuestos
-        </ListGroup.Item>
-        <ListGroup.Item className="d-flex align-items-center">
-          <Shield size={20} className="text-custom me-2" />
-          Garantía
-        </ListGroup.Item>
-        <ListGroup.Item className="d-flex align-items-center">
-          <Book size={20} className="text-custom me-2" />
-          Manual de usuario de la Vivienda
-        </ListGroup.Item>
-        <ListGroup.Item className="d-flex align-items-center">
-          <Clock size={20} className="text-custom me-2" />
-          Historial de Incidencias
-        </ListGroup.Item>
+        <Link to="/factura" state={{ building_id: buildingId }}>
+          {" "}
+          <ListGroup.Item className="d-flex align-items-center">
+            <Receipt size={20} className="text-custom me-2" />
+            Facturas
+          </ListGroup.Item>
+        </Link>
+        <Link to="/presupuesto" state={{ building_id: buildingId }}>
+          {" "}
+          <ListGroup.Item className="d-flex align-items-center">
+            <Clipboard size={20} className="text-custom me-2" />
+            Presupuestos
+          </ListGroup.Item>
+        </Link>
+        <Link to="/garantia" state={{ building_id: buildingId }}>
+          {" "}
+          <ListGroup.Item className="d-flex align-items-center">
+            <Shield size={20} className="text-custom me-2" />
+            Garantía
+          </ListGroup.Item>
+        </Link>
+        <Link to="/manual" state={{ building_id: buildingId }}>
+          {" "}
+          <ListGroup.Item className="d-flex align-items-center">
+            <Book size={20} className="text-custom me-2" />
+            Manual de usuario de la Vivienda
+          </ListGroup.Item>
+        </Link>
+        <Link to="/historial" state={{ building_id: buildingId }}>
+          {" "}
+          <ListGroup.Item className="d-flex align-items-center">
+            <Clock size={20} className="text-custom me-2" />
+            Historial de Incidencias
+          </ListGroup.Item>
+        </Link>
       </ListGroup>
 
       {/* Botón de Cerrar Sesión */}

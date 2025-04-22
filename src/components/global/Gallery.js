@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Image, Modal } from "react-bootstrap";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 
+//Objeto que contiene las rutas de las imágenes para las galerías
 const obraNueva = {
   "LA MORALEJA": [
     "/img/Moraleja/1.jpg",
@@ -140,6 +141,7 @@ const comercialRetail = {
   ],
 };
 
+//Combina todos los objetos de galería en uno solo para facilitar el acceso.
 const allGalleries = {
   ...obraNueva,
   ...reformaRehabilitacion,
@@ -147,14 +149,15 @@ const allGalleries = {
 };
 
 function Gallery() {
-  const { galleryName } = useParams();
-  const [searchParams] = useSearchParams();
-  const [selectedGallery, setSelectedGallery] = useState([]);
-  const [filteredGalleries, setFilteredGalleries] = useState(allGalleries);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const { galleryName } = useParams(); // Obtiene el nombre de la galería desde los parámetros de la URL.
+  const [searchParams] = useSearchParams(); // Obtiene los parámetros de búsqueda de la URL.
+  const [selectedGallery, setSelectedGallery] = useState([]); // Estado para almacenar la galería de imágenes actualmente seleccionada. Inicialmente vacío.
+  const [filteredGalleries, setFilteredGalleries] = useState(allGalleries); // Estado para almacenar las galerías que se mostrarán en la barra lateral por filtro.
+  const [modalVisible, setModalVisible] = useState(false); // Estado para controlar la visibilidad del modal de la imagen grande. Inicialmente oculto.
+  const [selectedImage, setSelectedImage] = useState(null); // Estado para almacenar la URL de la imagen seleccionada para mostrar en el modal. Inicialmente nulo.
 
   useEffect(() => {
+    // Obtiene el valor del parámetro 'section' de la URL. Filtra las galerías según el valor del parámetro 'section'.
     const section = searchParams.get("section");
     if (section === "reforma-rehabilitacion") {
       setFilteredGalleries(reformaRehabilitacion);
@@ -166,7 +169,8 @@ function Gallery() {
       setFilteredGalleries(allGalleries);
     }
 
-    // Establecer la galería inicial si viene un nombre específico en la URL
+    // Establece la galería inicial basada en el 'galleryName' de la URL.
+    // Se convierte el 'galleryName' a mayúsculas y se reemplazan los guiones por espacios para que coincida con las claves del objeto 'allGalleries'.
     if (
       galleryName &&
       allGalleries[galleryName?.toUpperCase()?.replace(/-/g, " ")]
@@ -179,15 +183,20 @@ function Gallery() {
     }
   }, [searchParams, galleryName]);
 
+  // Función que se ejecuta al hacer clic en el nombre de una galería en la barra lateral.
+  // Actualiza el estado 'selectedGallery' con las imágenes de la galería seleccionada.
   const handleClick = (name) => {
     setSelectedGallery(allGalleries[name]);
   };
 
+  // Función que se ejecuta al hacer clic en una imagen de la galería.
+  // Establece la URL de la imagen seleccionada y muestra el modal.
   const handleImageClick = (imageUrl) => {
     setSelectedImage(imageUrl);
     setModalVisible(true);
   };
 
+  // Función para cerrar el modal de la imagen grande. Oculta el modal y resetea la URL de la imagen seleccionada.
   const closeModal = () => {
     setModalVisible(false);
     setSelectedImage(null);

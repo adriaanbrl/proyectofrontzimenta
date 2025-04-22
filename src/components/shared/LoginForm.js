@@ -5,31 +5,36 @@ import { Container, Row, Col, Card, Form, Button, InputGroup } from "react-boots
 import axios from "axios";
 
 function LoginForm() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [usernameError, setUsernameError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
-  const [error, setError] = useState("");
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const navigate = useNavigate();
+  const [username, setUsername] = useState(""); // Estado para almacenar el nombre de usuario ingresado.
+  const [password, setPassword] = useState(""); // Estado para almacenar la contraseña ingresada.
+  const [usernameError, setUsernameError] = useState(false); // Estado para indicar si hay un error en el nombre de usuario
+  const [passwordError, setPasswordError] = useState(false); // Estado para indicar si hay un error en la contraseña.
+  const [error, setError] = useState(""); // Estado para almacenar mensajes de error durante el inicio de sesión.
+  const [passwordVisible, setPasswordVisible] = useState(false); // Estado para controlar la visibilidad de la contraseña.
+  const navigate = useNavigate(); // Hook para la navegación entre rutas.
 
+  // Función para actualizar el estado 'username' cuando el valor del input cambia.
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
   };
 
+  // Función para actualizar el estado 'password' cuando el valor del input cambia.
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
 
+  // Función para alternar la visibilidad de la contraseña.
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
 
+  // Función asíncrona que se ejecuta al enviar el formulario de inicio de sesión.
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
 
     try {
+      // Realiza una petición POST a la API de inicio de sesión.
       const response = await axios.post("http://localhost:8080/auth/login", {
         username: username,
         password: password,

@@ -4,12 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="nombre y apellidos perfil">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="LegDoc finalizado">
       <change beforePath="$PROJECT_DIR$/src/components/client/ProfileElements/LegDoc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/ProfileElements/LegDoc.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/shared/LoginForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/shared/LoginForm.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -231,7 +227,7 @@
       <workItem from="1744756711453" duration="3000" />
       <workItem from="1744756731662" duration="268000" />
       <workItem from="1744856544792" duration="37000" />
-      <workItem from="1745308519873" duration="3672000" />
+      <workItem from="1745308519873" duration="4943000" />
     </task>
     <task id="LOCAL-00001" summary="Imagenes">
       <option name="closed" value="true" />
@@ -281,7 +277,23 @@
       <option name="project" value="LOCAL" />
       <updated>1743706880722</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="LegDoc finalizado">
+      <option name="closed" value="true" />
+      <created>1745314026545</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1745314026545</updated>
+    </task>
+    <task id="LOCAL-00008" summary="LegDoc finalizado">
+      <option name="closed" value="true" />
+      <created>1745315053395</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1745315053395</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -303,6 +315,8 @@
     <MESSAGE value="Perfil foto + nombre" />
     <MESSAGE value="corrección foto" />
     <MESSAGE value="nombre y apellidos perfil" />
-    <option name="LAST_COMMIT_MESSAGE" value="nombre y apellidos perfil" />
+    <MESSAGE value="LegDoc" />
+    <MESSAGE value="LegDoc finalizado" />
+    <option name="LAST_COMMIT_MESSAGE" value="LegDoc finalizado" />
   </component>
 </project>

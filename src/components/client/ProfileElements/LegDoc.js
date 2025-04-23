@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import './LegDoc.css';
-import { useLocation, useNavigate } from 'react-router-dom';
+import './LegDoc.css'; // Manteniendo tu CSS personalizado
+import { useLocation } from 'react-router-dom';
 import { Container, Row, Col, Button, Alert, Spinner } from 'react-bootstrap';
 
 function LegDoc() {
     const location = useLocation();
-    const navigate = useNavigate();
     const [buildingId, setBuildingId] = useState("");
     const [pdfUrl, setPdfUrl] = useState(null);
     const [error, setError] = useState(null);
@@ -19,7 +18,7 @@ function LegDoc() {
         } else {
             setError("No se proporcionó el ID del edificio.");
         }
-    }, [location.state]);
+    }, [location.state]); // Dependencia en location.state para reaccionar a cambios de navegación
 
     useEffect(() => {
         if (buildingId) {
@@ -49,14 +48,7 @@ function LegDoc() {
                 const blob = await response.blob();
                 const url = URL.createObjectURL(blob);
                 setPdfUrl(url);
-            } else if (response.status === 401) {
-                setError("No autorizado para ver este documento. Por favor, inicia sesión nuevamente.");
-                // Redirigir al usuario a la página de inicio de sesión
-                navigate('/login');
-            } else if (response.status === 404) {
-                setError("El documento legal no se encontró para este edificio.");
-            }
-            else {
+            } else {
                 setError(`Error al cargar el documento: ${response.status}`);
             }
         } catch (error) {
@@ -81,7 +73,6 @@ function LegDoc() {
                     )}
                     {loading && !error && <p><Spinner animation="border" size="sm" /> Cargando documento...</p>}
                     {!pdfUrl && !error && !loading && buildingId && <p>Documento no disponible.</p>}
-                    {!buildingId && !error && <p>No se ha especificado un edificio para mostrar la documentación.</p>}
                 </Col>
             </Row>
         </Container>

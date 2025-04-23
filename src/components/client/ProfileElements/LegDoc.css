@@ -11,35 +11,69 @@
     text-align: center;
 }
 
-.pdf-card {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 15px;
+.pdf-preview-container {
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+    position: relative;
     width: 80%;
     max-width: 600px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    border-radius: 8px;
+    overflow: hidden; /* Asegura que el contenido del PDF no se salga del borde */
+    background-color: #f9f9f9; /* Fondo similar a la tarjeta anterior */
+}
+
+.react-pdf__Document {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%; /* Asegura que el documento ocupe el ancho del contenedor */
+}
+
+.react-pdf__Page {
+    margin: 10px 0; /* Espacio vertical entre páginas si se renderizaran varias */
+    width: 100% !important; /* Hace que la página sea responsiva dentro del contenedor */
+    height: auto !important;
+}
+
+.react-pdf__Page__canvas {
+    max-width: 100%;
+    height: auto !important;
+    display: block; /* Evita espacio extra debajo del canvas */
+    margin: 0 auto; /* Centra el canvas */
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
     display: flex;
     justify-content: center;
+    align-items: center;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 8px; /* Igual que el contenedor */
 }
 
-.pdf-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
+.pdf-preview-container:hover .overlay {
+    opacity: 1;
+}
+
+.overlay p {
+    font-size: 1.2em;
+    padding: 15px;
     border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-}
-
-.pdf-button:hover {
-    background-color: #0056b3;
+    background-color: rgba(0, 0, 0, 0.7); /* Fondo más oscuro para mejor legibilidad */
 }
 
 .error {
     color: red;
     margin-top: 10px;
+    text-align: center;
 }

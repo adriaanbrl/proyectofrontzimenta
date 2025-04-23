@@ -112,6 +112,14 @@ button.btn-zimenta {
   transition: all 0.3s ease-in-out; 
 }
 
+.tarjetas{
+  transition: all 0.3s ease-in-out; 
+}
+
+.tarjetas:hover {
+  transform: scale(1.05); 
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2); /* Más sombra en hover */
+}	
 
 .btn-zimenta:hover {
   transform: scale(1.1); 

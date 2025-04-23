@@ -125,7 +125,7 @@ function GlobalView() {
       </div>
 
       {/* Descripcion */}
-      <div className="row mt-5 align-items-center">
+      <div className="row mt-5 mb-5 align-items-center">
         <h2 className="modern-title mt-5">CONSTRUYENDO TU ESPACIO</h2>
         <div className="col-md-6">
           <img
@@ -151,47 +151,57 @@ function GlobalView() {
       </div>
 
       {/* Certificados */}
-      <div className="row mt-5 align-items-center">
-        <h2 className="modern-title mt-5">CERTIFICACIÓN OFICIAL</h2>
-        <div className="col-md-6">
-          <p className="modern-text text-start">
-            Aportamos valor añadido y exclusividad a todos nuestros trabajos.
-            Estamos certificados con sellos de calidad y medio ambiente, y
-            clasificados por el Ministerio de Fomento como contratistas con la
-            Administración
-          </p>
-          <a
-            href="https://www.appluscertification.com/global/es/about-us/applus-group"
-            class="btn-zimenta text-decoration-none  mb-5"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Saber más
-          </a>
-        </div>
-        <div className="col-md-3">
-          <img
-            src="/img/A9001.png"
-            className="d-block w-100"
-            alt="Second slide"
-            style={{
-              height: "200px",
-              objectFit: "cover",
-              borderRadius: "10px",
-            }}
-          />
-        </div>
-        <div className="col-md-3">
-          <img
-            src="/img/A14001.png"
-            className="d-block w-100"
-            alt="Second slide"
-            style={{
-              height: "200px",
-              objectFit: "cover",
-              borderRadius: "10px",
-            }}
-          />
+      <div className="container mt-5">
+        <div className="row align-items-center g-4">
+          <div className="col-12">
+            <h2 className="modern-title text-center text-md-start mt-5">
+              CERTIFICACIÓN OFICIAL
+            </h2>
+          </div>
+
+          {/* Texto y botón */}
+          <div className="col-12 col-md-6">
+            <p className="modern-text text-start">
+              Aportamos valor añadido y exclusividad a todos nuestros trabajos.
+              Estamos certificados con sellos de calidad y medio ambiente, y
+              clasificados por el Ministerio de Fomento como contratistas con la
+              Administración
+            </p>
+            <a
+              href="https://www.appluscertification.com/global/es/about-us/applus-group"
+              className="btn-zimenta text-decoration-none mb-4 d-inline-block"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Saber más
+            </a>
+          </div>
+
+          {/* Imagen 1 */}
+          <div className="col-6 col-md-3">
+            <img
+              src="/img/A9001.png"
+              className="img-fluid rounded"
+              alt="Certificado 1"
+              style={{
+                height: "200px",
+                objectFit: "cover",
+              }}
+            />
+          </div>
+
+          {/* Imagen 2 */}
+          <div className="col-6 col-md-3">
+            <img
+              src="/img/A14001.png"
+              className="img-fluid rounded"
+              alt="Certificado 2"
+              style={{
+                height: "200px",
+                objectFit: "cover",
+              }}
+            />
+          </div>
         </div>
       </div>
 
@@ -223,7 +233,7 @@ function GlobalView() {
         </div>
 
         {/* Imagen 1 */}
-        <div className="col-md-4 col-sm-4">
+        <div className="col-md-4 col-sm-4 tarjetas">
           <Link to="/gallery?section=obra-nueva">
             <img
               src="/img/esp1.jpg"
@@ -235,11 +245,11 @@ function GlobalView() {
               }}
             />
           </Link>
-          <p className="text-white p-5 fs-5">OBRA NUEVA</p>
+          <p className="text-white p-5 fs-5 shadow b-4 fw-bold">OBRA NUEVA</p>
         </div>
 
         {/* Imagen 2 */}
-        <div className="col-md-4  col-sm-4">
+        <div className="col-md-4  col-sm-4 tarjetas">
           <Link to="/gallery?section=reforma-rehabilitacion">
             <img
               src="/img/esp2.jpg" // Cambia por la imagen correspondiente
@@ -251,11 +261,13 @@ function GlobalView() {
               }}
             />
           </Link>
-          <p className="text-white p-5 fs-5">REFORMA Y REHABILITACIÓN</p>
+          <p className="text-white p-5 fs-5 shadow fw-bold">
+            REFORMA Y REHABILITACIÓN
+          </p>
         </div>
 
         {/* Imagen 3 */}
-        <div className="col-md-4  col-sm-4">
+        <div className="col-md-4  col-sm-4 tarjetas">
           <Link to="/gallery?section=comercial-retail">
             <img
               src="/img/esp3.jpg" // Cambia por la imagen correspondiente
@@ -267,24 +279,25 @@ function GlobalView() {
               }}
             />
           </Link>
-          <p className="text-white p-5 fs-5">COMERCIAL-RETAIL</p>
+          <p className="text-white p-5 fs-5 shadow fw-bold ">
+            COMERCIAL-RETAIL
+          </p>
         </div>
       </div>
 
       {/* 2 Columnas Imagenes con Texto */}
       <div className="row align-items-center mt-5 g-4">
         {/* Columna 1 */}
-        <div className="col-md-6">
+        <div className="col-12 col-md-6">
           {/* Imagen 1 */}
           <img
             src="/img/collage1.jpg"
-            className="img-fluid w-100"
+            className="img-fluid w-100 tarjetas"
             alt="Imagen 1"
-            style={{ height: "700px", objectFit: "cover" }}
+            style={{ maxHeight: "500px", objectFit: "cover" }}
           />
-
-          <div className="p-5">
-            <h2 className="modern-title mt-5 text-start">
+          <div className="p-4">
+            <h2 className="modern-title mt-4 text-start">
               CLIENTES Y SIN EMBARGO AMIGOS
             </h2>
             <p className="modern-text text-start">
@@ -299,9 +312,9 @@ function GlobalView() {
         </div>
 
         {/* Columna 2 */}
-        <div className="col-md-6">
-          <div className="p-5">
-            <h2 className="modern-title mt-5 text-start">
+        <div className="col-12 col-md-6">
+          <div className="p-4">
+            <h2 className="modern-title mt-4 text-start">
               MOTIVACIÓN Y EXPERIENCIA IMPULSANDO EL APRENDIZAJE Y LA INNOVACIÓN
             </h2>
             <p className="modern-text text-start mb-4">
@@ -310,30 +323,29 @@ function GlobalView() {
               permite acometer el mejor servicio.
             </p>
           </div>
-          <div className="row">
+          <div className="row g-3">
             {/* Imagen 2 */}
             <div className="col-12">
               <img
                 src="/img/collage2.jpg"
-                className="img-fluid w-100"
+                className="img-fluid w-100 tarjetas "
                 alt="Imagen 2"
-                style={{ height: "400px", objectFit: "cover" }}
+                style={{ maxHeight: "300px", objectFit: "cover" }}
               />
             </div>
 
             {/* Imagen 3 */}
-            <div className="col-6 mt-4">
+            <div className="col-6">
               <img
                 src="/img/collage3.jpg"
-                className="img-fluid w-100"
+                className="img-fluid w-100 tarjetas"
                 alt="Imagen 3"
-                style={{ height: "500px", objectFit: "cover" }}
+                style={{ maxHeight: "500px", objectFit: "cover" }}
               />
             </div>
           </div>
         </div>
       </div>
-
       {/* Sección inferior */}
       <section className="text-center bg-dark text-white py-5 mt-5 mb-4">
         <div className="container">
@@ -352,48 +364,6 @@ function GlobalView() {
           </Link>
         </div>
       </section>
-
-      {/* Fila con tres videos de Instagram con más márgenes */}
-      <div className="row mt-5 p-5">
-        {/* Video 1 */}
-        <div className="col-4 mb-4">
-          <iframe
-            src="https://www.instagram.com/reel/C4PzRX2teBA/embed"
-            width="100%"
-            height="500"
-            allowFullScreen
-            className="border rounded"
-            title="Video de Instagram 1"
-            style={{ maxWidth: "100%" }}
-          ></iframe>
-        </div>
-
-        {/* Video 2 */}
-        <div className="col-4 mb-4">
-          <iframe
-            src="https://www.instagram.com/reel/C4GF6e8gZg2/embed"
-            width="100%"
-            height="500"
-            allowFullScreen
-            className="border rounded"
-            title="Video de Instagram 2"
-            style={{ maxWidth: "100%" }}
-          ></iframe>
-        </div>
-
-        {/* Video 3 */}
-        <div className="col-4 mb-4">
-          <iframe
-            src="https://www.instagram.com/reel/C37E8TyAgYb/embed"
-            width="100%"
-            height="500"
-            allowFullScreen
-            className="border rounded"
-            title="Video de Instagram 3"
-            style={{ maxWidth: "100%" }}
-          ></iframe>
-        </div>
-      </div>
 
       {/* Footer */}
       <div className="especialidades-section mt-5 w-100">

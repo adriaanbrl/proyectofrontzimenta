@@ -172,11 +172,11 @@ function Gallery() {
     // Establece la galería inicial basada en el 'galleryName' de la URL.
     // Se convierte el 'galleryName' a mayúsculas y se reemplazan los guiones por espacios para que coincida con las claves del objeto 'allGalleries'.
     if (
-      galleryName &&
-      allGalleries[galleryName?.toUpperCase()?.replace(/-/g, " ")]
+        galleryName &&
+        allGalleries[galleryName?.toUpperCase()?.replace(/-/g, " ")]
     ) {
       setSelectedGallery(
-        allGalleries[galleryName?.toUpperCase()?.replace(/-/g, " ")]
+          allGalleries[galleryName?.toUpperCase()?.replace(/-/g, " ")]
       );
     } else {
       setSelectedGallery(allGalleries[Object.keys(allGalleries)[0]] || []);
@@ -203,80 +203,81 @@ function Gallery() {
   };
 
   return (
-    <Container className="mt-4">
-      <header className="text-center mt-5">
-        <Link to="/#gallery-links">
-          <Image
-            src="/img/logo_zimenta.png"
-            alt="Logo"
-            fluid
-            style={{ maxWidth: "150px", height: "auto" }}
-          />
-        </Link>
-      </header>
-      <Row className="mt-5">
-        {/* Sidebar */}
-        <Col
-          md={3}
-          className="p-3 position-sticky"
-          style={{
-            backgroundColor: "#f5922c",
-            borderRadius: "10px",
-            padding: "20px",
-          }}
+      <Container className="mt-5">
+        <header className="text-center mb-4">
+          <Link to="/#gallery-links">
+            <Image
+                src="/img/logo_zimenta.png"
+                alt="Logo"
+                fluid
+                style={{ maxWidth: "150px", height: "auto" }}
+            />
+          </Link>
+        </header>
+        <Row>
+          {/* Sidebar */}
+          <Col
+              md={3}
+              className="p-3" // Elimina position-sticky para que no se quede fijo
+              style={{
+                backgroundColor: "#f5922c",
+                borderRadius: "10px",
+                padding: "20px",
+                // top: "20px", // Ya no es necesario
+              }}
+          >
+            <ul className="list-unstyled text-white fs-5">
+              {Object.keys(filteredGalleries).map((name) => (
+                  <li
+                      key={name}
+                      onClick={() => handleClick(name)}
+                      style={{
+                        cursor: "pointer",
+                        padding: "10px",
+                        borderRadius: "8px",
+                        transition: "background-color 0.3s",
+                      }}
+                      className="hover-effect"
+                  >
+                    {name}
+                  </li>
+              ))}
+            </ul>
+          </Col>
+
+          {/* Galeria */}
+          <Col md={9} className="mt-md-0 mt-4">
+            <Row className="g-4">
+              {selectedGallery.map((src, index) => (
+                  <Col xs={12} sm={6} md={4} lg={3} key={index}>
+                    <Image
+                        src={src}
+                        alt={`Obra ${index + 1}`}
+                        fluid
+                        rounded
+                        style={{ cursor: "pointer" }}
+                        onClick={() => handleImageClick(src)}
+                    />
+                  </Col>
+              ))}
+            </Row>
+          </Col>
+        </Row>
+
+        {/* Modal */}
+        <Modal
+            show={modalVisible}
+            onHide={closeModal}
+            style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+            centered
+            size="lg"
         >
-          <ul className="list-unstyled text-white fs-5">
-            {Object.keys(filteredGalleries).map((name) => (
-              <li
-                key={name}
-                onClick={() => handleClick(name)}
-                style={{
-                  cursor: "pointer",
-                  padding: "10px",
-                  borderRadius: "8px",
-                  transition: "background-color 0.3s",
-                }}
-                className="hover-effect"
-              >
-                {name}
-              </li>
-            ))}
-          </ul>
-        </Col>
-
-        {/* Galeria */}
-        <Col md={9}>
-          <Row className="g-2">
-            {selectedGallery.map((src, index) => (
-              <Col xs={4} key={index}>
-                <Image
-                  src={src}
-                  alt={`Obra ${index + 1}`}
-                  fluid
-                  rounded
-                  style={{ cursor: "pointer" }}
-                  onClick={() => handleImageClick(src)}
-                />
-              </Col>
-            ))}
-          </Row>
-        </Col>
-      </Row>
-
-      {/* Modal */}
-      <Modal
-        show={modalVisible}
-        onHide={closeModal}
-        style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-        centered
-        size="lg"
-      >
-        <Modal.Header closeButton />
-        <Modal.Body className="d-flex justify-content-center">
-          <Image src={selectedImage} alt="Imagen grande" fluid />
-        </Modal.Body>
-      </Modal>
-    </Container>
+          <Modal.Header closeButton />
+          <Modal.Body className="d-flex justify-content-center">
+            <Image src={selectedImage} alt="Imagen grande" fluid />
+          </Modal.Body>
+        </Modal>
+      </Container>
   );
 }
 

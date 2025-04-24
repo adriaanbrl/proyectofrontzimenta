@@ -73,24 +73,10 @@ const EventCalendar = () => {
     return `${diaSemana}, ${mes} ${dia}`;
   };
 
-  const cancelarSeleccion = () => {
-    console.log("Cancelado");
-  };
-
-  const confirmarSeleccion = () => {
-    console.log("Consulta fijada para:", fechaSeleccionada);
-  };
 
   return (
     <Container className="calendario-eventos p-3">
-      <Row className="mb-3 align-items-center">
-        <Col xs="auto">
-          <div className="fw-bold">{formatearFecha(fechaSeleccionada)}</div>
-        </Col>
-        <Col xs="auto" className="ms-auto">
-          <FaPencilAlt /> {/* Icono de editar */}
-        </Col>
-      </Row>
+     
 
       <Row className="mb-3 align-items-center justify-content-between">
         <Col xs="auto">
@@ -148,18 +134,6 @@ const EventCalendar = () => {
         ))}
       </Row>
 
-      <Row className="mt-3 justify-content-end">
-        <Col xs="auto">
-          <Button variant="secondary" onClick={cancelarSeleccion}>
-            Cancel
-          </Button>
-        </Col>
-        <Col xs="auto" className="ms-2">
-          <Button variant="primary" onClick={confirmarSeleccion}>
-            OK
-          </Button>
-        </Col>
-      </Row>
 
       <hr className="my-4" />
 

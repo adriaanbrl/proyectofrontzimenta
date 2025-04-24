@@ -5,7 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="LegDoc finalizado">
-      <change beforePath="$PROJECT_DIR$/src/components/client/ProfileElements/LegDoc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/ProfileElements/LegDoc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/global/GlobalView.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/global/GlobalView.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -228,6 +230,7 @@
       <workItem from="1744756731662" duration="268000" />
       <workItem from="1744856544792" duration="37000" />
       <workItem from="1745308519873" duration="4943000" />
+      <workItem from="1745477129059" duration="2901000" />
     </task>
     <task id="LOCAL-00001" summary="Imagenes">
       <option name="closed" value="true" />

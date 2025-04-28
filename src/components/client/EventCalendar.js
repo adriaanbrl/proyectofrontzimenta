@@ -146,7 +146,6 @@ const EventCalendar = () => {
                 {formatearFecha(evento.fecha)}
               </Card.Title>
               <Card.Text className="small">{evento.titulo}</Card.Text>
-              {/* Aquí podrías agregar una imagen si la tienes */}
             </Card.Body>
           </Card>
         ))}

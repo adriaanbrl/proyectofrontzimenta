@@ -4,9 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Global view actualizado">
+    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Calendario actualizado">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/client/EventCalendar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/EventCalendar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/client/ProfileElements/LegDoc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/ProfileElements/LegDoc.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/global/Gallery.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/global/Gallery.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -230,7 +233,13 @@
       <workItem from="1744756731662" duration="268000" />
       <workItem from="1744856544792" duration="37000" />
       <workItem from="1745308519873" duration="4943000" />
-      <workItem from="1745477129059" duration="6487000" />
+      <workItem from="1745477129059" duration="7738000" />
+      <workItem from="1745493445899" duration="1258000" />
+      <workItem from="1745574989195" duration="2397000" />
+      <workItem from="1745578186628" duration="56000" />
+      <workItem from="1745578304020" duration="94000" />
+      <workItem from="1745579049803" duration="982000" />
+      <workItem from="1745822089052" duration="6189000" />
     </task>
     <task id="LOCAL-00001" summary="Imagenes">
       <option name="closed" value="true" />
@@ -304,7 +313,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745480571886</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Calendario actualizado">
+      <option name="closed" value="true" />
+      <created>1745489050472</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1745489050472</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -329,6 +346,7 @@
     <MESSAGE value="LegDoc" />
     <MESSAGE value="LegDoc finalizado" />
     <MESSAGE value="Global view actualizado" />
-    <option name="LAST_COMMIT_MESSAGE" value="Global view actualizado" />
+    <MESSAGE value="Calendario actualizado" />
+    <option name="LAST_COMMIT_MESSAGE" value="Calendario actualizado" />
   </component>
 </project>

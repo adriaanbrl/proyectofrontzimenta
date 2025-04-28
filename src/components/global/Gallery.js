@@ -157,9 +157,12 @@ function Gallery() {
   const [selectedImage, setSelectedImage] = useState(null); // Estado para almacenar la URL de la imagen seleccionada para mostrar en el modal. Inicialmente nulo.
 
   useEffect(() => {
+
     // Obtiene el valor del parámetro 'section' de la URL. Filtra las galerías según el valor del parámetro 'section'.
     const section = searchParams.get("section");
+
     if (section === "reforma-rehabilitacion") {
+      console.log("section", section);
       setFilteredGalleries(reformaRehabilitacion);
     } else if (section === "comercial-retail") {
       setFilteredGalleries(comercialRetail);
@@ -186,6 +189,7 @@ function Gallery() {
   // Función que se ejecuta al hacer clic en el nombre de una galería en la barra lateral.
   // Actualiza el estado 'selectedGallery' con las imágenes de la galería seleccionada.
   const handleClick = (name) => {
+    console.log("name", name);
     setSelectedGallery(allGalleries[name]);
   };
 

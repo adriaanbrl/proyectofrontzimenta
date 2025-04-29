@@ -134,18 +134,18 @@ export default function Profile() {
             Presupuestos
           </ListGroup.Item>
         </Link>
-        <Link to="/garantia" state={{ building_id: buildingId }}>
-          {" "}
-          <ListGroup.Item className="d-flex align-items-center">
-            <Shield size={20} className="text-custom me-2" />
-            Garantía
-          </ListGroup.Item>
-        </Link>
         <Link to="/manual" state={{ building_id: buildingId }}>
           {" "}
           <ListGroup.Item className="d-flex align-items-center">
             <Book size={20} className="text-custom me-2" />
             Manual de usuario de la Vivienda
+          </ListGroup.Item>
+        </Link>
+        <Link to="/garantia" state={{ building_id: buildingId }}>
+          {" "}
+          <ListGroup.Item className="d-flex align-items-center">
+            <Shield size={20} className="text-custom me-2" />
+            Incidencias
           </ListGroup.Item>
         </Link>
         <Link to="/historial" state={{ building_id: buildingId }}>

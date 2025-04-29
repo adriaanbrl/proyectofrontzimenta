@@ -3,11 +3,6 @@ import './LegDoc.css';
 import { useLocation } from 'react-router-dom';
 import { Container, Row, Col, Button, Alert, Spinner } from 'react-bootstrap';
 
-interface PdfWithFilename {
-    filename: string;
-    data: number[]; // Representa los datos del PDF como un array de bytes
-}
-
 function LegDoc() {
     const location = useLocation();
     const [buildingId, setBuildingId] = useState("");
@@ -35,66 +30,62 @@ function LegDoc() {
         setError(null);
         setPdfUrls([]);
 
-            const token = localStorage.getItem('authToken');
+        const token = localStorage.getItem('authToken');
 
-            if (!token) {
-                setError("No se encontró el token de autenticación.");
-                setLoading(false);
-                return;
-            }
+        if (!token) {
+            setError("No se encontró el token de autenticación.");
+            setLoading(false);
+            return;
+        }
 
-            const response = await fetch(`http://localhost:8080/auth/building/${id}/legalDocumentsIds`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-            });
+        const responseIds = await fetch(`http://localhost:8080/auth/building/${id}/legalDocumentsIds`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        });
 
-            if (response.ok) {
-                const idList = await response.json();
+        if (responseIds.ok) {
+            const idList = await responseIds.json();
 
-                if (Array.isArray(idList) && idList.length > 0) {
-                    // Fetch the PDFs individually
-                    const pdfResponse = await fetch(`http://localhost:8080/legaldocuments/pdfs`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(idList),
+            if (Array.isArray(idList) && idList.length > 0) {
+                const responsePdfs = await fetch(`http://localhost:8080/legaldocuments/pdfs`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(idList),
+                });
+
+                if (responsePdfs.ok) {
+                    const pdfDataList = await responsePdfs.json();
+                    const urls = [];
+                    pdfDataList.forEach(pdfData => {
+                        const byteArray = new Uint8Array(pdfData.data);
+                        const fileBlob = new Blob([byteArray], { type: 'application/pdf' });
+                        const url = URL.createObjectURL(fileBlob);
+                        urls.push(url);
                     });
-
-                    if (pdfResponse.ok) {
-                        const pdfDataList: PdfWithFilename[] = await pdfResponse.json(); // Cambiado el tipo de la respuesta
-                        const urls: string[] = [];
-                        pdfDataList.forEach(pdfData => {
-                            // Convertir el array de bytes a Blob
-                            const byteArray = new Uint8Array(pdfData.data);
-                            const fileBlob = new Blob([byteArray], { type: 'application/pdf' });
-                            const url = URL.createObjectURL(fileBlob);
-                            urls.push(url);
-                        });
-                        setPdfUrls(urls);
-                        setLoading(false);
-                    } else {
-                        setError(`Error al descargar los documentos: ${pdfResponse.status}`);
-                        setLoading(false);
-                    }
-                } else if (Array.isArray(idList) && idList.length === 0) {
-                    setError("No hay documentos legales disponibles para este edificio.");
+                    setPdfUrls(urls);
                     setLoading(false);
                 } else {
-                    setError("Respuesta inesperada del servidor: Se esperaba una lista de IDs.");
+                    setError(`Error al descargar los documentos: ${responsePdfs.status}`);
                     setLoading(false);
                 }
+            } else if (Array.isArray(idList) && idList.length === 0) {
+                setError("No hay documentos legales disponibles para este edificio.");
+                setLoading(false);
             } else {
-                setError(`Error al obtener la lista de documentos: ${response.status}`);
+                setError("Respuesta inesperada del servidor: Se esperaba una lista de IDs.");
                 setLoading(false);
             }
-        
+        } else {
+            setError(`Error al obtener la lista de documentos: ${responseIds.status}`);
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
-        // Cleanup the URLs
         return () => {
             pdfUrls.forEach(url => URL.revokeObjectURL(url));
         };

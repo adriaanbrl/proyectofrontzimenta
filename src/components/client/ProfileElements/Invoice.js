@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Container, Row, Col, Button, Alert, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Table, Button, Alert, Spinner } from 'react-bootstrap';
+
 
 function InvoicesDoc() {
     const location = useLocation();
     const [buildingId, setBuildingId] = useState('');
-    const [pdfUrls, setPdfUrls] = useState([]);
+    const [pdfDataListWithInfo, setPdfDataListWithInfo] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
@@ -27,7 +28,7 @@ function InvoicesDoc() {
     const fetchInvoices = async (id) => {
         setLoading(true);
         setError(null);
-        setPdfUrls([]);
+        setPdfDataListWithInfo([]);
 
         const token = localStorage.getItem('authToken');
 
@@ -65,20 +66,17 @@ function InvoicesDoc() {
                 }
 
                 const pdfDataList = await responsePdfs.json();
-                const urls = pdfDataList.map(pdfData => { // Changed from forEach to map
-                    // Decodificar la cadena Base64 a un string binario
+                const pdfsWithInfo = pdfDataList.map(pdfData => {
                     const byteString = atob(pdfData.data);
-
-                    // Crear un array de bytes (Uint8Array) a partir del string binario
                     const byteArray = new Uint8Array(byteString.length);
                     for (let i = 0; i < byteString.length; i++) {
                         byteArray[i] = byteString.charCodeAt(i);
                     }
-
                     const fileBlob = new Blob([byteArray], { type: 'application/pdf' });
-                    return URL.createObjectURL(fileBlob); // Return the URL
+                    const url = URL.createObjectURL(fileBlob);
+                    return { filename: pdfData.filename, url: url, dateInfo: pdfData.dateInfo };
                 });
-                setPdfUrls(urls);
+                setPdfDataListWithInfo(pdfsWithInfo);
                 setLoading(false);
             } else if (Array.isArray(idList) && idList.length === 0) {
                 setError('No hay facturas disponibles para este edificio.');
@@ -87,7 +85,7 @@ function InvoicesDoc() {
                 setError('Respuesta inesperada del servidor: Se esperaba una lista de IDs.');
                 setLoading(false);
             }
-        } catch (err) { // Changed err to be more explicit
+        } catch (err) {
             setError(err.message);
             setLoading(false);
         }
@@ -95,9 +93,9 @@ function InvoicesDoc() {
 
     useEffect(() => {
         return () => {
-            pdfUrls.forEach(url => URL.revokeObjectURL(url));
+            pdfDataListWithInfo.forEach(item => URL.revokeObjectURL(item.url));
         };
-    }, [pdfUrls]);
+    }, [pdfDataListWithInfo]);
 
     return (
         <Container className="leg-doc-container">
@@ -105,23 +103,38 @@ function InvoicesDoc() {
                 <Col>
                     <h1 className="leg-doc-title">Facturas</h1>
                     {error && <Alert variant="danger">{error}</Alert>}
-                    {pdfUrls.length > 0 && (
-                        <div className="pdfs-grid">
-                            {pdfUrls.map((url, index) => (
-                                <div key={index} className="pdf-card">
-                                    <Button variant="primary" onClick={() => window.open(url, '_blank')}>
-                                        Abrir Factura {index + 1}
-                                    </Button>
-                                </div>
-                            ))}
-                        </div>
-                    )}
                     {loading && !error && (
                         <p>
                             <Spinner animation="border" size="sm" /> Cargando facturas...
                         </p>
                     )}
-                    {!pdfUrls.length && !error && !loading && buildingId && (
+                    {pdfDataListWithInfo.length > 0 && (
+                        <Table striped bordered hover responsive>
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nombre del Archivo</th>
+                                <th>Mes</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {pdfDataListWithInfo.map((item, index) => (
+                                <tr key={index}>
+                                    <td>{index + 1}</td>
+                                    <td>{item.filename}</td>
+                                    <td>{item.dateInfo}</td>
+                                    <td>
+                                        <Button variant="primary" size="sm" onClick={() => window.open(item.url, '_blank')}>
+                                            <i className="bi bi-file-pdf-fill mr-2"></i> Abrir
+                                        </Button>
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </Table>
+                    )}
+                    {!pdfDataListWithInfo.length && !error && !loading && buildingId && (
                         <p>No hay facturas disponibles para este edificio.</p>
                     )}
                     {!buildingId && !error && <p>Esperando el ID del edificio...</p>}

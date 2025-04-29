@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import './LegDoc.css';
 import { useLocation } from 'react-router-dom';
-import { Container, Row, Col, Button, Alert, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Button, Alert, Spinner, Table } from 'react-bootstrap';
+
 
 function LegDoc() {
     const location = useLocation();
     const [buildingId, setBuildingId] = useState("");
-    const [pdfUrls, setPdfUrls] = useState([]);
+    const [pdfDataList, setPdfDataList] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+
 
     useEffect(() => {
         document.title = "Documentación Legal";
@@ -19,18 +21,22 @@ function LegDoc() {
         }
     }, [location.state]);
 
+
     useEffect(() => {
         if (buildingId) {
             fetchLegalDocuments(buildingId);
         }
     }, [buildingId]);
 
+
     const fetchLegalDocuments = async (id) => {
         setLoading(true);
         setError(null);
-        setPdfUrls([]);
+        setPdfDataList([]);
+
 
         const token = localStorage.getItem('authToken');
+
 
         if (!token) {
             setError("No se encontró el token de autenticación.");
@@ -38,14 +44,22 @@ function LegDoc() {
             return;
         }
 
-        const responseIds = await fetch(`http://localhost:8080/auth/building/${id}/legalDocumentsIds`, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-            },
-        });
 
-        if (responseIds.ok) {
+        try {
+            const responseIds = await fetch(`http://localhost:8080/auth/building/${id}/legalDocumentsIds`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+
+            if (!responseIds.ok) {
+                throw new Error(`Error al obtener la lista de documentos: ${responseIds.status}`);
+            }
+
+
             const idList = await responseIds.json();
+
 
             if (Array.isArray(idList) && idList.length > 0) {
                 const responsePdfs = await fetch(`http://localhost:8080/legaldocuments/pdfs`, {
@@ -57,29 +71,25 @@ function LegDoc() {
                     body: JSON.stringify(idList),
                 });
 
-                if (responsePdfs.ok) {
-                    const pdfDataList = await responsePdfs.json();
-                    const urls = [];
-                    pdfDataList.forEach(pdfData => {
-                        // Decodificar la cadena Base64 a un string binario
-                        const byteString = atob(pdfData.data);
 
-                        // Crear un array de bytes (Uint8Array) a partir del string binario
-                        const byteArray = new Uint8Array(byteString.length);
-                        for (let i = 0; i < byteString.length; i++) {
-                            byteArray[i] = byteString.charCodeAt(i);
-                        }
-
-                        const fileBlob = new Blob([byteArray], { type: 'application/pdf' });
-                        const url = URL.createObjectURL(fileBlob);
-                        urls.push(url);
-                    });
-                    setPdfUrls(urls);
-                    setLoading(false);
-                } else {
-                    setError(`Error al descargar los documentos: ${responsePdfs.status}`);
-                    setLoading(false);
+                if (!responsePdfs.ok) {
+                    throw new Error(`Error al descargar los documentos: ${responsePdfs.status}`);
                 }
+
+
+                const pdfDataListFromServer = await responsePdfs.json();
+                const pdfsWithInfo = pdfDataListFromServer.map(pdfData => {
+                    const byteString = atob(pdfData.data);
+                    const byteArray = new Uint8Array(byteString.length);
+                    for (let i = 0; i < byteString.length; i++) {
+                        byteArray[i] = byteString.charCodeAt(i);
+                    }
+                    const fileBlob = new Blob([byteArray], { type: 'application/pdf' });
+                    const url = URL.createObjectURL(fileBlob);
+                    return { filename: pdfData.filename, url: url };
+                });
+                setPdfDataList(pdfsWithInfo);
+                setLoading(false);
             } else if (Array.isArray(idList) && idList.length === 0) {
                 setError("No hay documentos legales disponibles para este edificio.");
                 setLoading(false);
@@ -87,17 +97,19 @@ function LegDoc() {
                 setError("Respuesta inesperada del servidor: Se esperaba una lista de IDs.");
                 setLoading(false);
             }
-        } else {
-            setError(`Error al obtener la lista de documentos: ${responseIds.status}`);
+        } catch (err) {
+            setError(err.message);
             setLoading(false);
         }
     };
 
+
     useEffect(() => {
         return () => {
-            pdfUrls.forEach(url => URL.revokeObjectURL(url));
+            pdfDataList.forEach(item => URL.revokeObjectURL(item.url));
         };
-    }, [pdfUrls]);
+    }, [pdfDataList]);
+
 
     return (
         <Container className="leg-doc-container">
@@ -105,20 +117,33 @@ function LegDoc() {
                 <Col>
                     <h1 className="leg-doc-title">Documentación Legal</h1>
                     {error && <Alert variant="danger">{error}</Alert>}
-                    {pdfUrls.length > 0 && (
-                        <div className="pdfs-grid">
-                            {pdfUrls.map((url, index) => (
-                                <div key={index} className="pdf-card">
-                                    <Button variant="primary" onClick={() => window.open(url, '_blank')}>
-                                        Abrir Documento {index + 1}
-                                    </Button>
-                                </div>
-                            ))}
-                        </div>
-                    )}
                     {loading && !error && <p><Spinner animation="border" size="sm" /> Cargando documentos...</p>}
-                    {!pdfUrls.length && !error && !loading && buildingId && (
-                        <p>No hay documentos disponibles para este edificio.</p>
+                    {pdfDataList.length > 0 && (
+                        <Table striped bordered hover responsive>
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nombre del Archivo</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {pdfDataList.map((item, index) => (
+                                <tr key={index}>
+                                    <td>{index + 1}</td>
+                                    <td>{item.filename}</td>
+                                    <td>
+                                        <Button variant="primary" size="sm" onClick={() => window.open(item.url, '_blank')}>
+                                            <i className="bi bi-file-pdf-fill mr-2"></i> Abrir Documento
+                                        </Button>
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </Table>
+                    )}
+                    {!pdfDataList.length && !error && !loading && buildingId && (
+                        <p>No hay documentos legales disponibles para este edificio.</p>
                     )}
                     {!buildingId && !error && <p>Esperando el ID del edificio...</p>}
                 </Col>
@@ -126,5 +151,6 @@ function LegDoc() {
         </Container>
     );
 }
+
 
 export default LegDoc;

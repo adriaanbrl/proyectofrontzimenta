@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Container, Row, Col, Table, Button, Alert, Spinner } from 'react-bootstrap';
 
-function ManualsDoc() {
+
+function InvoicesDoc() {
     const location = useLocation();
     const [buildingId, setBuildingId] = useState('');
     const [pdfDataListWithInfo, setPdfDataListWithInfo] = useState([]);
@@ -10,7 +11,7 @@ function ManualsDoc() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        document.title = 'Manuales de Usuario';
+        document.title = 'Facturas';
         if (location.state && location.state.building_id) {
             setBuildingId(location.state.building_id);
         } else {
@@ -20,11 +21,11 @@ function ManualsDoc() {
 
     useEffect(() => {
         if (buildingId) {
-            fetchManuals(buildingId);
+            fetchInvoices(buildingId);
         }
     }, [buildingId]);
 
-    const fetchManuals = async (id) => {
+    const fetchInvoices = async (id) => {
         setLoading(true);
         setError(null);
         setPdfDataListWithInfo([]);
@@ -38,20 +39,20 @@ function ManualsDoc() {
         }
 
         try {
-            const responseIds = await fetch(`http://localhost:8080/auth/building/${id}/manualIds`, {
+            const responseIds = await fetch(`http://localhost:8080/auth/building/${id}/invoicesIds`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
             });
 
             if (!responseIds.ok) {
-                throw new Error(`Error al obtener la lista de manuales: ${responseIds.status}`);
+                throw new Error(`Error al obtener la lista de facturas: ${responseIds.status}`);
             }
 
             const idList = await responseIds.json();
 
             if (Array.isArray(idList) && idList.length > 0) {
-                const responsePdfs = await fetch(`http://localhost:8080/manual/pdfs`, {
+                const responsePdfs = await fetch(`http://localhost:8080/invoices/pdfs`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -61,7 +62,7 @@ function ManualsDoc() {
                 });
 
                 if (!responsePdfs.ok) {
-                    throw new Error(`Error al descargar los manuales: ${responsePdfs.status}`);
+                    throw new Error(`Error al descargar las facturas: ${responsePdfs.status}`);
                 }
 
                 const pdfDataList = await responsePdfs.json();
@@ -78,7 +79,7 @@ function ManualsDoc() {
                 setPdfDataListWithInfo(pdfsWithInfo);
                 setLoading(false);
             } else if (Array.isArray(idList) && idList.length === 0) {
-                setError('No hay manuales disponibles para este edificio.');
+                setError('No hay facturas disponibles para este edificio.');
                 setLoading(false);
             } else {
                 setError('Respuesta inesperada del servidor: Se esperaba una lista de IDs.');
@@ -100,11 +101,11 @@ function ManualsDoc() {
         <Container className="leg-doc-container">
             <Row>
                 <Col>
-                    <h1 className="leg-doc-title">Manuales de Usuario</h1>
+                    <h1 className="leg-doc-title">Facturas</h1>
                     {error && <Alert variant="danger">{error}</Alert>}
                     {loading && !error && (
                         <p>
-                            <Spinner animation="border" size="sm" /> Cargando manuales...
+                            <Spinner animation="border" size="sm" /> Cargando facturas...
                         </p>
                     )}
                     {pdfDataListWithInfo.length > 0 && (
@@ -113,7 +114,7 @@ function ManualsDoc() {
                             <tr>
                                 <th>#</th>
                                 <th>Nombre del Archivo</th>
-                                <th>Información Adicional</th>
+                                <th>Mes</th>
                                 <th>Acciones</th>
                             </tr>
                             </thead>
@@ -134,7 +135,7 @@ function ManualsDoc() {
                         </Table>
                     )}
                     {!pdfDataListWithInfo.length && !error && !loading && buildingId && (
-                        <p>No hay manuales disponibles para este edificio.</p>
+                        <p>No hay facturas disponibles para este edificio.</p>
                     )}
                     {!buildingId && !error && <p>Esperando el ID del edificio...</p>}
                 </Col>
@@ -143,4 +144,4 @@ function ManualsDoc() {
     );
 }
 
-export default ManualsDoc;
+export default InvoicesDoc;

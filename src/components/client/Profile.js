@@ -5,7 +5,6 @@ import {
   FileEarmarkText,
   Receipt,
   Clipboard,
-  Shield,
   Book,
   Clock,
 } from "react-bootstrap-icons";
@@ -144,7 +143,7 @@ export default function Profile() {
         <Link to="/garantia" state={{ building_id: buildingId }}>
           {" "}
           <ListGroup.Item className="d-flex align-items-center">
-            <Shield size={20} className="text-custom me-2" />
+            <PencilSquare size={20} className="text-custom me-2" />
             Incidencias
           </ListGroup.Item>
         </Link>

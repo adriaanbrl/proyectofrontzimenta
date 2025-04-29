@@ -61,7 +61,15 @@ function LegDoc() {
                     const pdfDataList = await responsePdfs.json();
                     const urls = [];
                     pdfDataList.forEach(pdfData => {
-                        const byteArray = new Uint8Array(pdfData.data);
+                        // Decodificar la cadena Base64 a un string binario
+                        const byteString = atob(pdfData.data);
+
+                        // Crear un array de bytes (Uint8Array) a partir del string binario
+                        const byteArray = new Uint8Array(byteString.length);
+                        for (let i = 0; i < byteString.length; i++) {
+                            byteArray[i] = byteString.charCodeAt(i);
+                        }
+
                         const fileBlob = new Blob([byteArray], { type: 'application/pdf' });
                         const url = URL.createObjectURL(fileBlob);
                         urls.push(url);

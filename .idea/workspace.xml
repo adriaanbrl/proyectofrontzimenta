@@ -6,11 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Calendario actualizado">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/client/EventCalendar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/EventCalendar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/client/ProfileElements/Invoice.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/ProfileElements/Invoice.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/client/ProfileElements/LegDoc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/ProfileElements/LegDoc.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/global/Gallery.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/global/Gallery.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -239,7 +236,9 @@
       <workItem from="1745578186628" duration="56000" />
       <workItem from="1745578304020" duration="94000" />
       <workItem from="1745579049803" duration="982000" />
-      <workItem from="1745822089052" duration="6189000" />
+      <workItem from="1745822089052" duration="6901000" />
+      <workItem from="1745909099631" duration="4511000" />
+      <workItem from="1745918400143" duration="2666000" />
     </task>
     <task id="LOCAL-00001" summary="Imagenes">
       <option name="closed" value="true" />
@@ -321,7 +320,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745489050472</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Calendario actualizado">
+      <option name="closed" value="true" />
+      <created>1745835450165</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1745835450165</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Facturas">
+    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Manual usuario, facturas y legislacion legal actualizado">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/client/ProfileElements/Invoice.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/ProfileElements/Invoice.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/client/ProfileElements/Manual.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/ProfileElements/Manual.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,8 +15,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="JavaScript File" />
         <option value="CSS File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -79,6 +77,9 @@
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\adrxx\Desktop\InteliJ\proyectofrontzimenta" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\adrxx\Desktop\InteliJ\proyectofrontzimenta\src" />
     </key>
   </component>
   <component name="RunManager">
@@ -238,7 +239,8 @@
       <workItem from="1745579049803" duration="982000" />
       <workItem from="1745822089052" duration="6901000" />
       <workItem from="1745909099631" duration="4511000" />
-      <workItem from="1745918400143" duration="8689000" />
+      <workItem from="1745918400143" duration="10273000" />
+      <workItem from="1745995701117" duration="3451000" />
     </task>
     <task id="LOCAL-00001" summary="Imagenes">
       <option name="closed" value="true" />
@@ -344,7 +346,23 @@
       <option name="project" value="LOCAL" />
       <updated>1745927839762</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Manual usuario, facturas y legislacion legal actualizado">
+      <option name="closed" value="true" />
+      <created>1745935912742</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1745935912742</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Manual usuario, facturas y legislacion legal actualizado">
+      <option name="closed" value="true" />
+      <created>1745936100326</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1745936100326</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -371,6 +389,7 @@
     <MESSAGE value="Global view actualizado" />
     <MESSAGE value="Calendario actualizado" />
     <MESSAGE value="Facturas" />
-    <option name="LAST_COMMIT_MESSAGE" value="Facturas" />
+    <MESSAGE value="Manual usuario, facturas y legislacion legal actualizado" />
+    <option name="LAST_COMMIT_MESSAGE" value="Manual usuario, facturas y legislacion legal actualizado" />
   </component>
 </project>

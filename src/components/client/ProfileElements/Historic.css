@@ -1,0 +1,83 @@
+/* src/components/client/ProfileElements/HistorialIncidencias.css */
+.historial-incidencias-container {
+    padding: 20px;
+}
+
+.historial-incidencias-container h2 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.incidencias-lista {
+    list-style: none;
+    padding: 0;
+}
+
+.incidencia-item {
+    border: 1px solid #ddd;
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.incidencia-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.incidencia-titulo {
+    margin: 0;
+    color: #555;
+}
+
+.incidencia-status {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.incidencia-status.recibida {
+    background-color: #e0f7fa;
+    color: #00acc1;
+}
+
+.incidencia-status.en-revision {
+    background-color: #fffde7;
+    color: #fbc02d;
+}
+
+.incidencia-status.en-proceso {
+    background-color: #e8f5e9;
+    color: #4caf50;
+}
+
+.incidencia-status.resuelta,
+.incidencia-status.cerrada {
+    background-color: #fbe9e7;
+    color: #e64a19;
+}
+
+.incidencia-descripcion {
+    color: #777;
+    margin-bottom: 10px;
+}
+
+.incidencia-detalles {
+    display: flex;
+    gap: 15px;
+    font-size: 0.85em;
+    color: #999;
+}
+
+.error-message {
+    color: red;
+    font-weight: bold;
+    padding: 10px;
+    background-color: #ffe0e0;
+    border: 1px solid #ffaaaa;
+    border-radius: 5px;
+}

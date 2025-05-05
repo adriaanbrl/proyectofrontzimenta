@@ -1,73 +1,92 @@
-import React, { useState } from 'react';
-import { Button } from 'react-bootstrap';
-import { InputGroup, Form, FloatingLabel } from 'react-bootstrap';
-
-
-const categorias = ['fontanería', 'electricidad', 'acabados', 'carpintería', 'humedades'];
-const estancias = ['salón', 'cocina', 'dormitorio principal', 'baño 1', 'etc.'];
-
-// Función mock para simular la inserción en la base de datos
-const insertarIncidenciaEnDB = async (
-    titulo: string,
-    categoria: string,
-    descripcion: string,
-    ubicacionEstancia: string,
-    ubicacionDetalle: string
-) => {
-    // Simula una llamada a la base de datos con un query SQL
-    const query = `
-        INSERT INTO zimapp.incidencias (creation_date,description,resdlution_date, status,title , building_id, room_id, category_id)
-        VALUES (
-            '${titulo}',
-            '${categoria}',
-            '${descripcion}',
-            '${ubicacionEstancia}',
-            '${ubicacionDetalle}',
-            NOW()
-        );
-    `;
-    console.log('Query SQL simulado:', query); // Muestra el query simulado
-
-    // Simula una respuesta exitosa de la base de datos
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    return { success: true, message: 'Incidencia registrada exitosamente en la base de datos.' };
-};
+import React, { useState, useEffect } from 'react';
+import { Button, Form } from 'react-bootstrap';
 
 function Warranty({ onIncidenciaCreada }) {
     const [titulo, setTitulo] = useState('');
-    const [categoria, setCategoria] = useState('');
     const [descripcion, setDescripcion] = useState('');
-    const [ubicacionEstancia, setUbicacionEstancia] = useState('');
-    const [ubicacionDetalle, setUbicacionDetalle] = useState('');
+    const [categoriaId, setCategoriaId] = useState('');
+    const [estanciaId, setEstanciaId] = useState('');
+    const [categorias, setCategorias] = useState([]);
+    const [estancias, setEstancias] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState('');
+    const buildingId = 1; // ¡Importante! Reemplaza con la forma correcta de obtener el ID del edificio
 
-    const handleSubmit = async (event: React.FormEvent) => {
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch('/api/categorias');
+                if (response.ok) {
+                    const data = await response.json();
+                    setCategorias(data);
+                } else {
+                    console.error('Error al cargar las categorías:', response.status);
+                    setError('Error al cargar las categorías.');
+                }
+            } catch (error) {
+                console.error('Error de red al cargar las categorías:', error);
+                setError('Error de red al cargar las categorías.');
+            }
+        };
+
+        const fetchEstancias = async () => {
+            try {
+                const response = await fetch('/api/estancias'); // Asegúrate de que esta ruta coincida con tu backend
+                if (response.ok) {
+                    const data = await response.json();
+                    setEstancias(data);
+                } else {
+                    console.error('Error al cargar las estancias:', response.status);
+                    setError('Error al cargar las estancias.');
+                }
+            } catch (error) {
+                console.error('Error de red al cargar las estancias:', error);
+                setError('Error de red al cargar las estancias.');
+            }
+        };
+
+        fetchCategories();
+        fetchEstancias();
+    }, []);
+
+    const handleSubmit = async (event) => {
         event.preventDefault();
         setIsSubmitting(true);
+        setError('');
 
         try {
-            const result = await insertarIncidenciaEnDB(
-                titulo,
-                categoria,
-                descripcion,
-                ubicacionEstancia,
-                ubicacionDetalle
-            );
-            if (result.success) {
-                alert(result.message);
-                onIncidenciaCreada();
-                // Limpiar el formulario
+            const response = await fetch(`/api/buildings/${buildingId}/incidents?categoryId=${categoriaId}&roomId=${estanciaId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title: titulo,
+                    status: 'Pendiente',
+                    description: descripcion,
+                    building: {
+                        id: buildingId,
+                    },
+                    // Ya no enviamos categoryId ni roomId en el body, sino como params de consulta
+                }),
+            });
+
+            if (response.ok) {
+                const savedIncident = await response.json();
+                alert('Incidencia registrada exitosamente en la base de datos.');
+                onIncidenciaCreada(savedIncident);
                 setTitulo('');
-                setCategoria('');
                 setDescripcion('');
-                setUbicacionEstancia('');
-                setUbicacionDetalle('');
+                setCategoriaId('');
+                setEstanciaId('');
             } else {
-                alert('Hubo un error al registrar la incidencia.');
+                const errorData = await response.json();
+                console.error('Error al registrar la incidencia:', errorData);
+                setError('Hubo un error al registrar la incidencia.');
             }
         } catch (error) {
-            console.error('Error al registrar la incidencia:', error);
-            alert('Hubo un error al registrar la incidencia.');
+            console.error('Error de red al registrar la incidencia:', error);
+            setError('Error de red al registrar la incidencia.');
         } finally {
             setIsSubmitting(false);
         }
@@ -76,6 +95,7 @@ function Warranty({ onIncidenciaCreada }) {
     return (
         <div className="p-4 rounded-lg shadow-md bg-light">
             <h2 className="text-2xl font-semibold mb-4 text-gray-800">Reportar Incidencia de Garantía</h2>
+            {error && <div className="alert alert-danger">{error}</div>}
             <form onSubmit={handleSubmit} className="space-y-3">
                 <div className="form-group">
                     <label htmlFor="titulo" className="text-sm font-medium text-gray-700">Título de la Incidencia:</label>
@@ -90,18 +110,17 @@ function Warranty({ onIncidenciaCreada }) {
                     />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="categoria" className="text-sm font-medium text-gray-700">Categoría de la Incidencia:</label>
+                    <label htmlFor="categoriaId" className="text-sm font-medium text-gray-700">Categoría de la Incidencia:</label>
                     <Form.Control
                         as="select"
-                        id="categoria"
-                        value={categoria}
-                        onChange={(e) => setCategoria(e.target.value)}
-                        required
+                        id="categoriaId"
+                        value={categoriaId}
+                        onChange={(e) => setCategoriaId(e.target.value)}
                         className="mt-1"
                     >
                         <option value="">Seleccionar categoría</option>
                         {categorias.map((cat) => (
-                            <option key={cat} value={cat}>{cat}</option>
+                            <option key={cat.id} value={cat.id}>{cat.name}</option>
                         ))}
                     </Form.Control>
                 </div>
@@ -119,31 +138,19 @@ function Warranty({ onIncidenciaCreada }) {
                     />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="ubicacionEstancia" className="text-sm font-medium text-gray-700">Estancia:</label>
+                    <label htmlFor="estanciaId" className="text-sm font-medium text-gray-700">Estancia:</label>
                     <Form.Control
                         as="select"
-                        id="ubicacionEstancia"
-                        value={ubicacionEstancia}
-                        onChange={(e) => setUbicacionEstancia(e.target.value)}
-                        required
+                        id="estanciaId"
+                        value={estanciaId}
+                        onChange={(e) => setEstanciaId(e.target.value)}
                         className="mt-1"
                     >
                         <option value="">Seleccionar estancia</option>
                         {estancias.map((estancia) => (
-                            <option key={estancia} value={estancia}>{estancia}</option>
+                            <option key={estancia.id} value={estancia.id}>{estancia.name}</option>
                         ))}
                     </Form.Control>
-                </div>
-                <div className="form-group">
-                    <label htmlFor="ubicacionDetalle" className="text-sm font-medium text-gray-700">Detalles de la Ubicación:</label>
-                    <Form.Control
-                        type="text"
-                        id="ubicacionDetalle"
-                        value={ubicacionDetalle}
-                        onChange={(e) => setUbicacionDetalle(e.target.value)}
-                        placeholder="Ej: Junto al lavabo, en la pared izquierda"
-                        className="mt-1"
-                    />
                 </div>
                 <Button type="submit" disabled={isSubmitting} className="w-100">
                     {isSubmitting ? 'Enviando...' : 'Enviar Reporte'}
@@ -154,4 +161,3 @@ function Warranty({ onIncidenciaCreada }) {
 }
 
 export default Warranty;
-

@@ -29,7 +29,7 @@ function Warranty({ onIncidenciaCreada }) {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await fetch('/api/categorias');
+                const response = await fetch('http://localhost:8080/api/categorias');
                 if (response.ok) {
                     const data = await response.json();
                     setCategorias(data);
@@ -45,7 +45,7 @@ function Warranty({ onIncidenciaCreada }) {
 
         const fetchEstancias = async () => {
             try {
-                const response = await fetch('/api/estancias'); // Asegúrate de que esta ruta coincida con tu backend
+                const response = await fetch('http://localhost:8080/api/estancias'); // Asegúrate de que esta ruta coincida con tu backend
                 if (response.ok) {
                     const data = await response.json();
                     setEstancias(data);

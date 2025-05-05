@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import { Button, Form, Alert, Row, Col } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 
 function Warranty() {
@@ -94,7 +94,7 @@ function Warranty() {
             );
 
             if (response.ok) {
-                await response.json(); // Puedes manejar la respuesta si lo necesitas
+                await response.json();
                 alert('Incidencia registrada exitosamente en la base de datos.');
                 setTitulo('');
                 setDescripcion('');
@@ -117,74 +117,70 @@ function Warranty() {
         return <div>Cargando información del edificio...</div>;
     }
 
-    if (error) {
-        return <div className="alert alert-danger">{error}</div>;
-    }
-
     return (
         <div className="p-4 rounded-lg shadow-md bg-light">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">Reportar Incidencia de Garantía</h2>
-            {error && <div className="alert alert-danger">{error}</div>}
-            <form onSubmit={handleSubmit} className="space-y-3">
-                <div className="form-group">
-                    <label htmlFor="titulo" className="text-sm font-medium text-gray-700">Título de la Incidencia:</label>
-                    <Form.Control
-                        type="text"
-                        id="titulo"
-                        value={titulo}
-                        onChange={(e) => setTitulo(e.target.value)}
-                        required
-                        placeholder="Ej: Fuga en tubería del baño"
-                        className="mt-1"
-                    />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="categoriaId" className="text-sm font-medium text-gray-700">Categoría de la Incidencia:</label>
-                    <Form.Control
-                        as="select"
-                        id="categoriaId"
-                        value={categoriaId}
-                        onChange={(e) => setCategoriaId(e.target.value)}
-                        className="mt-1"
-                    >
-                        <option value="">Seleccionar categoría</option>
-                        {categorias.map((cat) => (
-                            <option key={cat.id} value={cat.id}>{cat.name}</option>
-                        ))}
-                    </Form.Control>
-                </div>
-                <div className="form-group">
-                    <label htmlFor="descripcion" className="text-sm font-medium text-gray-700">Descripción Detallada:</label>
+            <h2 className="mb-4">Reportar Incidencia de Garantía</h2>
+            {error && <Alert variant="danger">{error}</Alert>}
+            <Form onSubmit={handleSubmit}>
+                <Row className="mb-3">
+                    <Form.Group as={Col} md="6" controlId="titulo">
+                        <Form.Label>Título de la Incidencia:</Form.Label>
+                        <Form.Control
+                            type="text"
+                            value={titulo}
+                            onChange={(e) => setTitulo(e.target.value)}
+                            required
+                            placeholder="Ej: Fuga en tubería del baño"
+                        />
+                    </Form.Group>
+                </Row>
+
+                <Row className="mb-3">
+                    <Form.Group as={Col} md="6" controlId="categoriaId">
+                        <Form.Label>Categoría de la Incidencia:</Form.Label>
+                        <Form.Control
+                            as="select"
+                            value={categoriaId}
+                            onChange={(e) => setCategoriaId(e.target.value)}
+                        >
+                            <option value="">Seleccionar categoría</option>
+                            {categorias.map((cat) => (
+                                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                            ))}
+                        </Form.Control>
+                    </Form.Group>
+
+                    <Form.Group as={Col} md="6" controlId="estanciaId">
+                        <Form.Label>Estancia:</Form.Label>
+                        <Form.Control
+                            as="select"
+                            value={estanciaId}
+                            onChange={(e) => setEstanciaId(e.target.value)}
+                        >
+                            <option value="">Seleccionar estancia</option>
+                            {estancias.map((estancia) => (
+                                <option key={estancia.id} value={estancia.id}>{estancia.name}</option>
+                            ))}
+                        </Form.Control>
+                    </Form.Group>
+                </Row>
+
+                <Form.Group className="mb-3" controlId="descripcion">
+                    <Form.Label>Descripción Detallada:</Form.Label>
                     <Form.Control
                         as="textarea"
-                        id="descripcion"
+                        rows={5}
                         value={descripcion}
                         onChange={(e) => setDescripcion(e.target.value)}
-                        rows={5}
                         required
                         placeholder="Describa detalladamente el problema..."
-                        className="mt-1"
                     />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="estanciaId" className="text-sm font-medium text-gray-700">Estancia:</label>
-                    <Form.Control
-                        as="select"
-                        id="estanciaId"
-                        value={estanciaId}
-                        onChange={(e) => setEstanciaId(e.target.value)}
-                        className="mt-1"
-                    >
-                        <option value="">Seleccionar estancia</option>
-                        {estancias.map((estancia) => (
-                            <option key={estancia.id} value={estancia.id}>{estancia.name}</option>
-                        ))}
-                    </Form.Control>
-                </div>
-                <Button type="submit" disabled={isSubmitting} className="w-100">
+                </Form.Group>
+
+                <Button variant="primary" type="submit" disabled={isSubmitting} className="w-100">
                     {isSubmitting ? 'Enviando...' : 'Enviar Reporte'}
                 </Button>
-            </form>
+            </Form>
         </div>
     );
 }

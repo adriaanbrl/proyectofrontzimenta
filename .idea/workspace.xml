@@ -6,6 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Manual usuario, facturas y legislacion legal actualizado">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/client/EventCalendar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/EventCalendar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/client/ProfileElements/Invoice.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/ProfileElements/Invoice.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/client/ProfileElements/LegDoc.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/ProfileElements/LegDoc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/client/ProfileElements/Manual.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/ProfileElements/Manual.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/client/ProfileElements/Warranty.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/ProfileElements/Warranty.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -24,7 +28,6 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RESET_MODE" value="HARD" />
-    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -246,6 +249,7 @@
       <workItem from="1746316466784" duration="243000" />
       <workItem from="1746427268268" duration="3577000" />
       <workItem from="1746436764983" duration="3858000" />
+      <workItem from="1746442020219" duration="6014000" />
     </task>
     <task id="LOCAL-00001" summary="Imagenes">
       <option name="closed" value="true" />
@@ -375,7 +379,15 @@
       <option name="project" value="LOCAL" />
       <updated>1746006612257</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Manual usuario, facturas y legislacion legal actualizado">
+      <option name="closed" value="true" />
+      <created>1746442190521</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1746442190521</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

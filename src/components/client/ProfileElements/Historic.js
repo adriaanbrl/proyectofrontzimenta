@@ -1,75 +1,88 @@
-
 import React, { useState, useEffect } from 'react';
-import { obtenerIncidenciasPorEdificio } from '../../../Api'; // Ajusta la ruta si es diferente
-import './Historic.css'; // Importa estilos CSS
+import { Card, ListGroup, Alert } from 'react-bootstrap';
+import axios from 'axios';
+import { useLocation } from 'react-router-dom';
 
-function Historic({ buildingId }) {
-    const [incidencias, setIncidencias] = useState([]);
-    const [loading, setLoading] = useState(true);
+
+const Historic = () => {
+    const location = useLocation();
+    const [incidents, setIncidents] = useState([]);
+    const [buildingId, setBuildingId] = useState('');
     const [error, setError] = useState(null);
-    const token = localStorage.getItem('jwtToken'); // Obtén el token JWT
+
 
     useEffect(() => {
-        const fetchIncidencias = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const data = await obtenerIncidenciasPorEdificio(buildingId, token);
-                setIncidencias(data);
-            } catch (err) {
-                setError('Error al cargar el historial de incidencias.');
-                console.error('Error fetching incidencias:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        if (buildingId && token) {
-            fetchIncidencias();
+        document.title = "Historial de Incidentes";
+        if (location.state && location.state.building_id) {
+            setBuildingId(location.state.building_id);
+        } else {
+            setError("No se proporcionó el ID del edificio.");
+            console.error("No se proporcionó el ID del edificio en el estado de la ruta.");
         }
-    }, [buildingId, token]);
+    }, [location.state]);
 
-    if (loading) {
-        return <div>Cargando historial de incidencias...</div>;
-    }
 
-    if (error) {
-        return <div className="error-message">{error}</div>;
-    }
+    useEffect(() => {
+        if (buildingId) {
+            const fetchIncidents = async () => {
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    console.error('No se encontró el token de autenticación.');
+                    setError('No se encontró el token de autenticación.');
+                    return;
+                }
+                try {
+                    const response = await axios.get(
+                        `http://localhost:8080/api/buildings/${buildingId}/incidents`,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
+                    );
+                    console.log("Respuesta del backend:", response.data);
+                    setIncidents(response.data);
+                } catch (error) {
+                    console.error('Error al obtener los incidentes:', error);
+                    setError('Error al cargar el historial de incidentes.');
+                }
+            };
 
-    if (!incidencias || incidencias.length === 0) {
-        return <div>No hay incidencias reportadas para este edificio.</div>;
-    }
+
+            fetchIncidents();
+        }
+    }, [buildingId]);
+
 
     return (
-        <div className="historial-incidencias-container">
-            <h2>Historial de Incidencias</h2>
-            <ul className="incidencias-lista">
-                {incidencias.map((incidencia) => (
-                    <li key={incidencia.id} className="incidencia-item">
-                        <div className="incidencia-header">
-                            <h3 className="incidencia-titulo">{incidencia.title}</h3>
-                            <span className={`incidencia-status ${incidencia.status.toLowerCase().replace(' ', '-')}`}>
-                {incidencia.status}
-              </span>
-                        </div>
-                        <p className="incidencia-descripcion">{incidencia.description}</p>
-                        <div className="incidencia-detalles">
-              <span className="incidencia-fecha-creacion">
-                Creada: {new Date(incidencia.creationDate).toLocaleDateString()}
-              </span>
-                            {incidencia.resolutionDate && (
-                                <span className="incidencia-fecha-resolucion">
-                  Resuelta: {new Date(incidencia.resolutionDate).toLocaleDateString()}
-                </span>
-                            )}
-                        </div>
-                        {/* Aquí podrías añadir más detalles visuales como botones para ver detalles, adjuntos, etc. */}
-                    </li>
-                ))}
-            </ul>
+        <div>
+            <h2>Historial de Incidentes</h2>
+            {error && <Alert variant="danger">{error}</Alert>}
+            {!buildingId && !error && <p>Esperando el ID del edificio...</p>}
+            {buildingId && incidents.length > 0 ? (
+                incidents.map((incident) => (
+                    <Card key={incident.id} className="mb-3">
+                        <Card.Body>
+                            <Card.Title>{incident.title}</Card.Title>
+                            <ListGroup variant="flush">
+                                <ListGroup.Item>Descripción: {incident.description}</ListGroup.Item>
+                                <ListGroup.Item>Estado: {incident.status}</ListGroup.Item>
+                                {incident.resolutionDate && (
+                                    <ListGroup.Item>Fecha de Resolución: {new Date(incident.resolutionDate).toLocaleDateString()}</ListGroup.Item>
+                                )}
+
+                            </ListGroup>
+                        </Card.Body>
+                    </Card>
+                ))
+            ) : (
+                buildingId && !error && <p>No hay incidentes registrados para este edificio.</p>
+            )}
         </div>
     );
-}
+};
+
 
 export default Historic;
+
+

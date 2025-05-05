@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Form, Alert, Row, Col } from 'react-bootstrap';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { ChevronLeft, File } from 'lucide-react';
 
 function Warranty() {
     const location = useLocation();
@@ -10,6 +11,7 @@ function Warranty() {
     const [estanciaId, setEstanciaId] = useState('');
     const [categorias, setCategorias] = useState([]);
     const [estancias, setEstancias] = useState([]);
+    const navigate = useNavigate();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
     const [buildingId, setBuildingId] = useState(null);
@@ -62,6 +64,8 @@ function Warranty() {
         fetchCategories();
         fetchEstancias();
     }, []);
+
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -117,9 +121,29 @@ function Warranty() {
         return <div>Cargando información del edificio...</div>;
     }
 
+
+    const handleGoBack = () => {
+        navigate(-1);
+    };
+
     return (
         <div className="p-4 rounded-lg shadow-md bg-light">
-            <h2 className="mb-4">Reportar Incidencia de Garantía</h2>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <Button
+                    variant="link"
+                    onClick={handleGoBack}
+                    className="back-button"
+                    aria-label="Volver atrás"
+                    style={{ padding: 0 }}
+                >
+                    <ChevronLeft size={20} color="orange" />
+                </Button>
+                <h1 className="leg-doc-title text-center" style={{ margin: '0 auto' }}>Reportar Incidencia</h1>
+                <div style={{ visibility: 'hidden', width: 'auto' }}>
+                    {/* Este div invisible ocupa el espacio del botón para centrar */}
+                    <ChevronLeft size={20} color="transparent" />
+                </div>
+            </div>
             {error && <Alert variant="danger">{error}</Alert>}
             <Form onSubmit={handleSubmit}>
                 <Row className="mb-3">

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Table, Button, Alert, Spinner } from 'react-bootstrap';
-import { ArrowLeft, File } from 'lucide-react';
+import { ChevronLeft, File } from 'lucide-react';
 
 function InvoicesDoc() {
     const location = useLocation();
@@ -107,16 +107,24 @@ function InvoicesDoc() {
             <Row>
                 <Col>
                     <div className="d-flex align-items-center mb-3">
-                        <Button
-                            variant="link"
-                            onClick={handleGoBack}
-                            className="back-button"
-                            aria-label="Volver atrás"
-                            style={{ padding: 0, marginRight: '10px' }}
-                        >
-                            <ArrowLeft size={20} color="orange" />
-                        </Button>
-                        <h1 className="leg-doc-title text-center" style={{ margin: 0 }}>Facturas</h1>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                            <Button
+                                variant="link"
+                                onClick={handleGoBack}
+                                className="back-button"
+                                aria-label="Volver atrás"
+                                style={{ padding: 0 }}
+                            >
+                                <ChevronLeft size={20} color="orange" />
+                            </Button>
+                            <h1 className="leg-doc-title text-center" style={{ margin: '0 auto' }}>Facturas</h1>
+                            <div style={{ visibility: 'hidden', width: 'auto' }}>
+                                {/* Este div invisible ocupa el espacio del botón para centrar */}
+                                <ChevronLeft size={20} color="transparent" />
+                            </div>
+                        </div>
+                        {error && <Alert variant="danger">{error}</Alert>}
+                        <div style={{ width: 'auto' }}></div> {/* Spacer div */}
                     </div>
                     {error && <Alert variant="danger">{error}</Alert>}
                     {loading && !error && (
@@ -161,4 +169,3 @@ function InvoicesDoc() {
 }
 
 export default InvoicesDoc;
-    

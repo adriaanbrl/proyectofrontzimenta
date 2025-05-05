@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Table, Button, Alert, Spinner } from 'react-bootstrap';
+import { ChevronLeft, File } from 'lucide-react';
 
 function ManualsDoc() {
     const location = useLocation();
     const [buildingId, setBuildingId] = useState('');
     const [pdfDataListWithInfo, setPdfDataListWithInfo] = useState([]);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -96,11 +98,31 @@ function ManualsDoc() {
         };
     }, [pdfDataListWithInfo]);
 
+    const handleGoBack = () => {
+        navigate(-1);
+    };
+
     return (
         <Container className="leg-doc-container">
+
             <Row>
+                <div className="d-flex align-items-center mb-4"> {/* Added mb-4 here */}
+                    <Button
+                        variant="link"
+                        onClick={handleGoBack}
+                        className="back-button"
+                        aria-label="Volver atrás"
+                        style={{ padding: 0 }}
+                    >
+                        <ChevronLeft size={20} color="orange" />
+                    </Button>
+                    <h1 className="leg-doc-title text-center" style={{ margin: '0 auto' }}>Manual de Usuario</h1>
+                    <div style={{ visibility: 'hidden', width: 'auto' }}>
+                        {/* Este div invisible ocupa el espacio del botón para centrar */}
+                        <ChevronLeft size={20} color="transparent" />
+                    </div>
+                </div>
                 <Col>
-                    <h1 className="leg-doc-title">Manuales de Usuario</h1>
                     {error && <Alert variant="danger">{error}</Alert>}
                     {loading && !error && (
                         <p>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './LegDoc.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Button, Alert, Spinner, Table } from 'react-bootstrap';
-import { ArrowLeft, File } from 'lucide-react'; // Correct import for File icon
+import { ChevronLeft, File } from 'lucide-react'; // Correct import for File icon
 
 function LegDoc() {
     const location = useLocation();
@@ -128,7 +128,7 @@ function LegDoc() {
                             aria-label="Volver atrás"
                             style={{ padding: 0, marginRight: '10px' }}
                         >
-                            <ArrowLeft size={20} color="orange" />
+                            <ChevronLeft size={20} color="orange" />
                         </Button>
                         <h1 className="leg-doc-title" style={{ margin: 0 }}>Documentación Legal</h1>
                     </div>

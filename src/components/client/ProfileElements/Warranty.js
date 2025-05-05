@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import { useLocation } from 'react-router-dom'; // Importa useLocation
+import { useLocation } from 'react-router-dom';
 
 function Warranty({ onIncidenciaCreada }) {
-    const location = useLocation(); // Obtén el objeto location
+    const location = useLocation();
     const [titulo, setTitulo] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [categoriaId, setCategoriaId] = useState('');
@@ -12,17 +12,17 @@ function Warranty({ onIncidenciaCreada }) {
     const [estancias, setEstancias] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
-    const [buildingId, setBuildingId] = useState(null); // Inicializa buildingId como null
-    const [loadingBuildingId, setLoadingBuildingId] = useState(true); // Opcional: estado de carga
+    const [buildingId, setBuildingId] = useState(null);
+    const [loadingBuildingId, setLoadingBuildingId] = useState(true);
 
     useEffect(() => {
         document.title = "Reportar Incidencia de Garantía";
         if (location.state && location.state.building_id) {
             setBuildingId(location.state.building_id);
-            setLoadingBuildingId(false); // Si el ID está en el state, ya no está cargando
+            setLoadingBuildingId(false);
         } else {
             setError("No se proporcionó el ID del edificio.");
-            setLoadingBuildingId(false); // Terminamos de "cargar" aunque haya un error
+            setLoadingBuildingId(false);
         }
     }, [location.state]);
 
@@ -45,7 +45,7 @@ function Warranty({ onIncidenciaCreada }) {
 
         const fetchEstancias = async () => {
             try {
-                const response = await fetch('http://localhost:8080/api/estancias'); // Asegúrate de que esta ruta coincida con tu backend
+                const response = await fetch('http://localhost:8080/api/estancias');
                 if (response.ok) {
                     const data = await response.json();
                     setEstancias(data);
@@ -75,18 +75,23 @@ function Warranty({ onIncidenciaCreada }) {
         }
 
         try {
-            const response = await fetch(`/api/buildings/${buildingId}/incidents?categoryId=${categoriaId}&roomId=${estanciaId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    title: titulo,
-                    status: 'Pendiente',
-                    description: descripcion,
-                    // buildingId se pasa en la URL
-                }),
-            });
+            const response = await fetch(
+                `http://localhost:8080/api/buildings/${buildingId}/incidents?categoryId=${parseInt(categoriaId, 10)}&roomId=${parseInt(estanciaId, 10)}`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title: titulo,
+                        status: 'Pendiente',
+                        description: descripcion,
+                        building: { // Incluye el objeto building en el cuerpo
+                            id: buildingId,
+                        },
+                    }),
+                }
+            );
 
             if (response.ok) {
                 const savedIncident = await response.json();
@@ -97,9 +102,9 @@ function Warranty({ onIncidenciaCreada }) {
                 setCategoriaId('');
                 setEstanciaId('');
             } else {
-                const errorData = await response.json();
-                console.error('Error al registrar la incidencia:', errorData);
-                setError('Hubo un error al registrar la incidencia.');
+                const errorText = await response.text(); // Leer la respuesta como texto para ver el HTML
+                console.error('Error al registrar la incidencia:', response.status, errorText);
+                setError(`Hubo un error al registrar la incidencia: ${errorText}`);
             }
         } catch (error) {
             console.error('Error de red al registrar la incidencia:', error);

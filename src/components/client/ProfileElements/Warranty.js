@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Form } from 'react-bootstrap';
+import { useLocation } from 'react-router-dom'; // Importa useLocation
 
 function Warranty({ onIncidenciaCreada }) {
+    const location = useLocation(); // Obtén el objeto location
     const [titulo, setTitulo] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [categoriaId, setCategoriaId] = useState('');
@@ -10,7 +12,19 @@ function Warranty({ onIncidenciaCreada }) {
     const [estancias, setEstancias] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
-    const buildingId = 1; // ¡Importante! Reemplaza con la forma correcta de obtener el ID del edificio
+    const [buildingId, setBuildingId] = useState(null); // Inicializa buildingId como null
+    const [loadingBuildingId, setLoadingBuildingId] = useState(true); // Opcional: estado de carga
+
+    useEffect(() => {
+        document.title = "Reportar Incidencia de Garantía";
+        if (location.state && location.state.building_id) {
+            setBuildingId(location.state.building_id);
+            setLoadingBuildingId(false); // Si el ID está en el state, ya no está cargando
+        } else {
+            setError("No se proporcionó el ID del edificio.");
+            setLoadingBuildingId(false); // Terminamos de "cargar" aunque haya un error
+        }
+    }, [location.state]);
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -54,6 +68,12 @@ function Warranty({ onIncidenciaCreada }) {
         setIsSubmitting(true);
         setError('');
 
+        if (!buildingId) {
+            setError('No se pudo obtener el ID del edificio.');
+            setIsSubmitting(false);
+            return;
+        }
+
         try {
             const response = await fetch(`/api/buildings/${buildingId}/incidents?categoryId=${categoriaId}&roomId=${estanciaId}`, {
                 method: 'POST',
@@ -64,10 +84,7 @@ function Warranty({ onIncidenciaCreada }) {
                     title: titulo,
                     status: 'Pendiente',
                     description: descripcion,
-                    building: {
-                        id: buildingId,
-                    },
-                    // Ya no enviamos categoryId ni roomId en el body, sino como params de consulta
+                    // buildingId se pasa en la URL
                 }),
             });
 
@@ -91,6 +108,14 @@ function Warranty({ onIncidenciaCreada }) {
             setIsSubmitting(false);
         }
     };
+
+    if (loadingBuildingId) {
+        return <div>Cargando información del edificio...</div>;
+    }
+
+    if (error) {
+        return <div className="alert alert-danger">{error}</div>;
+    }
 
     return (
         <div className="p-4 rounded-lg shadow-md bg-light">

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Table, Button, Alert, Spinner } from 'react-bootstrap';
-
+import { ArrowLeft, File } from 'lucide-react';
 
 function InvoicesDoc() {
     const location = useLocation();
+    const navigate = useNavigate();
     const [buildingId, setBuildingId] = useState('');
     const [pdfDataListWithInfo, setPdfDataListWithInfo] = useState([]);
     const [error, setError] = useState(null);
@@ -97,11 +98,26 @@ function InvoicesDoc() {
         };
     }, [pdfDataListWithInfo]);
 
+    const handleGoBack = () => {
+        navigate(-1);
+    };
+
     return (
         <Container className="leg-doc-container">
             <Row>
                 <Col>
-                    <h1 className="leg-doc-title">Facturas</h1>
+                    <div className="d-flex align-items-center mb-3">
+                        <Button
+                            variant="link"
+                            onClick={handleGoBack}
+                            className="back-button"
+                            aria-label="Volver atrás"
+                            style={{ padding: 0, marginRight: '10px' }}
+                        >
+                            <ArrowLeft size={20} color="orange" />
+                        </Button>
+                        <h1 className="leg-doc-title text-center" style={{ margin: 0 }}>Facturas</h1>
+                    </div>
                     {error && <Alert variant="danger">{error}</Alert>}
                     {loading && !error && (
                         <p>
@@ -115,7 +131,7 @@ function InvoicesDoc() {
                                 <th>#</th>
                                 <th>Nombre del Archivo</th>
                                 <th>Mes</th>
-                                <th>Acciones</th>
+                                <th className="text-center">Acciones</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -124,9 +140,9 @@ function InvoicesDoc() {
                                     <td>{index + 1}</td>
                                     <td>{item.filename}</td>
                                     <td>{item.dateInfo}</td>
-                                    <td>
+                                    <td className="text-center">
                                         <Button variant="primary" size="sm" onClick={() => window.open(item.url, '_blank')}>
-                                            <i className="bi bi-file-pdf-fill mr-2"></i> Abrir
+                                            <File className="mr-2" size={16} /> Abrir
                                         </Button>
                                     </td>
                                 </tr>
@@ -145,3 +161,4 @@ function InvoicesDoc() {
 }
 
 export default InvoicesDoc;
+    

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import './LegDoc.css';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Button, Alert, Spinner, Table } from 'react-bootstrap';
-
+import { ArrowLeft, File } from 'lucide-react'; // Correct import for File icon
 
 function LegDoc() {
     const location = useLocation();
+    const navigate = useNavigate();
     const [buildingId, setBuildingId] = useState("");
     const [pdfDataList, setPdfDataList] = useState([]);
     const [error, setError] = useState(null);
@@ -110,12 +111,27 @@ function LegDoc() {
         };
     }, [pdfDataList]);
 
+    const handleGoBack = () => {
+        navigate(-1);
+    };
+
 
     return (
         <Container className="leg-doc-container">
             <Row>
                 <Col>
-                    <h1 className="leg-doc-title">Documentación Legal</h1>
+                    <div className="d-flex align-items-center mb-3">
+                        <Button
+                            variant="link"
+                            onClick={handleGoBack}
+                            className="back-button"
+                            aria-label="Volver atrás"
+                            style={{ padding: 0, marginRight: '10px' }}
+                        >
+                            <ArrowLeft size={20} color="orange" />
+                        </Button>
+                        <h1 className="leg-doc-title" style={{ margin: 0 }}>Documentación Legal</h1>
+                    </div>
                     {error && <Alert variant="danger">{error}</Alert>}
                     {loading && !error && <p><Spinner animation="border" size="sm" /> Cargando documentos...</p>}
                     {pdfDataList.length > 0 && (
@@ -124,7 +140,7 @@ function LegDoc() {
                             <tr>
                                 <th>#</th>
                                 <th>Nombre del Archivo</th>
-                                <th>Acciones</th>
+                                <th className="text-center">Acciones</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -132,9 +148,9 @@ function LegDoc() {
                                 <tr key={index}>
                                     <td>{index + 1}</td>
                                     <td>{item.filename}</td>
-                                    <td>
+                                    <td className="text-center">
                                         <Button variant="primary" size="sm" onClick={() => window.open(item.url, '_blank')}>
-                                            <i className="bi bi-file-pdf-fill mr-2"></i> Abrir Documento
+                                            <File className="mr-2" size={16} /> Abrir Documento {/* Correct usage of File icon */}
                                         </Button>
                                     </td>
                                 </tr>
@@ -151,6 +167,5 @@ function LegDoc() {
         </Container>
     );
 }
-
 
 export default LegDoc;

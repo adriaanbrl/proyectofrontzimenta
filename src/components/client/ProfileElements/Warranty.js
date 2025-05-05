@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 
-function Warranty({ onIncidenciaCreada }) {
+function Warranty() {
     const location = useLocation();
     const [titulo, setTitulo] = useState('');
     const [descripcion, setDescripcion] = useState('');
@@ -86,7 +86,7 @@ function Warranty({ onIncidenciaCreada }) {
                         title: titulo,
                         status: 'Pendiente',
                         description: descripcion,
-                        building: { // Incluye el objeto building en el cuerpo
+                        building: {
                             id: buildingId,
                         },
                     }),
@@ -94,15 +94,14 @@ function Warranty({ onIncidenciaCreada }) {
             );
 
             if (response.ok) {
-                const savedIncident = await response.json();
+                await response.json(); // Puedes manejar la respuesta si lo necesitas
                 alert('Incidencia registrada exitosamente en la base de datos.');
-                onIncidenciaCreada(savedIncident);
                 setTitulo('');
                 setDescripcion('');
                 setCategoriaId('');
                 setEstanciaId('');
             } else {
-                const errorText = await response.text(); // Leer la respuesta como texto para ver el HTML
+                const errorText = await response.text();
                 console.error('Error al registrar la incidencia:', response.status, errorText);
                 setError(`Hubo un error al registrar la incidencia: ${errorText}`);
             }

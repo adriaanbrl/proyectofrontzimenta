@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import { useLocation } from 'react-router-dom'; // Importa useLocation
+import { useLocation, useNavigate } from 'react-router-dom'; // Importa useNavigate
 
 function Warranty({ onIncidenciaCreada }) {
     const location = useLocation(); // Obtén el objeto location
+    const navigate = useNavigate(); // Obtén la función navigate
     const [titulo, setTitulo] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [categoriaId, setCategoriaId] = useState('');
@@ -45,7 +46,7 @@ function Warranty({ onIncidenciaCreada }) {
 
         const fetchEstancias = async () => {
             try {
-                const response = await fetch('http://localhost:8080/api/estancias'); // Asegúrate de que esta ruta coincida con tu backend
+                const response = await fetch('http://localhost:8080/api/estancias');
                 if (response.ok) {
                     const data = await response.json();
                     setEstancias(data);
@@ -75,7 +76,7 @@ function Warranty({ onIncidenciaCreada }) {
         }
 
         try {
-            const response = await fetch(`/api/buildings/${buildingId}/incidents?categoryId=${categoriaId}&roomId=${estanciaId}`, {
+            const response = await fetch(`http://localhost:8080/api/buildings/${buildingId}/incidents?categoryId=${categoriaId}&roomId=${estanciaId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -91,11 +92,14 @@ function Warranty({ onIncidenciaCreada }) {
             if (response.ok) {
                 const savedIncident = await response.json();
                 alert('Incidencia registrada exitosamente en la base de datos.');
-                onIncidenciaCreada(savedIncident);
+                if (onIncidenciaCreada) {
+                    onIncidenciaCreada(savedIncident);
+                }
                 setTitulo('');
                 setDescripcion('');
                 setCategoriaId('');
                 setEstanciaId('');
+                navigate(`/building/${buildingId}/incidents`); // Redirige a la lista de incidencias
             } else {
                 const errorData = await response.json();
                 console.error('Error al registrar la incidencia:', errorData);

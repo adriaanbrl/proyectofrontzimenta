@@ -79,7 +79,7 @@
   align-items: center;
   justify-content: center;
   padding-right: 15px;
-  border-right: 1px solid #eee; /* Separador visual */
+  border-right: 1px solid #eee;
   margin-right: 15px;
 }
 
@@ -103,9 +103,9 @@
   margin-bottom: 0; /* Asegura alineación */
 }
 
-/* EventCalendar.css */
+
 .dia-con-evento {
-  background-color: #f5922c !important; /* El !important asegura que se aplique sobre otros estilos de Bootstrap */
+  background-color: #f5922c !important;
   border-color: #f5922c !important;
   color: white !important;
 }

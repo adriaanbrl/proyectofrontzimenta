@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Calendario">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/client/EventCalendar.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/EventCalendar.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/client/ProfileElements/Historic.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/ProfileElements/Historic.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/client/ProfileElements/Historic.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/ProfileElements/Historic.js" afterDir="false" />
     </list>
@@ -247,7 +248,7 @@
       <workItem from="1746427268268" duration="3577000" />
       <workItem from="1746436764983" duration="3858000" />
       <workItem from="1746442020219" duration="6910000" />
-      <workItem from="1746512508920" duration="7053000" />
+      <workItem from="1746512508920" duration="8624000" />
     </task>
     <task id="LOCAL-00001" summary="Imagenes">
       <option name="closed" value="true" />
@@ -425,7 +426,15 @@
       <option name="project" value="LOCAL" />
       <updated>1746522207881</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="Calendario">
+      <option name="closed" value="true" />
+      <created>1746523530457</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1746523530457</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

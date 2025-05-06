@@ -1,32 +1,30 @@
-/* Historic.css (Unificado) */
+
 .historic-container {
-    background-color: #f8f9fa; /* Un gris claro de fondo */
-    min-height: 100vh; /* Ocupa al menos toda la altura de la pantalla */
-    padding: 20px; /* Tomando el padding del otro archivo como base */
-    padding-top: 2rem;
-    padding-bottom: 4rem; /* Ajusta según sea necesario para el "side bar" */
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    padding-top: 20px;
+    margin-bottom: 50px;
 }
 
 .historic-container h2,
 .historic-title {
-    color: #f5922c !important; /* Color naranja especificado */
-    text-align: center !important; /* Alinea el título al centro */
-    margin-bottom: 15px; /* Tomando un valor común */
+    color: #f5922c !important;
+    text-align: center !important;
+    margin-bottom: 15px;
 }
 
 .incidencias-lista,
-.incident-list-group { /* Si usas ListGroup de Bootstrap, podrías no necesitar esto */
+.incident-list-group {
     list-style: none;
     padding: 0;
 }
 
 .incidencia-item,
 .incident-card {
-    border: 1px solid #e0e0e0; /* Tomando un borde más suave */
+    border: 1px solid #e0e0e0;
     margin-bottom: 15px;
     padding: 15px;
     border-radius: 8px;
-    /* background-color: #f9f9f9;  Quitando el fondo blanco de la card */
 }
 
 .incidencia-header {
@@ -39,7 +37,7 @@
 .incidencia-titulo,
 .incident-card-title {
     margin: 0;
-    color: #333; /* Un color más oscuro para el título */
+    color: #333;
     font-size: 1.25rem;
     font-weight: bold;
     margin-bottom: 0.75rem;
@@ -52,32 +50,13 @@
     font-weight: bold;
 }
 
-.incidencia-status.recibida,
-.status-recibida {
-    background-color: #e0f7fa;
-    color: #00acc1;
-}
-
-.incidencia-status.en-revision {
-    background-color: #fffde7;
-    color: #fbc02d;
-}
-
-.incidencia-status.en-progreso,
-.status-en progreso {
-    background-color: #e9ecef;
-    color: #007bff;
+.status-resuelta {
+    color: lawngreen;
     font-weight: bold;
 }
 
-.incidencia-status.resuelta,
-.incidencia-status.cerrada,
-.status-resuelta {
-    color: #155724;
-}
-
 .status-pendiente {
-    color: #ffc107; /* Amarillo */
+    color: #ffc107;
     font-weight: bold;
 }
 
@@ -85,7 +64,7 @@
 .text-muted {
     color: #777;
     margin-bottom: 10px;
-    font-style: italic; /* Añadiendo el estilo itálico */
+    font-style: italic;
 }
 
 .incidencia-detalles {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Container, Row, Col, Button, Card, Alert, Spinner } from "react-bootstrap";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import "./EventCalendar.css";
@@ -14,6 +14,8 @@ const EventCalendar = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [diasConEventos, setDiasConEventos] = useState(new Set());
+  const [diasPasadosConEventos, setDiasPasadosConEventos] = useState(new Set());
+  const cardRefs = useRef({}); // Objeto para almacenar las referencias a las cards
 
   const diasSemana = ["L", "M", "X", "J", "V", "S", "D"];
   const meses = [
@@ -61,9 +63,25 @@ const EventCalendar = () => {
 
   const seleccionarFecha = (dia) => {
     if (dia) {
-      setFechaSeleccionada(
-          new Date(mesActual.getFullYear(), mesActual.getMonth(), dia)
+      const fechaSeleccionadaCalendario = new Date(
+          mesActual.getFullYear(),
+          mesActual.getMonth(),
+          dia
       );
+      setFechaSeleccionada(fechaSeleccionadaCalendario);
+
+      // Buscar el primer evento para la fecha seleccionada y hacer scroll a su card
+      const eventoParaFecha = eventosProximos.find(
+          (evento) =>
+              evento.fecha.toDateString() === fechaSeleccionadaCalendario.toDateString()
+      );
+
+      if (eventoParaFecha && cardRefs.current[eventoParaFecha.id]) {
+        cardRefs.current[eventoParaFecha.id].scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }
     }
   };
 
@@ -114,6 +132,8 @@ const EventCalendar = () => {
     setError(null);
     setEventosProximos([]);
     setDiasConEventos(new Set());
+    setDiasPasadosConEventos(new Set());
+    cardRefs.current = {}; // Resetear las referencias al cargar nuevos eventos
 
     const token = localStorage.getItem("authToken");
 
@@ -144,10 +164,21 @@ const EventCalendar = () => {
         ...evento,
         fecha: new Date(evento.date),
       }));
-      setEventosProximos(eventosConFecha);
+
+      const ahora = new Date();
+      const eventosFuturos = eventosConFecha.filter((evento) => evento.fecha >= ahora);
+      const eventosPasadosEnMesActual = eventosConFecha.filter(
+          (evento) =>
+              evento.fecha.getFullYear() === mesActual.getFullYear() &&
+              evento.fecha.getMonth() === mesActual.getMonth() &&
+              evento.fecha < ahora
+      );
+
+      eventosFuturos.sort((a, b) => a.fecha.getTime() - b.fecha.getTime());
+      setEventosProximos(eventosFuturos);
 
       const diasConEventosEnMesActual = new Set();
-      eventosConFecha.forEach((evento) => {
+      eventosFuturos.forEach((evento) => {
         if (
             evento.fecha.getFullYear() === mesActual.getFullYear() &&
             evento.fecha.getMonth() === mesActual.getMonth()
@@ -156,6 +187,12 @@ const EventCalendar = () => {
         }
       });
       setDiasConEventos(diasConEventosEnMesActual);
+
+      const diasPasados = new Set();
+      eventosPasadosEnMesActual.forEach((evento) => {
+        diasPasados.add(evento.fecha.getDate());
+      });
+      setDiasPasadosConEventos(diasPasados);
 
     } catch (err) {
       setError(err.message);
@@ -204,7 +241,7 @@ const EventCalendar = () => {
 
         <Row className="mb-3 align-items-center justify-content-between">
           <Col xs="auto">
-            <Button variant="link" onClick={() => cambiarMes(-1)}>
+            <Button variant="link" onClick={() => cambiarMes(-1)} style={{ color: 'black' }}>
               <FaChevronLeft />
             </Button>
           </Col>
@@ -212,7 +249,7 @@ const EventCalendar = () => {
             {meses[mesActual.getMonth()]} {mesActual.getFullYear()}
           </Col>
           <Col xs="auto">
-            <Button variant="link" onClick={() => cambiarMes(1)}>
+            <Button variant="link" onClick={() => cambiarMes(1)} style={{ color: 'black' }}>
               <FaChevronRight />
             </Button>
           </Col>
@@ -238,7 +275,9 @@ const EventCalendar = () => {
                               ? "primary"
                               : diasConEventos.has(dia)
                                   ? "warning"
-                                  : "light"
+                                  : diasPasadosConEventos.has(dia)
+                                      ? "secondary"
+                                      : "light"
                         }
                         className={`rounded-circle w-100 h-100 d-flex align-items-center justify-content-center ${
                             new Date(
@@ -248,7 +287,8 @@ const EventCalendar = () => {
                             ).toDateString() === new Date().toDateString()
                                 ? "fw-bold"
                                 : ""
-                        }`}
+                        } ${diasConEventos.has(dia) ? 'dia-con-evento' : ''}`}
+                        style={diasConEventos.has(dia) ? { backgroundColor: '#f5922c', borderColor: '#f5922c', color: 'white' } : {}}
                         onClick={() => seleccionarFecha(dia)}
                     >
                       {dia}
@@ -263,11 +303,15 @@ const EventCalendar = () => {
         <hr className="my-4" />
 
         <div className="proximos-eventos" style={{ marginBottom: '60px' }}>
-          <h2 className="h6 mb-3" style={{ color: 'orange' }}>EVENTOS PRÓXIMOS</h2>
+          <h2 className="h6 mb-3" style={{ color: 'orange' }}>PRÓXIMOS EVENTOS</h2>
           {eventosProximos.map((evento, index) => (
-              <Card key={index} className="mb-2 evento-card">
+              <Card
+                  key={evento.id} // Asegúrate de que cada evento tenga un ID único
+                  className="mb-2 evento-card"
+                  ref={(el) => (cardRefs.current[evento.id] = el)} // Asignar referencia a la card
+              >
                 <Card.Body className="p-2 d-flex align-items-center">
-                  <div className="fecha-evento me-3 text-center"> {/* Añadida clase text-center */}
+                  <div className="fecha-evento me-3 text-center">
                     <p className="dia-semana fw-bold mb-0" style={{ color: 'orange' }}>
                       {new Intl.DateTimeFormat("es-ES", { weekday: "short" }).format(new Date(evento.fecha)).toUpperCase()}
                     </p>
@@ -281,9 +325,9 @@ const EventCalendar = () => {
                       {new Date(evento.fecha).getFullYear()}
                     </p>
                   </div>
-                  <div className="text-center"> {/* Añadida clase text-center */}
-                    <Card.Title className="small fw-bold mb-1">{evento.title}</Card.Title>
-                    <Card.Text className="small text-muted">{evento.description || 'Sin descripción'}</Card.Text>
+                  <div className="text-center">
+                    <Card.Title className="small fw-bold mb-1 text-center">{evento.title}</Card.Title>
+                    <Card.Text className="small text-muted text-center">{evento.description || 'Sin descripción'}</Card.Text>
                   </div>
                 </Card.Body>
               </Card>

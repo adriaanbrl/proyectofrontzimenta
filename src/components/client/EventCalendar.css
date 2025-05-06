@@ -102,3 +102,10 @@
   font-size: 0.7em;
   margin-bottom: 0; /* Asegura alineación */
 }
+
+/* EventCalendar.css */
+.dia-con-evento {
+  background-color: #f5922c !important; /* El !important asegura que se aplique sobre otros estilos de Bootstrap */
+  border-color: #f5922c !important;
+  color: white !important;
+}

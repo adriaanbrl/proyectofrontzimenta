@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Terminos y privacidad">
+    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Gallery">
+      <change afterPath="$PROJECT_DIR$/src/components/client/ClientGallery.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/client/ClientGallery.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/ClientGallery.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/client/EventCalendar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/EventCalendar.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,8 +18,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="CSS File" />
         <option value="JavaScript File" />
+        <option value="CSS File" />
       </list>
     </option>
   </component>
@@ -247,7 +249,7 @@
       <workItem from="1746436764983" duration="3858000" />
       <workItem from="1746442020219" duration="6910000" />
       <workItem from="1746512508920" duration="11780000" />
-      <workItem from="1746528754672" duration="1562000" />
+      <workItem from="1746528754672" duration="4493000" />
     </task>
     <task id="LOCAL-00001" summary="Imagenes">
       <option name="closed" value="true" />
@@ -481,7 +483,23 @@
       <option name="project" value="LOCAL" />
       <updated>1746527891967</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="Gallery">
+      <option name="closed" value="true" />
+      <created>1746530636188</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1746530636188</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Gallery">
+      <option name="closed" value="true" />
+      <created>1746532335769</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1746532335769</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -514,6 +532,7 @@
     <MESSAGE value="calendario" />
     <MESSAGE value="Galleria" />
     <MESSAGE value="Terminos y privacidad" />
-    <option name="LAST_COMMIT_MESSAGE" value="Terminos y privacidad" />
+    <MESSAGE value="Gallery" />
+    <option name="LAST_COMMIT_MESSAGE" value="Gallery" />
   </component>
 </project>

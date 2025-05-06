@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
+import './ClientGallery.css';
 
 function ClientGallery() {
-    const [images, setImages] = useState([]);
+    const [groupedImages, setGroupedImages] = useState({});
     const [buildingIdFromToken, setBuildingIdFromToken] = useState(null);
     const [loadingBuildingId, setLoadingBuildingId] = useState(true);
     const [errorBuildingId, setErrorBuildingId] = useState(null);
+    const [loadingImages, setLoadingImages] = useState(true);
+    const [errorImages, setErrorImages] = useState(null);
+    const [expandedRoom, setExpandedRoom] = useState(null);
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
@@ -13,9 +17,7 @@ function ClientGallery() {
             try {
                 const decodedToken = jwtDecode(token);
                 setBuildingIdFromToken(decodedToken.building_id || null);
-                console.log('building_id del token para la galería:', decodedToken.building_id);
             } catch (error) {
-                console.error('Error al decodificar el token para la galería:', error);
                 setErrorBuildingId('Error al leer la información del edificio.');
             } finally {
                 setLoadingBuildingId(false);
@@ -29,6 +31,8 @@ function ClientGallery() {
     useEffect(() => {
         const fetchBuildingImages = async () => {
             if (buildingIdFromToken) {
+                setLoadingImages(true);
+                setErrorImages(null);
                 try {
                     const url = `http://localhost:8080/api/buildings/${buildingIdFromToken}/images`;
                     const token = localStorage.getItem('authToken');
@@ -36,7 +40,7 @@ function ClientGallery() {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`, // Incluye el token en los headers
+                            'Authorization': `Bearer ${token}`,
                         },
                     });
 
@@ -45,52 +49,71 @@ function ClientGallery() {
                     }
 
                     const data = await response.json();
-                    setImages(data);
-                    console.log(`Imágenes recibidas para el edificio ${buildingIdFromToken}:`, data);
+                    const grouped = data.reduce((acc, image) => {
+                        const roomId = image.roomId || 'sin_habitacion';
+                        if (!acc[roomId]) {
+                            acc[roomId] = { name: image.roomName || 'Sin Habitación', images: [] };
+                        }
+                        acc[roomId].images.push(image);
+                        return acc;
+                    }, {});
+                    setGroupedImages(grouped);
                 } catch (error) {
                     console.error(`Error fetching imágenes del edificio ${buildingIdFromToken}:`, error);
-                    setImages([]);
+                    setErrorImages('Error al cargar las imágenes.');
+                    setGroupedImages({});
+                } finally {
+                    setLoadingImages(false);
                 }
-            } else if (errorBuildingId) {
-                console.error('Error al obtener el ID del edificio:', errorBuildingId);
-                setImages([]);
-            } else if (!loadingBuildingId) {
-                console.warn('ID del edificio no disponible. No se pueden cargar las imágenes.');
-                setImages([]);
             }
         };
 
         fetchBuildingImages();
-    }, [buildingIdFromToken, errorBuildingId, loadingBuildingId]);
+    }, [buildingIdFromToken]);
+
+    const toggleRoomExpansion = (roomId) => {
+        setExpandedRoom(expandedRoom === roomId ? null : roomId);
+    };
 
     return (
-        <div>
-            <h1>Galería de Imágenes del Edificio {buildingIdFromToken || 'Cargando ID...'}</h1>
-            {loadingBuildingId && <p>Cargando ID del edificio...</p>}
+        <div className="client-gallery-container">
+            <h1 className="gallery-title" style={{ color: '#f5922c' }}>Galería de Imágenes</h1>
+            {loadingBuildingId && <p className="loading-message">Cargando ID del edificio...</p>}
             {errorBuildingId && <p className="error-message">{errorBuildingId}</p>}
-            {!loadingBuildingId && !errorBuildingId && (
-                <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                    {images.map(image => (
-                        <div key={image.id} style={{ margin: '10px', border: '1px solid #ccc', padding: '10px', borderRadius: '5px' }}>
-                            {image.imageBase64 && (
-                                <img
-                                    src={image.imageBase64}
-                                    alt={image.title || 'Imagen'}
-                                    style={{ maxWidth: '200px', height: 'auto', display: 'block', marginBottom: '5px' }}
-                                />
-                            )}
-                            {image.title && <h3>{image.title}</h3>}
-                            {image.roomId && <p>Room ID: {image.roomId}</p>}
-                            {/* Puedes seguir mostrando otros campos si tu entidad los tiene */}
-                        </div>
-                    ))}
-                </div>
-            )}
-            {!loadingBuildingId && !errorBuildingId && images.length === 0 && buildingIdFromToken && (
-                <p>No hay imágenes para este edificio.</p>
-            )}
+            {loadingImages && !errorImages && <p className="loading-message">Cargando imágenes...</p>}
+            {errorImages && <p className="error-message">{errorImages}</p>}
+            {!loadingBuildingId && !errorBuildingId && !loadingImages && !errorImages && Object.keys(groupedImages).length > 0 ? (
+                Object.entries(groupedImages).map(([roomId, roomData]) => (
+                    <div key={roomId} className="room-group">
+                        <h2 className="room-title" onClick={() => toggleRoomExpansion(roomId)} style={{ cursor: 'pointer' }}>
+                            {roomData.name} ({roomData.images.length})
+                        </h2>
+                        {expandedRoom === roomId && (
+                            <div className="image-grid expanded">
+                                {roomData.images.map(image => (
+                                    <div key={image.id} className="image-item">
+                                        {image.imageBase64 && (
+                                            <img
+                                                src={image.imageBase64}
+                                                alt={image.title || 'Imagen'}
+                                                className="gallery-image"
+                                            />
+                                        )}
+                                        <div className="image-details">
+                                            {image.title && <h3 className="image-title">{image.title}</h3>}
+                                            {image.roomId && <p className="image-room-id">Habitación: {image.roomId}</p>}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                ))
+            ) : (!loadingBuildingId && !errorBuildingId && !loadingImages && !errorImages && (
+                <p className="no-images">No hay imágenes para este edificio.</p>
+            ))}
             {!loadingBuildingId && !errorBuildingId && !buildingIdFromToken && (
-                <p>ID del edificio no disponible.</p>
+                <p className="no-id">ID del edificio no disponible.</p>
             )}
         </div>
     );

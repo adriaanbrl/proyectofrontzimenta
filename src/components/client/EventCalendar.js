@@ -209,9 +209,7 @@ const EventCalendar = () => {
   if (loading) {
     return (
         <Container className="calendario-eventos p-3">
-          <p>
             <Spinner animation="border" size="sm" /> Cargando eventos...
-          </p>
         </Container>
     );
   }

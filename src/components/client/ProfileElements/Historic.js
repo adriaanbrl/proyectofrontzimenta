@@ -52,6 +52,14 @@ const Historic = () => {
         }
     }, [buildingId]);
 
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Los meses en JS son 0-indexados
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+    };
+
     // Filtrar y ordenar incidentes por estado y fecha de creación
     const resolvedIncidents = incidents
         .filter(incident => incident.status.toLowerCase() === 'resuelta')
@@ -105,8 +113,9 @@ const Historic = () => {
                                                 <ListGroup variant="flush">
                                                     <ListGroup.Item><strong>Descripción:</strong> <span className="text-muted">{incident.description}</span></ListGroup.Item>
                                                     <ListGroup.Item><strong>Estado:</strong> <span className={`status-${incident.status.toLowerCase().replace(' ', '-')}`}>{incident.status}</span></ListGroup.Item>
+                                                    <ListGroup.Item><strong>Creado el:</strong> <span className="text-muted">{formatDate(incident.creationDate)}</span></ListGroup.Item>
                                                     {incident.resolutionDate && (
-                                                        <ListGroup.Item><strong>Fecha de Resolución:</strong> <span className="text-muted">{new Date(incident.resolutionDate).toLocaleDateString()}</span></ListGroup.Item>
+                                                        <ListGroup.Item><strong>Fecha de Resolución:</strong> <span className="text-muted">{formatDate(incident.resolutionDate)}</span></ListGroup.Item>
                                                     )}
                                                 </ListGroup>
                                             </Card.Body>
@@ -118,7 +127,7 @@ const Historic = () => {
                             {resolvedIncidents.length > 0 && (
                                 <div className="mb-4">
                                     {pendingIncidents.length > 0 && <hr className="my-3" />}
-                                    <h4 className="text-muted">Resueltas</h4>
+                                    <h4 className="text-muted">Resueltos</h4>
                                     {resolvedIncidents.map((incident) => (
                                         <Card key={incident.id} className="incident-card mb-3 shadow-sm">
                                             <Card.Body className="p-3">
@@ -126,8 +135,9 @@ const Historic = () => {
                                                 <ListGroup variant="flush">
                                                     <ListGroup.Item><strong>Descripción:</strong> <span className="text-muted">{incident.description}</span></ListGroup.Item>
                                                     <ListGroup.Item><strong>Estado:</strong> <span className={`status-${incident.status.toLowerCase().replace(' ', '-')}`}>{incident.status}</span></ListGroup.Item>
+                                                    <ListGroup.Item><strong>Creado el:</strong> <span className="text-muted">{formatDate(incident.creationDate)}</span></ListGroup.Item>
                                                     {incident.resolutionDate && (
-                                                        <ListGroup.Item><strong>Fecha de Resolución:</strong> <span className="text-muted">{new Date(incident.resolutionDate).toLocaleDateString()}</span></ListGroup.Item>
+                                                        <ListGroup.Item><strong>Fecha de Resolución:</strong> <span className="text-muted">{formatDate(incident.resolutionDate)}</span></ListGroup.Item>
                                                     )}
                                                 </ListGroup>
                                             </Card.Body>
@@ -147,8 +157,9 @@ const Historic = () => {
                                                 <ListGroup variant="flush">
                                                     <ListGroup.Item><strong>Descripción:</strong> <span className="text-muted">{incident.description}</span></ListGroup.Item>
                                                     <ListGroup.Item><strong>Estado:</strong> <span className={`status-${incident.status.toLowerCase().replace(' ', '-')}`}>{incident.status}</span></ListGroup.Item>
+                                                    <ListGroup.Item><strong>Creado el:</strong> <span className="text-muted">{formatDate(incident.creationDate)}</span></ListGroup.Item>
                                                     {incident.resolutionDate && (
-                                                        <ListGroup.Item><strong>Fecha de Resolución:</strong> <span className="text-muted">{new Date(incident.resolutionDate).toLocaleDateString()}</span></ListGroup.Item>
+                                                        <ListGroup.Item><strong>Fecha de Resolución:</strong> <span className="text-muted">{formatDate(incident.resolutionDate)}</span></ListGroup.Item>
                                                     )}
                                                 </ListGroup>
                                             </Card.Body>

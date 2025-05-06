@@ -13,6 +13,7 @@ const EventCalendar = () => {
   const [eventosProximos, setEventosProximos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [diasConEventos, setDiasConEventos] = useState(new Set());
 
   const diasSemana = ["L", "M", "X", "J", "V", "S", "D"];
   const meses = [
@@ -106,12 +107,13 @@ const EventCalendar = () => {
     } else {
       setError("No se encontró el token de autenticación.");
     }
-  }, [mesActual]);
+  }, [mesActual]); // Dependencia en mesActual para recargar eventos al cambiar de mes
 
   const fetchBuildingEvents = async (id, year, month) => {
     setLoading(true);
     setError(null);
     setEventosProximos([]);
+    setDiasConEventos(new Set());
 
     const token = localStorage.getItem("authToken");
 
@@ -138,12 +140,23 @@ const EventCalendar = () => {
       }
 
       const data = await response.json();
-      setEventosProximos(
-          data.map((evento) => ({
-            ...evento,
-            fecha: new Date(evento.date),
-          }))
-      );
+      const eventosConFecha = data.map((evento) => ({
+        ...evento,
+        fecha: new Date(evento.date),
+      }));
+      setEventosProximos(eventosConFecha);
+
+      const diasConEventosEnMesActual = new Set();
+      eventosConFecha.forEach((evento) => {
+        if (
+            evento.fecha.getFullYear() === mesActual.getFullYear() &&
+            evento.fecha.getMonth() === mesActual.getMonth()
+        ) {
+          diasConEventosEnMesActual.add(evento.fecha.getDate());
+        }
+      });
+      setDiasConEventos(diasConEventosEnMesActual);
+
     } catch (err) {
       setError(err.message);
     } finally {
@@ -223,7 +236,9 @@ const EventCalendar = () => {
                           fechaSeleccionada.getMonth() === mesActual.getMonth() &&
                           fechaSeleccionada.getFullYear() === mesActual.getFullYear()
                               ? "primary"
-                              : "light"
+                              : diasConEventos.has(dia)
+                                  ? "warning"
+                                  : "light"
                         }
                         className={`rounded-circle w-100 h-100 d-flex align-items-center justify-content-center ${
                             new Date(
@@ -259,10 +274,10 @@ const EventCalendar = () => {
                     <p className="dia-mes mb-0" style={{ color: 'orange', fontSize: '1.2em' }}>
                       {new Date(evento.fecha).getDate()}
                     </p>
-                    <p className="mes small text-muted mb-0"> {/* Añadimos mb-0 para alineación */}
+                    <p className="mes small text-muted mb-0">
                       {meses[new Date(evento.fecha).getMonth()].substring(0, 3).toUpperCase()}
                     </p>
-                    <p className="year small text-muted mb-0"> {/* Añadimos el año */}
+                    <p className="anio small text-muted mb-0">
                       {new Date(evento.fecha).getFullYear()}
                     </p>
                   </div>

@@ -106,7 +106,7 @@ const EventCalendar = () => {
     } else {
       setError("No se encontró el token de autenticación.");
     }
-  }, [mesActual]); // Dependencia en mesActual para recargar eventos al cambiar de mes
+  }, [mesActual]);
 
   const fetchBuildingEvents = async (id, year, month) => {
     setLoading(true);
@@ -141,7 +141,7 @@ const EventCalendar = () => {
       setEventosProximos(
           data.map((evento) => ({
             ...evento,
-            fecha: new Date(evento.date), // Assuming your backend returns 'date'
+            fecha: new Date(evento.date),
           }))
       );
     } catch (err) {
@@ -247,16 +247,29 @@ const EventCalendar = () => {
 
         <hr className="my-4" />
 
-        <div className="proximos-eventos">
+        <div className="proximos-eventos" style={{ marginBottom: '60px' }}>
           <h2 className="h6 mb-3">EVENTOS PRÓXIMOS</h2>
           {eventosProximos.map((evento, index) => (
-              <Card key={index} className="mb-2">
-                <Card.Body className="p-2">
-                  <Card.Title className="small fw-bold">
-                    {formatearFecha(new Date(evento.fecha))}
-                  </Card.Title>
-                  <Card.Text className="small">{evento.title}</Card.Text>{" "}
-                  {/* Assuming your backend returns 'title' */}
+              <Card key={index} className="mb-2 evento-card">
+                <Card.Body className="p-2 d-flex align-items-center">
+                  <div className="fecha-evento me-3">
+                    <p className="dia-semana fw-bold mb-0" style={{ color: 'orange' }}>
+                      {new Intl.DateTimeFormat("es-ES", { weekday: "short" }).format(new Date(evento.fecha)).toUpperCase()}
+                    </p>
+                    <p className="dia-mes mb-0" style={{ color: 'orange', fontSize: '1.2em' }}>
+                      {new Date(evento.fecha).getDate()}
+                    </p>
+                    <p className="mes small text-muted mb-0"> {/* Añadimos mb-0 para alineación */}
+                      {meses[new Date(evento.fecha).getMonth()].substring(0, 3).toUpperCase()}
+                    </p>
+                    <p className="year small text-muted mb-0"> {/* Añadimos el año */}
+                      {new Date(evento.fecha).getFullYear()}
+                    </p>
+                  </div>
+                  <div>
+                    <Card.Title className="small fw-bold mb-1">{evento.title}</Card.Title>
+                    <Card.Text className="small text-muted">{evento.description || 'Sin descripción'}</Card.Text>
+                  </div>
                 </Card.Body>
               </Card>
           ))}

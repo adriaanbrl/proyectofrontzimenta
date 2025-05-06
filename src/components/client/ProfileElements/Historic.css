@@ -1,24 +1,32 @@
-/* src/components/client/ProfileElements/HistorialIncidencias.css */
-.historial-incidencias-container {
-    padding: 20px;
+/* Historic.css (Unificado) */
+.historic-container {
+    background-color: #f8f9fa; /* Un gris claro de fondo */
+    min-height: 100vh; /* Ocupa al menos toda la altura de la pantalla */
+    padding: 20px; /* Tomando el padding del otro archivo como base */
+    padding-top: 2rem;
+    padding-bottom: 4rem; /* Ajusta según sea necesario para el "side bar" */
 }
 
-.historial-incidencias-container h2 {
-    margin-bottom: 15px;
-    color: #333;
+.historic-container h2,
+.historic-title {
+    color: #f5922c !important; /* Color naranja especificado */
+    text-align: center !important; /* Alinea el título al centro */
+    margin-bottom: 15px; /* Tomando un valor común */
 }
 
-.incidencias-lista {
+.incidencias-lista,
+.incident-list-group { /* Si usas ListGroup de Bootstrap, podrías no necesitar esto */
     list-style: none;
     padding: 0;
 }
 
-.incidencia-item {
-    border: 1px solid #ddd;
+.incidencia-item,
+.incident-card {
+    border: 1px solid #e0e0e0; /* Tomando un borde más suave */
     margin-bottom: 15px;
     padding: 15px;
     border-radius: 8px;
-    background-color: #f9f9f9;
+    /* background-color: #f9f9f9;  Quitando el fondo blanco de la card */
 }
 
 .incidencia-header {
@@ -28,9 +36,13 @@
     margin-bottom: 10px;
 }
 
-.incidencia-titulo {
+.incidencia-titulo,
+.incident-card-title {
     margin: 0;
-    color: #555;
+    color: #333; /* Un color más oscuro para el título */
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 0.75rem;
 }
 
 .incidencia-status {
@@ -40,7 +52,8 @@
     font-weight: bold;
 }
 
-.incidencia-status.recibida {
+.incidencia-status.recibida,
+.status-recibida {
     background-color: #e0f7fa;
     color: #00acc1;
 }
@@ -50,20 +63,29 @@
     color: #fbc02d;
 }
 
-.incidencia-status.en-proceso {
-    background-color: #e8f5e9;
-    color: #4caf50;
+.incidencia-status.en-progreso,
+.status-en progreso {
+    background-color: #e9ecef;
+    color: #007bff;
+    font-weight: bold;
 }
 
 .incidencia-status.resuelta,
-.incidencia-status.cerrada {
-    background-color: #fbe9e7;
-    color: #e64a19;
+.incidencia-status.cerrada,
+.status-resuelta {
+    color: #155724;
 }
 
-.incidencia-descripcion {
+.status-pendiente {
+    color: #ffc107; /* Amarillo */
+    font-weight: bold;
+}
+
+.incidencia-descripcion,
+.text-muted {
     color: #777;
     margin-bottom: 10px;
+    font-style: italic; /* Añadiendo el estilo itálico */
 }
 
 .incidencia-detalles {

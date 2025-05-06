@@ -5,6 +5,7 @@ import "./EventCalendar.css";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
+
 const EventCalendar = () => {
   const navigate = useNavigate();
   const [buildingId, setBuildingId] = useState("");
@@ -16,6 +17,7 @@ const EventCalendar = () => {
   const [diasConEventos, setDiasConEventos] = useState(new Set());
   const [diasPasadosConEventos, setDiasPasadosConEventos] = useState(new Set());
   const cardRefs = useRef({}); // Objeto para almacenar las referencias a las cards
+
 
   const diasSemana = ["L", "M", "X", "J", "V", "S", "D"];
   const meses = [
@@ -33,6 +35,7 @@ const EventCalendar = () => {
     "Diciembre",
   ];
 
+
   const primerDiaDelMes = new Date(
       mesActual.getFullYear(),
       mesActual.getMonth(),
@@ -46,6 +49,7 @@ const EventCalendar = () => {
   const numeroDeDias = ultimoDiaDelMes.getDate();
   const primerDiaSemana = primerDiaDelMes.getDay();
 
+
   const diasDelMes = [];
   const espaciosNecesarios = primerDiaSemana === 0 ? 6 : primerDiaSemana - 1;
   for (let i = 0; i < espaciosNecesarios; i++) {
@@ -55,11 +59,13 @@ const EventCalendar = () => {
     diasDelMes.push(i);
   }
 
+
   const cambiarMes = (direccion) => {
     const nuevoMes = new Date(mesActual);
     nuevoMes.setMonth(mesActual.getMonth() + direccion);
     setMesActual(nuevoMes);
   };
+
 
   const seleccionarFecha = (dia) => {
     if (dia) {
@@ -70,11 +76,13 @@ const EventCalendar = () => {
       );
       setFechaSeleccionada(fechaSeleccionadaCalendario);
 
+
       // Buscar el primer evento para la fecha seleccionada y hacer scroll a su card
       const eventoParaFecha = eventosProximos.find(
           (evento) =>
               evento.fecha.toDateString() === fechaSeleccionadaCalendario.toDateString()
       );
+
 
       if (eventoParaFecha && cardRefs.current[eventoParaFecha.id]) {
         cardRefs.current[eventoParaFecha.id].scrollIntoView({
@@ -85,6 +93,7 @@ const EventCalendar = () => {
     }
   };
 
+
   const formatearFecha = (fecha) => {
     const diaSemana = new Intl.DateTimeFormat("es-ES", {
       weekday: "short",
@@ -94,13 +103,16 @@ const EventCalendar = () => {
     return `${diaSemana}, ${mes} ${dia}`;
   };
 
+
   const handleGoBack = () => {
     navigate(-1);
   };
 
+
   useEffect(() => {
     document.title = "Calendario de Eventos";
     const token = localStorage.getItem("authToken");
+
 
     if (token) {
       try {
@@ -110,6 +122,7 @@ const EventCalendar = () => {
             "building_id recibido del customer (JWT):",
             decodedToken.building_id
         );
+
 
         if (decodedToken.building_id) {
           fetchBuildingEvents(
@@ -127,6 +140,7 @@ const EventCalendar = () => {
     }
   }, [mesActual]);
 
+
   const fetchBuildingEvents = async (id, year, month) => {
     setLoading(true);
     setError(null);
@@ -135,13 +149,16 @@ const EventCalendar = () => {
     setDiasPasadosConEventos(new Set());
     cardRefs.current = {}; // Resetear las referencias al cargar nuevos eventos
 
+
     const token = localStorage.getItem("authToken");
+
 
     if (!token) {
       setError("No se encontró el token de autenticación.");
       setLoading(false);
       return;
     }
+
 
     try {
       const response = await fetch(
@@ -153,17 +170,20 @@ const EventCalendar = () => {
           }
       );
 
+
       if (!response.ok) {
         throw new Error(
             `Error al obtener los eventos del edificio: ${response.status}`
         );
       }
 
+
       const data = await response.json();
       const eventosConFecha = data.map((evento) => ({
         ...evento,
         fecha: new Date(evento.date),
       }));
+
 
       const ahora = new Date();
       const eventosFuturos = eventosConFecha.filter((evento) => evento.fecha >= ahora);
@@ -174,8 +194,10 @@ const EventCalendar = () => {
               evento.fecha < ahora
       );
 
+
       eventosFuturos.sort((a, b) => a.fecha.getTime() - b.fecha.getTime());
       setEventosProximos(eventosFuturos);
+
 
       const diasConEventosEnMesActual = new Set();
       eventosFuturos.forEach((evento) => {
@@ -188,11 +210,13 @@ const EventCalendar = () => {
       });
       setDiasConEventos(diasConEventosEnMesActual);
 
+
       const diasPasados = new Set();
       eventosPasadosEnMesActual.forEach((evento) => {
         diasPasados.add(evento.fecha.getDate());
       });
       setDiasPasadosConEventos(diasPasados);
+
 
     } catch (err) {
       setError(err.message);
@@ -200,6 +224,7 @@ const EventCalendar = () => {
       setLoading(false);
     }
   };
+
 
   if (loading) {
     return (
@@ -211,6 +236,7 @@ const EventCalendar = () => {
     );
   }
 
+
   if (error) {
     return (
         <Container className="calendario-eventos p-3">
@@ -221,6 +247,7 @@ const EventCalendar = () => {
         </Container>
     );
   }
+
 
   return (
       <Container className="calendario-eventos p-3">
@@ -239,6 +266,7 @@ const EventCalendar = () => {
           <div style={{ width: '20px' }}></div> {/* Espacio para alinear los botones de cambio de mes */}
         </div>
 
+
         <Row className="mb-3 align-items-center justify-content-between">
           <Col xs="auto">
             <Button variant="link" onClick={() => cambiarMes(-1)} style={{ color: 'black' }}>
@@ -255,6 +283,7 @@ const EventCalendar = () => {
           </Col>
         </Row>
 
+
         <Row className="mb-2">
           {diasSemana.map((dia, index) => (
               <Col key={index} className="text-center small fw-bold">
@@ -262,6 +291,7 @@ const EventCalendar = () => {
               </Col>
           ))}
         </Row>
+
 
         <Row className="gx-0">
           {diasDelMes.map((dia, index) => (
@@ -300,7 +330,9 @@ const EventCalendar = () => {
           ))}
         </Row>
 
+
         <hr className="my-4" />
+
 
         <div className="proximos-eventos" style={{ marginBottom: '60px' }}>
           <h2 className="h6 mb-3" style={{ color: 'orange' }}>PRÓXIMOS EVENTOS</h2>
@@ -310,8 +342,8 @@ const EventCalendar = () => {
                   className="mb-2 evento-card"
                   ref={(el) => (cardRefs.current[evento.id] = el)} // Asignar referencia a la card
               >
-                <Card.Body className="p-2 d-flex align-items-center">
-                  <div className="fecha-evento me-3 text-center">
+                <Card.Body className="p-2 d-flex align-items-start">
+                  <div className="fecha-evento me-5"> {/* Añadimos de nuevo "me-3" */}
                     <p className="dia-semana fw-bold mb-0" style={{ color: 'orange' }}>
                       {new Intl.DateTimeFormat("es-ES", { weekday: "short" }).format(new Date(evento.fecha)).toUpperCase()}
                     </p>
@@ -325,9 +357,9 @@ const EventCalendar = () => {
                       {new Date(evento.fecha).getFullYear()}
                     </p>
                   </div>
-                  <div className="text-center">
-                    <Card.Title className="small fw-bold mb-1 text-center">{evento.title}</Card.Title>
-                    <Card.Text className="small text-muted text-center">{evento.description || 'Sin descripción'}</Card.Text>
+                  <div className="mt-3 text-center">
+                    <Card.Title className="small fw-bold mb-1">{evento.title}</Card.Title>
+                    <Card.Text className="small text-muted">{evento.description || 'Sin descripción'}</Card.Text>
                   </div>
                 </Card.Body>
               </Card>
@@ -342,4 +374,7 @@ const EventCalendar = () => {
   );
 };
 
+
 export default EventCalendar;
+
+

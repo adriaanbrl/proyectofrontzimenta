@@ -107,7 +107,7 @@ const EventCalendar = () => {
     } else {
       setError("No se encontró el token de autenticación.");
     }
-  }, [mesActual]); // Dependencia en mesActual para recargar eventos al cambiar de mes
+  }, [mesActual]);
 
   const fetchBuildingEvents = async (id, year, month) => {
     setLoading(true);
@@ -179,7 +179,7 @@ const EventCalendar = () => {
         <Container className="calendario-eventos p-3">
           <Alert variant="danger">{error}</Alert>
           <Button variant="link" onClick={handleGoBack}>
-            <FaChevronLeft /> Volver
+            Volver
           </Button>
         </Container>
     );
@@ -187,7 +187,7 @@ const EventCalendar = () => {
 
   return (
       <Container className="calendario-eventos p-3">
-        <div className="d-flex align-items-center mb-3">
+        <div className="d-flex align-items-center mb-3 justify-content-center">
           <Button
               variant="link"
               onClick={handleGoBack}
@@ -195,11 +195,11 @@ const EventCalendar = () => {
               aria-label="Volver atrás"
               style={{ padding: 0, marginRight: "10px" }}
           >
-            <FaChevronLeft size={20} color="orange" />
           </Button>
-          <h1 className="calendario-eventos-title" style={{ margin: 0 }}>
+          <h1 className="calendario-eventos-title" style={{ margin: 0, color: 'orange', textAlign: 'center' }}>
             Calendario de Eventos
           </h1>
+          <div style={{ width: '20px' }}></div> {/* Espacio para alinear los botones de cambio de mes */}
         </div>
 
         <Row className="mb-3 align-items-center justify-content-between">
@@ -263,11 +263,11 @@ const EventCalendar = () => {
         <hr className="my-4" />
 
         <div className="proximos-eventos" style={{ marginBottom: '60px' }}>
-          <h2 className="h6 mb-3">EVENTOS PRÓXIMOS</h2>
+          <h2 className="h6 mb-3" style={{ color: 'orange' }}>EVENTOS PRÓXIMOS</h2>
           {eventosProximos.map((evento, index) => (
               <Card key={index} className="mb-2 evento-card">
                 <Card.Body className="p-2 d-flex align-items-center">
-                  <div className="fecha-evento me-3">
+                  <div className="fecha-evento me-3 text-center"> {/* Añadida clase text-center */}
                     <p className="dia-semana fw-bold mb-0" style={{ color: 'orange' }}>
                       {new Intl.DateTimeFormat("es-ES", { weekday: "short" }).format(new Date(evento.fecha)).toUpperCase()}
                     </p>
@@ -281,7 +281,7 @@ const EventCalendar = () => {
                       {new Date(evento.fecha).getFullYear()}
                     </p>
                   </div>
-                  <div>
+                  <div className="text-center"> {/* Añadida clase text-center */}
                     <Card.Title className="small fw-bold mb-1">{evento.title}</Card.Title>
                     <Card.Text className="small text-muted">{evento.description || 'Sin descripción'}</Card.Text>
                   </div>

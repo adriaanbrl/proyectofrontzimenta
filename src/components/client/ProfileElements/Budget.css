@@ -5,7 +5,7 @@
     border-radius: 12px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Slightly stronger shadow */
     max-width: 800px;
-    margin: 30px auto; /* Increased top margin for better spacing */
+    margin: 50px auto; /* Increased top margin for better spacing */
 }
 
 .budget-title {

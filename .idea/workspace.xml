@@ -4,13 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Gallery">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/client/ProfileElements/Budget.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/client/ProfileElements/Budget.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/ProfileElements/Budget.js" afterDir="false" />
+    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Presupuesto">
+      <change beforePath="$PROJECT_DIR$/src/components/client/ProfileElements/Budget.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/ProfileElements/Budget.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -255,7 +250,7 @@
       <workItem from="1746528754672" duration="8862000" />
       <workItem from="1746560402390" duration="764000" />
       <workItem from="1746568187980" duration="298000" />
-      <workItem from="1746624723719" duration="3363000" />
+      <workItem from="1746624723719" duration="3730000" />
     </task>
     <task id="LOCAL-00001" summary="Imagenes">
       <option name="closed" value="true" />
@@ -513,7 +508,15 @@
       <option name="project" value="LOCAL" />
       <updated>1746539242573</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="Presupuesto">
+      <option name="closed" value="true" />
+      <created>1746628767542</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1746628767542</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -547,6 +550,7 @@
     <MESSAGE value="Galleria" />
     <MESSAGE value="Terminos y privacidad" />
     <MESSAGE value="Gallery" />
-    <option name="LAST_COMMIT_MESSAGE" value="Gallery" />
+    <MESSAGE value="Presupuesto" />
+    <option name="LAST_COMMIT_MESSAGE" value="Presupuesto" />
   </component>
 </project>

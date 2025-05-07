@@ -82,21 +82,10 @@ function Budget() {
             ...prevState,
             [chapterId]: !prevState[chapterId],
         }));
-        if (openChapters[chapterId]) {
-            const updatedItems = { ...openItems };
-            budgetData?.chapters?.forEach(chapter => {
-                if (chapter.id === chapterId) {
-                    chapter.items?.forEach(item => {
-                        delete updatedItems[item.id];
-                    });
-                }
-            });
-            setOpenItems(updatedItems);
-        }
     };
 
     const toggleItem = (itemId) => {
-        setOpenItems(prevState => ({
+        setOpenItems((prevState) => ({
             ...prevState,
             [itemId]: !prevState[itemId],
         }));
@@ -104,8 +93,8 @@ function Budget() {
 
     const handleShowAllChapters = () => {
         if (showAllChapters) {
-            setOpenChapters({}); // Colapsar todos los capítulos
-            setOpenItems({});    // Colapsar todos los items
+            setOpenChapters({});
+            setOpenItems({});
         }
         setShowAllChapters(!showAllChapters);
     };
@@ -133,7 +122,7 @@ function Budget() {
     let chaptersToDisplay = budgetData.chapters || [];
     const numberOfChapters = chaptersToDisplay.length;
     if (!showAllChapters && numberOfChapters > 10) {
-        chaptersToDisplay = chaptersToDisplay.slice(0, 10); // Muestra los primeros 10
+        chaptersToDisplay = chaptersToDisplay.slice(0, 10);
     }
 
     return (
@@ -155,12 +144,10 @@ function Budget() {
                                         chapter.items.map(item => (
                                             <li key={item.id} className="item-item">
                                                 <button
-                                                    onClick={() => {
-                                                        if (item.amount) {
-                                                            toggleItem(item.id);
-                                                        }
-                                                    }}
-                                                    className={`item-button ${openItems[item.id] ? 'open' : ''} ${item.amount ? 'has-details' : ''}`}
+                                                    onClick={() => toggleItem(item.id)}
+                                                    className={`item-button ${
+                                                        openItems[item.id] ? "open" : ""
+                                                    } ${item.amount ? "has-details" : ""}`}
                                                 >
                                                     {item.description}
                                                     {item.amount ? (openItems[item.id] ? '▼' : '▶') : ''}

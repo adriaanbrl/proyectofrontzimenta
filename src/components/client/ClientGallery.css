@@ -2,7 +2,7 @@
 .client-gallery-container {
     padding: 20px;
     font-family: sans-serif;
-    margin-bottom: 30px;
+    margin-bottom: 60px;
 }
 
 .gallery-title {
@@ -20,64 +20,124 @@
     margin-top: 15px;
 }
 
-.room-group {
-    margin-bottom: 30px;
-}
-
-.room-title {
-    color: #f5922c;
-    border-bottom: 2px solid #f5922c;
-    padding-bottom: 10px;
-    margin-bottom: 15px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.image-grid {
+.room-cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Reducido el minmax para más flexibilidad */
-    gap: 15px; /* Reducido el gap ligeramente */
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px; /* Añade espacio entre la rejilla de tarjetas y el footer */
+}
+
+.gallery-footer {
+    text-align: center;
+    margin-top: 20px; /* Espacio entre la última tarjeta y el footer */
+}
+
+
+.gallery-footer .footer-title {
+    font-size: 1.1em;
+    color: #555;
+    margin-top: 10px;
+}
+
+.room-card {
+    border: 1px solid #e0e0e0; /* Borde más claro */
+    border-radius: 10px; /* Bordes más redondeados */
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08); /* Sombra más suave */
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.3s ease; /* Transición suave para la sombra */
+}
+
+.room-card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12); /* Sombra más pronunciada al pasar el ratón */
+}
+
+.card-header {
+    cursor: pointer;
+}
+
+.card-image {
+    width: 100%;
+    height: 220px; /* Ligeramente más alto */
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.3s ease-in-out; /* Transición para el efecto hover de la imagen */
+}
+
+.card-header:hover .card-image {
+    transform: scale(1.03); /* Ligeramente zoom al pasar el ratón */
+}
+
+.card-info {
+    padding: 15px;
+    text-align: center;
+    background-color: #f9f9f9; /* Fondo ligeramente grisáceo */
+}
+
+.card-title {
+    font-size: 1.3em; /* Ligeramente más grande */
+    margin-bottom: 8px;
+    color: #444;
+    font-weight: 500; /* Ligeramente más grueso */
+}
+
+.card-image-count {
+    font-size: 0.95em;
+    color: #777;
+}
+
+.image-panel {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); /* Miniaturas ligeramente más pequeñas */
+    gap: 8px; /* Menos espacio entre miniaturas */
+    padding: 10px; /* Menos padding */
+    background-color: #fff; /* Fondo blanco */
+    border-top: 1px solid #eee;
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease-in-out;
-    padding: 10px; /* Añadido un poco de padding interno */
 }
 
-.image-grid.expanded {
-    max-height: 2000px; /* Aumentado el max-height para más imágenes */
-    padding-top: 15px;
+.image-panel.expanded {
+    max-height: 400px; /* Altura máxima ligeramente reducida */
 }
 
-.image-item {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-}
-
-.gallery-image {
+.panel-image {
     width: 100%;
     height: auto;
     display: block;
-    border-bottom: 1px solid #eee;
+    border-radius: 6px; /* Bordes más redondeados para las miniaturas */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* Sombra suave para las miniaturas */
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Transiciones para el hover de las miniaturas */
 }
 
-.image-details {
-    padding: 10px; /* Reducido el padding de los detalles */
-    text-align: center;
+.panel-image:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.image-title {
-    font-size: 1em; /* Reducido el tamaño del título */
-    margin-bottom: 3px; /* Reducido el margen inferior del título */
-    color: #333;
+/* Estilos para el lightbox */
+.lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85); /* Fondo ligeramente más oscuro */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    cursor: pointer;
 }
 
-.image-room-id {
-    font-size: 0.8em; /* Reducido el tamaño del ID de la habitación */
-    color: #777;
+.lightbox-image {
+    max-width: 96%; /* Ligeramente más grande */
+    max-height: 96%; /* Ligeramente más grande */
+    object-fit: contain;
+    border-radius: 8px; /* Bordes redondeados en la imagen del lightbox */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada en el lightbox */
 }

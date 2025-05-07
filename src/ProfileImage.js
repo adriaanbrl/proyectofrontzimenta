@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { PersonCircle } from 'react-bootstrap-icons'; // Import the icon
+import { PersonCircle } from 'react-bootstrap-icons';
 
 function ProfileImage({ username }) {
     const [profileImageUrl, setProfileImageUrl] = useState('');
-    const backendURL = 'http://localhost:8080'; // Reemplaza con la URL de tu backend
+    const backendURL = 'http://localhost:8080';
 
 
     useEffect(() => {
@@ -16,7 +16,7 @@ function ProfileImage({ username }) {
                     setProfileImageUrl(imageUrl);
                 } else if (response.status === 404) {
                     console.log('Imagen de perfil no encontrada para este usuario.');
-                    setProfileImageUrl(''); // Set to empty to trigger the icon
+                    setProfileImageUrl(''); 
                 } else {
                     console.error('Error al cargar la imagen de perfil:', response.status);
                 }

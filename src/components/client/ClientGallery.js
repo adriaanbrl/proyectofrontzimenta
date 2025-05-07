@@ -10,6 +10,7 @@ function ClientGallery() {
     const [loadingImages, setLoadingImages] = useState(true);
     const [errorImages, setErrorImages] = useState(null);
     const [expandedRoom, setExpandedRoom] = useState(null);
+    const [selectedImage, setSelectedImage] = useState(null);
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
@@ -72,8 +73,19 @@ function ClientGallery() {
     }, [buildingIdFromToken]);
 
     const toggleRoomExpansion = (roomId) => {
-        setExpandedRoom(expandedRoom === roomId ? null : roomId);
+        setExpandedRoom(prevExpandedRoom => (prevExpandedRoom === roomId ? null : roomId));
+        setSelectedImage(null);
     };
+
+    const handleImageClick = (image) => {
+        setSelectedImage(image);
+    };
+
+    const closeLightbox = () => {
+        setSelectedImage(null);
+    };
+
+    const lastRoomId = Object.keys(groupedImages)[Object.keys(groupedImages).length - 1];
 
     return (
         <div className="client-gallery-container">
@@ -83,37 +95,57 @@ function ClientGallery() {
             {loadingImages && !errorImages && <p className="loading-message">Cargando imágenes...</p>}
             {errorImages && <p className="error-message">{errorImages}</p>}
             {!loadingBuildingId && !errorBuildingId && !loadingImages && !errorImages && Object.keys(groupedImages).length > 0 ? (
-                Object.entries(groupedImages).map(([roomId, roomData]) => (
-                    <div key={roomId} className="room-group">
-                        <h2 className="room-title" onClick={() => toggleRoomExpansion(roomId)} style={{ cursor: 'pointer' }}>
-                            {roomData.name} ({roomData.images.length})
-                        </h2>
-                        {expandedRoom === roomId && (
-                            <div className="image-grid expanded">
-                                {roomData.images.map(image => (
-                                    <div key={image.id} className="image-item">
-                                        {image.imageBase64 && (
+                <div className="room-cards-grid">
+                    {Object.entries(groupedImages).map(([roomId, roomData]) => (
+                        <React.Fragment key={roomId}>
+                            <div className="room-card">
+                                <div className="card-header" onClick={() => toggleRoomExpansion(roomId)}>
+                                    {roomData.images[0]?.imageBase64 && (
+                                        <div
+                                            className="card-image"
+                                            style={{ backgroundImage: `url(${roomData.images[0].imageBase64})` }}
+                                        ></div>
+                                    )}
+                                    <div className="card-info">
+                                        <h2 className="card-title">{roomData.name}</h2>
+                                        <p className="card-image-count">{roomData.images.length} imágenes</p>
+                                    </div>
+                                </div>
+                                {expandedRoom === roomId && (
+                                    <div className={`image-panel expanded`}>
+                                        {roomData.images.map(image => (
                                             <img
+                                                key={image.id}
                                                 src={image.imageBase64}
                                                 alt={image.title || 'Imagen'}
-                                                className="gallery-image"
+                                                className="panel-image"
+                                                onClick={() => handleImageClick(image)}
+                                                style={{ cursor: 'pointer' }}
                                             />
-                                        )}
-                                        <div className="image-details">
-                                            {image.title && <h3 className="image-title">{image.title}</h3>}
-                                            {image.roomId && <p className="image-room-id">Habitación: {image.roomId}</p>}
-                                        </div>
+                                        ))}
                                     </div>
-                                ))}
+                                )}
                             </div>
-                        )}
-                    </div>
-                ))
+                            {roomId === lastRoomId && (
+                                <div className="gallery-footer">
+                                    <hr className="footer-line" />
+                                    <h3 className="footer-title">Planos</h3>
+                                </div>
+                            )}
+                        </React.Fragment>
+                    ))}
+                </div>
             ) : (!loadingBuildingId && !errorBuildingId && !loadingImages && !errorImages && (
                 <p className="no-images">No hay imágenes para este edificio.</p>
             ))}
             {!loadingBuildingId && !errorBuildingId && !buildingIdFromToken && (
                 <p className="no-id">ID del edificio no disponible.</p>
+            )}
+
+            {selectedImage && (
+                <div className="lightbox" onClick={closeLightbox}>
+                    <img src={selectedImage.imageBase64} alt={selectedImage.title || 'Imagen grande'} className="lightbox-image" />
+                </div>
             )}
         </div>
     );

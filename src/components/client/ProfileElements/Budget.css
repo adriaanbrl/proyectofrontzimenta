@@ -1,0 +1,142 @@
+.budget-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 30px;
+    background-color: #fdf5e6; /* More subtle background */
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Slightly stronger shadow */
+    max-width: 800px;
+    margin: 30px auto; /* Increased top margin for better spacing */
+}
+
+.budget-title {
+    color: #f5922c; /* Your specified orange */
+    text-align: center;
+    margin-bottom: 25px; /* Slightly more spacing */
+    font-size: 2.2em; /* Slightly larger title */
+    font-weight: bold; /* Make the title stand out */
+}
+
+.chapters-list {
+    list-style: none;
+    padding: 0;
+}
+
+.chapter-item {
+    margin-bottom: 15px; /* Adjusted spacing */
+    border: 1px solid #e0e0e0; /* Lighter border */
+    border-radius: 12px;
+    background-color: #fff;
+    overflow: hidden; /* To contain rounded corners of button */
+}
+
+.chapter-button {
+    background-color: #f5922c; /* Your specified orange */
+    color: white;
+    padding: 15px 20px; /* Increased padding */
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    text-align: left;
+    transition: background-color 0.3s ease; /* Smoother transition */
+    font-size: 1.15em; /* Slightly larger font */
+}
+
+.chapter-button:hover {
+    background-color: #e67e22; /* Slightly darker orange on hover */
+}
+
+.chapter-button.open {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.items-list {
+    list-style: none;
+    padding: 10px 0; /* Added some vertical padding */
+    margin-top: 0;
+    border-left: 5px solid #f5922c; /* More prominent accent color */
+    margin-left: 20px; /* Adjusted margin */
+    background-color: #f9f9f9; /* Light background for the list */
+}
+
+.item-item {
+    padding: 12px 15px; /* Adjusted padding */
+    border-bottom: 1px solid #eee;
+}
+
+.item-item:last-child {
+    border-bottom: none;
+}
+
+.item-button {
+    background-color: #fff; /* White background for items */
+    color: #333; /* Darker text */
+    padding: 12px;
+    border: 1px solid #ddd; /* Subtle border */
+    border-radius: 8px; /* Slightly smaller radius */
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 95%;
+    text-align: left;
+    transition: background-color 0.2s ease;
+}
+
+.item-button:hover {
+    background-color: #f0f0f0;
+}
+
+.item-button.open {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.item-details {
+    margin-left: 20px;
+    font-size: 0.95em; /* Slightly larger details text */
+    color: #666;
+    padding-top: 8px; /* Added some top padding */
+}
+
+.view-more-button {
+    background-color: #f5922c; /* Your specified orange */
+    color: white;
+    padding: 12px 20px; /* Adjusted padding */
+    border: none;
+    border-radius: 10px; /* Adjusted radius */
+    cursor: pointer;
+    margin-top: 25px; /* Increased top margin */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    transition: background-color 0.2s ease;
+    font-size: 1.1em;
+    font-weight: bold; /* Make the button stand out */
+}
+
+.view-more-button:hover {
+    background-color: #e67e22; /* Slightly darker orange on hover */
+}
+
+.loading,
+.error,
+.no-data {
+    text-align: center;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-top: 20px;
+    background-color: #fff;
+}
+
+.error {
+    color: #c62828; /* Darker red */
+    background-color: #ffebee; /* Lighter red background */
+    border-color: #ef9a9a; /* Lighter red border */
+}

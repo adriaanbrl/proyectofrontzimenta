@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Container, Row, Col, Button, Card, Alert, Spinner } from "react-bootstrap";
+import { Container, Row, Col, Button, Card, Alert, Spinner, Modal } from "react-bootstrap";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import "./EventCalendar.css";
 import { useNavigate } from "react-router-dom";
@@ -15,7 +15,8 @@ const EventCalendar = () => {
   const [error, setError] = useState(null);
   const [diasConEventos, setDiasConEventos] = useState(new Set());
   const [diasPasadosConEventos, setDiasPasadosConEventos] = useState(new Set());
-  const cardRefs = useRef({});
+  const [modalVisible, setModalVisible] = useState(false);
+  const [eventoModal, setEventoModal] = useState(null);
 
   const diasSemana = ["L", "M", "X", "J", "V", "S", "D"];
   const meses = [
@@ -75,11 +76,9 @@ const EventCalendar = () => {
               evento.fecha.toDateString() === fechaSeleccionadaCalendario.toDateString()
       );
 
-      if (eventoParaFecha && cardRefs.current[eventoParaFecha.id]) {
-        cardRefs.current[eventoParaFecha.id].scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
+      if (eventoParaFecha) {
+        setEventoModal(eventoParaFecha);
+        setModalVisible(true);
       }
     }
   };
@@ -100,6 +99,11 @@ const EventCalendar = () => {
 
   const handleGoBack = () => {
     navigate(-1);
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    setEventoModal(null);
   };
 
   useEffect(() => {
@@ -137,7 +141,6 @@ const EventCalendar = () => {
     setEventosProximos([]);
     setDiasConEventos(new Set());
     setDiasPasadosConEventos(new Set());
-    cardRefs.current = {}; // Resetear las referencias al cargar nuevos eventos
 
     const token = localStorage.getItem("authToken");
 
@@ -209,7 +212,7 @@ const EventCalendar = () => {
   if (loading) {
     return (
         <Container className="calendario-eventos p-3">
-            <Spinner animation="border" size="sm" /> Cargando eventos...
+          <Spinner animation="border" size="sm" /> Cargando eventos...
         </Container>
     );
   }
@@ -304,10 +307,15 @@ const EventCalendar = () => {
                         } ${diasConEventos.has(dia) ? "dia-con-evento" : ""}`}
                         style={
                           diasConEventos.has(dia)
-                              ? { backgroundColor: "#f5922c", borderColor: "#f5922c", color: "white" }
-                              : {}
+                              ? { backgroundColor: "#f5922c", borderColor: "#f5922c", color: "white", cursor: 'pointer' }
+                              : { cursor: 'pointer' }
                         }
-                        onClick={() => seleccionarFecha(dia)}
+                        onClick={() => {
+                          if (diasConEventos.has(dia)) {
+                            seleccionarFecha(dia);
+                          }
+                        }}
+                        disabled={!diasConEventos.has(dia)}
                     >
                       {dia}
                     </Button>
@@ -326,16 +334,13 @@ const EventCalendar = () => {
           </h2>
           {eventosProximos.map((evento, index) => (
               <Card
-                  key={evento.id} // Asegúrate de que cada evento tenga un ID único
+                  key={evento.id}
                   className="mb-2 evento-card"
-                  ref={(el) => (cardRefs.current[evento.id] = el)} // Asignar referencia a la card
-                  onClick={() => navegarAlMesEvento(evento)} // Añadir onClick a la Card
-                  style={{ cursor: "pointer" }} // Opcional: cambiar el cursor para indicar que es clickable
+                  onClick={() => navegarAlMesEvento(evento)}
+                  style={{ cursor: "pointer" }}
               >
                 <Card.Body className="p-2 d-flex align-items-start">
                   <div className="fecha-evento me-5">
-                    {" "}
-                    {/* Añadimos de nuevo "me-3" */}
                     <p
                         className="dia-semana fw-bold mb-0"
                         style={{ color: "orange" }}
@@ -376,6 +381,36 @@ const EventCalendar = () => {
               </p>
           )}
         </div>
+
+        <Modal show={modalVisible} onHide={handleCloseModal}>
+          {eventoModal && (
+              <>
+                <Modal.Header closeButton>
+                  <Modal.Title>{eventoModal.title}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <div className="fecha-evento mb-3">
+                    <p className="dia-semana fw-bold mb-0" style={{ color: "orange" }}>
+                      {new Intl.DateTimeFormat("es-ES", { weekday: "long" }).format(new Date(eventoModal.fecha)).toUpperCase()}
+                    </p>
+                    <p className="dia-mes mb-0" style={{ color: "orange", fontSize: "2em" }}>
+                      {new Date(eventoModal.fecha).getDate()}
+                    </p>
+                    <p className="mes text-muted mb-0">
+                      {meses[new Date(eventoModal.fecha).getMonth()]} de {new Date(eventoModal.fecha).getFullYear()}
+                    </p>
+                  </div>
+                  <p>{eventoModal.description || "Sin descripción"}</p>
+                  {/* Puedes añadir más detalles del evento aquí si es necesario */}
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={handleCloseModal}>
+                    Cerrar
+                  </Button>
+                </Modal.Footer>
+              </>
+          )}
+        </Modal>
       </Container>
   );
 };

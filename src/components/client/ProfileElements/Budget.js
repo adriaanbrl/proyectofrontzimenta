@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import './Budget.css';
+import { Container, Button, ListGroup } from 'react-bootstrap';
 
 function Budget() {
     const [budgetData, setBudgetData] = useState(null);
@@ -126,56 +127,79 @@ function Budget() {
     }
 
     return (
-        <div className="budget-container">
+        <Container className="budget-container">
             <h1 className="budget-title">{budgetData.title}</h1>
-            <ul className="chapters-list">
+            <ListGroup className="chapters-list">
                 {Array.isArray(chaptersToDisplay) ? (
-                    chaptersToDisplay.map(chapter => (
-                        <li key={chapter.id} className="chapter-item">
-                            <button
-                                onClick={() => toggleChapter(chapter.id)}
-                                className={`chapter-button ${openChapters[chapter.id] ? 'open' : ''}`}
-                            >
-                                {chapter.title} {openChapters[chapter.id] ? '▼' : '▶'}
-                            </button>
-                            {openChapters[chapter.id] && (
-                                <ul className="items-list">
-                                    {chapter.items && Array.isArray(chapter.items) ? (
-                                        chapter.items.map(item => (
-                                            <li key={item.id} className="item-item">
-                                                <button
-                                                    onClick={() => toggleItem(item.id)}
-                                                    className={`item-button ${
-                                                        openItems[item.id] ? "open" : ""
-                                                    } ${item.amount ? "has-details" : ""}`}
-                                                >
-                                                    {item.description}
-                                                    {item.amount ? (openItems[item.id] ? '▼' : '▶') : ''}
-                                                </button>
-                                                {openItems[item.id] && item.amount && (
-                                                    <div className="item-details">
-                                                        Importe: {item.amount} €
-                                                    </div>
-                                                )}
-                                            </li>
-                                        ))
-                                    ) : (
-                                        <li className="no-items">No hay partidas para este capítulo.</li>
-                                    )}
-                                </ul>
-                            )}
-                        </li>
-                    ))
+                    chaptersToDisplay.map(chapter => {
+                        // Calcular el total del capítulo
+                        const chapterTotal = chapter.items ? chapter.items.reduce((sum, item) => sum + parseFloat(item.amount || 0), 0) : 0;
+
+                        return (
+                            <ListGroup.Item key={chapter.id} className="chapter-item">
+                                <Button
+                                    variant="primary"
+                                    onClick={() => toggleChapter(chapter.id)}
+                                    className={`chapter-button ${openChapters[chapter.id] ? 'open' : ''}`}
+                                    block
+                                    aria-expanded={openChapters[chapter.id]}
+                                    aria-controls={`chapter-${chapter.id}`}
+                                >
+                                    {chapter.title} {openChapters[chapter.id] ? '▼' : '▶'}
+                                </Button>
+                                {openChapters[chapter.id] && (
+                                    <ListGroup className="items-list" id={`chapter-${chapter.id}`}>
+                                        {chapter.items && Array.isArray(chapter.items) ? (
+                                            chapter.items.map(item => (
+                                                <ListGroup.Item key={item.id} className="item-item">
+                                                    <Button
+                                                        variant="light"
+                                                        onClick={() => toggleItem(item.id)}
+                                                        className={`item-button ${
+                                                            openItems[item.id] ? "open" : ""
+                                                        } ${item.amount ? "has-details" : ""}`}
+                                                        block
+                                                        aria-expanded={openItems[item.id]}
+                                                        aria-controls={`item-${item.id}`}
+                                                    >
+                                                        {item.title}
+                                                        {item.amount ? (openItems[item.id] ? '▼' : '▶') : ''}
+                                                    </Button>
+                                                    {openItems[item.id] && item.amount && (
+                                                        <div className="item-details" id={`item-${item.id}`}>
+                                                            Importe: {item.amount} €
+                                                        </div>
+                                                    )}
+                                                </ListGroup.Item>
+                                            ))
+                                        ) : (
+                                            <ListGroup.Item className="no-items">No hay partidas para este capítulo.</ListGroup.Item>
+                                        )}
+                                        {openChapters[chapter.id] && (
+                                            <div className="chapter-total">
+                                                Total Capítulo: {chapterTotal.toFixed(2)} €
+                                            </div>
+                                        )}
+                                    </ListGroup>
+                                )}
+                                {!openChapters[chapter.id] && (
+                                    <div className="chapter-total-collapsed">
+                                        Total Capítulo: {chapterTotal.toFixed(2)} €
+                                    </div>
+                                )}
+                            </ListGroup.Item>
+                        );
+                    })
                 ) : (
-                    <li className="error">Error: Los datos del presupuesto no tienen el formato esperado.</li>
+                    <ListGroup.Item className="error">Error: Los datos del presupuesto no tienen el formato esperado.</ListGroup.Item>
                 )}
-            </ul>
+            </ListGroup>
             {numberOfChapters > 10 && (
-                <button className="view-more-button" onClick={handleShowAllChapters}>
+                <Button variant="outline-secondary" className="view-more-button" onClick={handleShowAllChapters}>
                     Ver {showAllChapters ? 'menos' : 'más'} capítulos
-                </button>
+                </Button>
             )}
-        </div>
+        </Container>
     );
 }
 

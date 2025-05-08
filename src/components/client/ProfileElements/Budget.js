@@ -132,8 +132,11 @@ function Budget() {
             <ListGroup className="chapters-list">
                 {Array.isArray(chaptersToDisplay) ? (
                     chaptersToDisplay.map(chapter => {
-                        // Calcular el total del capítulo
-                        const chapterTotal = chapter.items ? chapter.items.reduce((sum, item) => sum + parseFloat(item.amount || 0), 0) : 0;
+                        // Calcular el total del capítulo (incluyendo el amount del capítulo si existe)
+                        let chapterTotal = parseFloat(chapter.amount || 0); // Inicializar con el amount del capítulo
+                        if (chapter.items && Array.isArray(chapter.items)) {
+                            chapterTotal += chapter.items.reduce((sum, item) => sum + parseFloat(item.amount || 0), 0);
+                        }
 
                         return (
                             <ListGroup.Item key={chapter.id} className="chapter-item">

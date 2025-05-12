@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './LegDoc.css';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Container, Row, Col, Button, Alert, Spinner, Table } from 'react-bootstrap';
+import { Container, Row, Col, Button, Alert , Table } from 'react-bootstrap';
 import { ChevronLeft, File } from 'lucide-react'; // Correct import for File icon
 
 function LegDoc() {
@@ -133,7 +133,6 @@ function LegDoc() {
                         <h1 className="leg-doc-title" style={{ margin: 0 }}>Documentación Legal</h1>
                     </div>
                     {error && <Alert variant="danger">{error}</Alert>}
-                    {loading && !error && <p><Spinner animation="border" size="sm" /> Cargando documentos...</p>}
                     {pdfDataList.length > 0 && (
                         <Table striped bordered hover responsive>
                             <thead>

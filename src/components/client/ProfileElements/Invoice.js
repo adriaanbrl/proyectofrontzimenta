@@ -128,9 +128,10 @@ function InvoicesDoc() {
                     </div>
                     {error && <Alert variant="danger">{error}</Alert>}
                     {loading && !error && (
-                        <p>
-                            <Spinner animation="border" size="sm" /> Cargando facturas...
-                        </p>
+                        <>
+                        <p> Cargando facturas...</p>
+                        <Spinner animation="border" size="sm" />
+                        </>
                     )}
                     {pdfDataListWithInfo.length > 0 && (
                         <Table striped bordered hover responsive>

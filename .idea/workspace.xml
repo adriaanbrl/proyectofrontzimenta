@@ -6,8 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Calendario">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/client/EventCalendar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/EventCalendar.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/shared/LoginForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/shared/LoginForm.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,12 +30,12 @@
     &quot;assignee&quot;: &quot;adriaanbrl&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/adriaanbrl/proyectofrontzimenta.git&quot;,
-    &quot;accountId&quot;: &quot;f2ccd8d9-5fe2-4848-bc7b-ee678ce5fbfd&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/adriaanbrl/proyectofrontzimenta.git",
+    "accountId": "f2ccd8d9-5fe2-4848-bc7b-ee678ce5fbfd"
   }
-}</component>
+}]]></component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -255,7 +253,7 @@
       <workItem from="1746624723719" duration="3956000" />
       <workItem from="1746686128649" duration="6473000" />
       <workItem from="1746786182187" duration="1880000" />
-      <workItem from="1747031427476" duration="779000" />
+      <workItem from="1747031427476" duration="1749000" />
     </task>
     <task id="LOCAL-00001" summary="Imagenes">
       <option name="closed" value="true" />
@@ -537,7 +535,23 @@
       <option name="project" value="LOCAL" />
       <updated>1746686576203</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="Calendario">
+      <option name="closed" value="true" />
+      <created>1747032548538</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1747032548538</updated>
+    </task>
+    <task id="LOCAL-00037" summary="Calendario">
+      <option name="closed" value="true" />
+      <created>1747032570444</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1747032570445</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

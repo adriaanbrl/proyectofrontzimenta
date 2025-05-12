@@ -270,9 +270,9 @@ const ClientView = () => {
                       <div style={{ width: '12px', height: '12px', backgroundColor: chartData.datasets[0].backgroundColor[0], marginRight: '5px' }}></div>
                       <div className="fw-bold" style={{ fontSize: '0.9rem' }}>Pagado</div>
                     </div>
-                    <div className="d-flex align-items-center">
+                    <div className="d-flex align-items-center mb-2">
                       <div style={{ width: '12px', height: '12px', backgroundColor: chartData.datasets[0].backgroundColor[1], marginRight: '5px' }}></div>
-                      <div className="text-muted" style={{ fontSize: '0.9rem' }}>Pendiente</div>
+                      <div className="fw-bold" style={{ fontSize: '0.9rem' }}>Pendiente</div>
                     </div>
                   </div>
                 </div>

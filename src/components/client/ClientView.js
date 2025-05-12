@@ -253,7 +253,7 @@ const ClientView = () => {
         </Row>
         <Row>
           <Col md={6}>
-            <Card className="shadow-sm">
+            <Card className="shadow-sm">   
               <Card.Body>
                 <Card.Title className="fs-4 fw-bold text-start mb-3">PRECIO ESTIMADO</Card.Title>
                 <Card.Text className="fs-2 fw-bold text-warning text-start">{formattedEstimatedPrice}</Card.Text>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Container, Row, Col, Card, ProgressBar, ListGroup, Button, Spinner, Alert, Modal } from 'react-bootstrap';
-import { GeoAltFill, CalendarFill } from 'react-bootstrap-icons';
+import { GeoAltFill, CalendarFill, EyeFill, EyeSlashFill } from 'react-bootstrap-icons';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { Pie } from 'react-chartjs-2';
@@ -30,6 +30,11 @@ const ClientView = () => {
   const [invoiceAmount, setInvoiceAmount] = useState(null);
   const [invoiceLoading, setInvoiceLoading] = useState(false);
   const [invoiceError, setInvoiceError] = useState(null);
+  const [showEstimatedPrice, setShowEstimatedPrice] = useState(true);
+
+  const toggleEstimatedPriceVisibility = () => {
+    setShowEstimatedPrice(!showEstimatedPrice);
+  };
 
   const fetchEvents = async (buildingId, year, month) => {
     setEventLoading(true);
@@ -186,6 +191,9 @@ const ClientView = () => {
   const pendingAmountValue = estimatedPrice - paidAmount;
   const formattedPendingAmountForGraph = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(pendingAmountValue);
   const formattedPaidAmountForGraph = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(paidAmount);
+  const formattedEstimatedPrice = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(estimatedPrice);
+  const formattedBuildingStartDate = formatDate(buildingStartDateFromToken);
+  const formattedBuildingEndDate = formatDate(buildingEndDateFromToken);
 
   const formattedPlazos = deadlines ? deadlines.map(dateStr => ({ date: new Date(dateStr).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' }).replace(/ de /g, ' ') })) : [];
   const formattedFasesProyecto = projectPhases ? projectPhases.map(phase => ({
@@ -193,9 +201,6 @@ const ClientView = () => {
     startDate: phase.fechaInicio ? new Date(phase.fechaInicio) : null,
     endDate: phase.fechaFin ? new Date(phase.fechaFin) : null,
   })) : [];
-  const formattedEstimatedPrice = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(estimatedPrice);
-  const formattedBuildingStartDate = formatDate(buildingStartDateFromToken);
-  const formattedBuildingEndDate = formatDate(buildingEndDateFromToken);
 
   const timelineItems = [...(formattedFasesProyecto.map(fase => ({
     type: 'fase',
@@ -253,16 +258,23 @@ const ClientView = () => {
         </Row>
         <Row>
           <Col md={6}>
-            <Card className="shadow-sm">   
+            <Card className="shadow-sm">
               <Card.Body>
-                <Card.Title className="fs-4 fw-bold text-start mb-3">PRECIO ESTIMADO</Card.Title>
-                <Card.Text className="fs-2 fw-bold text-warning text-start">{formattedEstimatedPrice}</Card.Text>
+                <Card.Title className="fs-4 fw-bold text-start mb-3 d-flex align-items-center">
+                  <div onClick={toggleEstimatedPriceVisibility} style={{ cursor: 'pointer', marginRight: '10px' }}>
+                    {showEstimatedPrice ? <EyeFill size={20} /> : <EyeSlashFill size={20} />}
+                  </div>
+                  PRECIO ESTIMADO
+                </Card.Title>
+                <Card.Text className={`fs-2 fw-bold text-warning text-start ${!showEstimatedPrice ? 'blur' : ''}`}>
+                  {formattedEstimatedPrice}
+                </Card.Text>
                 <div className="d-flex align-items-center mt-3">
                   <div className="position-relative" style={{ width: '240px', height: '240px' }}>
                     <Pie data={chartData} options={chartOptions} />
                     <div className="position-absolute top-50 start-50 translate-middle text-center">
-                      <div className="fw-bold" style={{ fontSize: '0.8rem' }}>{formattedPendingAmountForGraph}</div>
-                      <div style={{ fontSize: '0.7rem', color: '#6c757d' }}>{formattedPaidAmountForGraph}</div>
+                      <div className="fw-bold" style={{ fontSize: '0.8rem' }}></div>
+                      <div style={{ fontSize: '0.7rem', color: '#6c757d' }}></div>
                     </div>
                   </div>
                   <div className="ms-3">

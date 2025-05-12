@@ -12,8 +12,7 @@ function LoginForm() {
   const [error, setError] = useState(""); // Estado para almacenar mensajes de error durante el inicio de sesión.
   const [passwordVisible, setPasswordVisible] = useState(false); // Estado para controlar la visibilidad de la contraseña.
   const navigate = useNavigate(); // Hook para la navegación entre rutas.
-
-  // Función para actualizar el estado 'username' cuando el valor del input cambia.
+  
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
   };
@@ -27,8 +26,7 @@ function LoginForm() {
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
-
-  // Función asíncrona que se ejecuta al enviar el formulario de inicio de sesión.
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");

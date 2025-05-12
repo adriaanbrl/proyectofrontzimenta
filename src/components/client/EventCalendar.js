@@ -401,7 +401,6 @@ const EventCalendar = () => {
                     </p>
                   </div>
                   <p>{eventoModal.description || "Sin descripción"}</p>
-                  {/* Puedes añadir más detalles del evento aquí si es necesario */}
                 </Modal.Body>
                 <Modal.Footer>
                   <Button variant="secondary" onClick={handleCloseModal}>

@@ -4,8 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Presupuesto">
+    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Calendario">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/client/EventCalendar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/EventCalendar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/shared/LoginForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/shared/LoginForm.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -251,7 +253,9 @@
       <workItem from="1746560402390" duration="764000" />
       <workItem from="1746568187980" duration="298000" />
       <workItem from="1746624723719" duration="3956000" />
-      <workItem from="1746686128649" duration="325000" />
+      <workItem from="1746686128649" duration="6473000" />
+      <workItem from="1746786182187" duration="1880000" />
+      <workItem from="1747031427476" duration="779000" />
     </task>
     <task id="LOCAL-00001" summary="Imagenes">
       <option name="closed" value="true" />
@@ -525,7 +529,15 @@
       <option name="project" value="LOCAL" />
       <updated>1746629198577</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="Calendario">
+      <option name="closed" value="true" />
+      <created>1746686576203</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1746686576203</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -553,13 +565,13 @@
     <MESSAGE value="Calendario actualizado" />
     <MESSAGE value="Facturas" />
     <MESSAGE value="Manual usuario, facturas y legislacion legal actualizado" />
-    <MESSAGE value="Calendario" />
     <MESSAGE value="Incidentes registro acabado" />
     <MESSAGE value="calendario" />
     <MESSAGE value="Galleria" />
     <MESSAGE value="Terminos y privacidad" />
     <MESSAGE value="Gallery" />
     <MESSAGE value="Presupuesto" />
-    <option name="LAST_COMMIT_MESSAGE" value="Presupuesto" />
+    <MESSAGE value="Calendario" />
+    <option name="LAST_COMMIT_MESSAGE" value="Calendario" />
   </component>
 </project>

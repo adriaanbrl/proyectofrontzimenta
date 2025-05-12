@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Container, Row, Col, Card, ProgressBar, ListGroup, Button, Spinner, Alert, Modal } from 'react-bootstrap';
-import { GeoAltFill, CalendarFill, ChevronLeft, ChevronRight } from 'react-bootstrap-icons'; // Changed import
+import { GeoAltFill, CalendarFill } from 'react-bootstrap-icons';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-// import "./EventCalendar.css"; // You might need to adjust the path or copy the CSS
+// import "./EventCalendar.css"; // Asegúrate de tener tus estilos CSS
 
 const ClientView = () => {
   const [projectData, setProjectData] = useState(null);
@@ -19,8 +19,6 @@ const ClientView = () => {
   const [eventError, setEventError] = useState(null);
   const [eventMonth, setEventMonth] = useState(new Date()); // State for controlling displayed month
   const timelineRef = useRef(null);
-  const [isAtStart, setIsAtStart] = useState(true);
-  const [isAtEnd, setIsAtEnd] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [eventoModal, setEventoModal] = useState(null);
 
@@ -130,30 +128,6 @@ const ClientView = () => {
     fetchProjectDataAndEvents();
   }, [eventMonth]);
 
-  // Function to handle scrolling
-  const handleScroll = (e) => {
-    const { scrollLeft, scrollWidth, clientWidth } = e.target;
-    setIsAtStart(scrollLeft === 0);
-    setIsAtEnd(Math.abs(scrollWidth - clientWidth - scrollLeft) < 1);
-  };
-
-  // Function to scroll timeline
-  const scrollTimeline = (direction) => {
-    if (timelineRef.current) {
-      const scrollAmount = 200; // Adjust scroll amount as needed
-      timelineRef.current.scrollLeft += direction * scrollAmount;
-    }
-  };
-
-  // Function to change month and fetch new events
-  const changeMonth = (direction) => {
-    setEventMonth((prevMonth) => {
-      const newMonth = new Date(prevMonth);
-      newMonth.setMonth(prevMonth.getMonth() + direction);
-      return newMonth;
-    });
-  };
-
   const formatDate = (dateString) => {
     if (!dateString) return 'No disponible';
     try {
@@ -170,8 +144,8 @@ const ClientView = () => {
     setEventoModal(null);
   };
 
-  const handleEventClick = (event) => {
-    setEventoModal(event);
+  const handleEventClick = (item) => {
+    setEventoModal(item);
     setModalVisible(true);
   }
 
@@ -193,13 +167,34 @@ const ClientView = () => {
   const pendingAmount = estimatedPrice - paidAmount;
 
   const formattedPlazos = deadlines ? deadlines.map(dateStr => ({ date: new Date(dateStr).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' }).replace(/ de /g, ' ') })) : [];
-  const formattedFasesProyecto = projectPhases ? projectPhases.map(phase => ({ name: phase.nombre, progress: phase.porcentajeCompletado })) : [];
+  const formattedFasesProyecto = projectPhases ? projectPhases.map(phase => ({
+    name: phase.nombre,
+    startDate: phase.fechaInicio ? new Date(phase.fechaInicio) : null,
+    endDate: phase.fechaFin ? new Date(phase.fechaFin) : null,
+  })) : [];
   const formattedEstimatedPrice = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(estimatedPrice);
   const formattedPaidAmount = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(paidAmount);
   const formattedPendingAmount = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(pendingAmount);
   const formattedBuildingStartDate = formatDate(buildingStartDateFromToken);
   const formattedBuildingEndDate = formatDate(buildingEndDateFromToken);
 
+  // Combinar fases y eventos y ordenarlos por fecha
+  const timelineItems = [...(formattedFasesProyecto.map(fase => ({
+    type: 'fase',
+    date: fase.startDate,
+    title: fase.name, // Usar name como título para fases
+  }))), ...(events.map(evento => ({
+    type: 'evento',
+    date: new Date(evento.date),
+    title: evento.title,
+    description: evento.description
+  })))].sort((a, b) => (a.date ? a.date.getTime() : Infinity) - (b.date ? b.date.getTime() : Infinity));
+
+  const projectStart = buildingStartDateFromToken ? new Date(buildingStartDateFromToken) : null;
+  const projectEnd = buildingEndDateFromToken ? new Date(buildingEndDateFromToken) : null;
+
+  // Calcular la diferencia total en días del proyecto
+  const totalDays = projectStart && projectEnd ? (projectEnd.getTime() - projectStart.getTime()) / (1000 * 60 * 60 * 24) : 0;
 
   return (
       <Container className="mt-4">
@@ -252,92 +247,66 @@ const ClientView = () => {
 
         <Row className="mt-4">
           <Col md={12}>
-            <h2 className="fs-4 fw-bold text-start mb-3">FASES DEL PROYECTO</h2>
-            <div className="d-flex align-items-center position-relative">
-              <div className="progress w-100" style={{ height: '5px', backgroundColor: '#e0e0e0' }}>
-                {formattedFasesProyecto.map((phase, index) => (
-                    <div
-                        key={index}
-                        className="progress-bar"
-                        role="progressbar"
-                        style={{ width: `${phase.progress}%`, backgroundColor: '#ff8c00' }}
-                        aria-valuenow={phase.progress}
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                    ></div>
-                ))}
+            <h2 className="fs-4 fw-bold text-start mb-3">LÍNEA DE TIEMPO DEL PROYECTO</h2>
+            <div style={{ overflowX: 'auto' }}>
+              <div
+                  className="position-relative"
+                  style={{
+                    height: '60px',
+                    // Reducir ligeramente la longitud de la línea de tiempo
+                    width: `${Math.max(600, totalDays * 10)}px`,
+                  }}
+                  ref={timelineRef}
+              >
+                <div
+                    className="w-100 bg-secondary"
+                    style={{ height: '2px', position: 'absolute', top: '50%', transform: 'translateY(-50%)' }}
+                ></div>
+                {projectStart && projectEnd && timelineItems.map((item, index) => {
+                  if (!item.date) return null;
+
+                  const totalDuration = projectEnd.getTime() - projectStart.getTime();
+                  const itemOffset = item.date.getTime() - projectStart.getTime();
+                  const percentage = totalDuration > 0 ? (itemOffset / totalDuration) * 100 : 0;
+                  const position = Math.max(0, Math.min(100, percentage));
+
+                  const isFase = item.type === 'fase';
+                  const color = isFase ? 'bg-warning' : 'bg-info';
+
+                  const titleTopOffset = '-20px';
+                  const shouldShowTitle = true;
+
+                  return (
+                      <div
+                          key={index}
+                          className="position-absolute"
+                          style={{
+                            left: `${position}%`,
+                            transform: 'translateX(-50%)',
+                            top: '50%',
+                            cursor: 'pointer',
+                          }}
+                          onClick={() => handleEventClick(item)}
+                      >
+                        <div className={`rounded-circle`} style={{ width: '10px', height: '10px', backgroundColor: '#f5922c' }} title={item.title}></div>
+                        {shouldShowTitle && (
+                            <div
+                                style={{
+                                  position: 'absolute',
+                                  top: titleTopOffset,
+                                  left: '50%',
+                                  transform: 'translateX(-50%)',
+                                  fontSize: '0.8rem',
+                                  whiteSpace: 'nowrap',
+                                }}
+                            >
+                              {item.title}
+                            </div>
+                        )}
+                      </div>
+                  );
+                })}
               </div>
-              {formattedFasesProyecto.map((phase, index) => (
-                  <div
-                      key={index}
-                      className="position-absolute text-center"
-                      style={{ left: `${index * (100 / (formattedFasesProyecto.length - 1))}%`, transform: 'translateX(-50%)', bottom: '-20px' }}
-                  >
-                    <div className="rounded-circle bg-secondary" style={{ width: '15px', height: '15px' }}>
-                      {phase.progress === 100 && <div className="text-white fw-bold" style={{ fontSize: '0.8rem', marginTop: '-2px', marginLeft: '1px' }}>✓</div>}
-                    </div>
-                    <div style={{ fontSize: '0.8rem', color: '#6c757d' }}>{phase.name}</div>
-                  </div>
-              ))}
-            </div>
-          </Col>
-        </Row>
-
-        <Row className="mt-4">
-          <Col md={12}>
-            <h2 className="fs-4 fw-bold text-start mb-3">EVENTOS DEL PROYECTO</h2>
-            <div className="d-flex align-items-center mb-3">
-              <Button
-                  variant="link"
-                  onClick={() => changeMonth(-1)}
-                  style={{ color: "black" }}
-                  disabled={isAtStart}
-                  className={isAtStart ? 'opacity-50' : ''}
-              >
-                <ChevronLeft />
-              </Button>
-              <span className="mx-3 fw-bold" style={{ color: "black" }}>
-                            {eventMonth.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })}
-                        </span>
-              <Button
-                  variant="link"
-                  onClick={() => changeMonth(1)}
-                  style={{ color: "black" }}
-                  disabled={isAtEnd}
-                  className={isAtEnd ? 'opacity-50' : ''}
-              >
-                <ChevronRight />
-              </Button>
-            </div>
-
-            <div
-                className="d-flex flex-nowrap overflow-auto"
-                ref={timelineRef}
-                onScroll={handleScroll}
-                style={{ scrollBehavior: 'smooth' }}
-            >
-              {eventLoading && (
-                  <div className="mx-2">
-                    <Spinner animation="border" size="sm" /> Cargando eventos...
-                  </div>
-              )}
-              {eventError && <div className="mx-2 text-danger">Error: {eventError}</div>}
-              {!eventLoading && !eventError && events.length === 0 && (
-                  <div className="mx-2 text-muted">No hay eventos para mostrar en este mes.</div>
-              )}
-              {events.map((evento) => (
-                  <Card key={evento.id} className="mx-2" style={{ minWidth: '200px', cursor: 'pointer' }} onClick={() => handleEventClick(evento)}>
-                    <Card.Body className="p-2">
-                      <Card.Title className="small fw-bold mb-1">{evento.title}</Card.Title>
-                      <Card.Text className="small text-muted">
-                        Fecha: {formatDate(evento.fecha)}
-                      </Card.Text>
-                      <Card.Text className="small text-muted">
-                        {evento.description || "Sin descripción"}
-                      </Card.Text>
-                    </Card.Body>
-                  </Card>
-              ))}
             </div>
           </Col>
         </Row>
@@ -382,9 +351,9 @@ const ClientView = () => {
                 </Modal.Header>
                 <Modal.Body>
                   <div className="mb-3">
-                                <span className="fw-bold" style={{ color: "orange" }}>
-                                    {formatDate(eventoModal.fecha)}
-                                </span>
+                                 <span className="fw-bold" style={{ color: "orange" }}>
+                                     {formatDate(eventoModal.date || eventoModal.fecha)}
+                                 </span>
                   </div>
                   <p>{eventoModal.description || "Sin descripción"}</p>
                 </Modal.Body>
@@ -401,4 +370,3 @@ const ClientView = () => {
 };
 
 export default ClientView;
-

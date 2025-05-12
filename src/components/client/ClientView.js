@@ -242,7 +242,7 @@ const ClientView = () => {
         }
       }
     },
-  };
+  }
 
   return (
       <Container className="mt-4">
@@ -258,7 +258,7 @@ const ClientView = () => {
                 <Card.Title className="fs-4 fw-bold text-start mb-3">PRECIO ESTIMADO</Card.Title>
                 <Card.Text className="fs-2 fw-bold text-warning text-start">{formattedEstimatedPrice}</Card.Text>
                 <div className="d-flex align-items-center mt-3">
-                  <div className="position-relative" style={{ width: '120px', height: '120px' }}>
+                  <div className="position-relative" style={{ width: '240px', height: '240px' }}>
                     <Pie data={chartData} options={chartOptions} />
                     <div className="position-absolute top-50 start-50 translate-middle text-center">
                       <div className="fw-bold" style={{ fontSize: '0.8rem' }}>{formattedPendingAmountForGraph}</div>
@@ -266,8 +266,14 @@ const ClientView = () => {
                     </div>
                   </div>
                   <div className="ms-3">
-                    <div className="fw-bold" style={{ fontSize: '0.9rem' }}>Pendiente</div>
-                    <div className="text-muted" style={{ fontSize: '0.9rem' }}>Pagado</div>
+                    <div className="d-flex align-items-center mb-2">
+                      <div style={{ width: '12px', height: '12px', backgroundColor: chartData.datasets[0].backgroundColor[0], marginRight: '5px' }}></div>
+                      <div className="fw-bold" style={{ fontSize: '0.9rem' }}>Pagado</div>
+                    </div>
+                    <div className="d-flex align-items-center">
+                      <div style={{ width: '12px', height: '12px', backgroundColor: chartData.datasets[0].backgroundColor[1], marginRight: '5px' }}></div>
+                      <div className="text-muted" style={{ fontSize: '0.9rem' }}>Pendiente</div>
+                    </div>
                   </div>
                 </div>
               </Card.Body>

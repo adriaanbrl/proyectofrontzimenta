@@ -13,17 +13,17 @@ import "./Profile.css";
 import { jwtDecode } from "jwt-decode";
 import ProfileImage from "../../TestProfileImage.js";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios"; // Import axios
+import axios from "axios";
 
 export default function Profile() {
-  const [username, setUsername] = useState(""); // Estado para almacenar el nombre de usuario.
-  const [surname, setSurname] = useState(""); // Estado para almacenar el apellido del usuario.
-  const [buildingId, setBuildingId] = useState(""); // Estado para almacenar el ID del edificio del usuario.
-  const [building, setBuilding] = useState(""); // Estado para almacenar los datos del edificio.
-  const navigate = useNavigate(); // Hook para la navegación entre rutas.
-  const [showModal, setShowModal] = useState(false); // Estado para controlar la visibilidad del modal.
-  const [selectedImage, setSelectedImage] = useState(null); // Estado para almacenar la imagen seleccionada.
-  const fileInputRef = useRef(null); // Referencia al input de tipo archivo.
+  const [username, setUsername] = useState("");
+  const [surname, setSurname] = useState("");
+  const [buildingId, setBuildingId] = useState(""); 
+  const [building, setBuilding] = useState("");
+  const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const fileInputRef = useRef(null);
 
   const fetchBuildingData = async (building_id) => {
     try {

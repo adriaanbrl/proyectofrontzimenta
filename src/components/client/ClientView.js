@@ -374,51 +374,53 @@ const ClientView = () => {
    // Plugin personalizado para mostrar texto en el centro del Donut
   // Plugin personalizado para mostrar texto en el centro del Donut
  // Plugin personalizado para mostrar texto en el centro del Donut
- const centerTextPlugin = {
-  id: "centerText",
-  beforeDraw: (chart) => {
-    if (chart.config.options.plugins.centerText.display) {
-      const ctx = chart.ctx;
-      const paidAmountFormatted = new Intl.NumberFormat("es-ES", {
-        style: "currency",
-        currency: "EUR",
-      }).format(paidAmount);
-      const remainingAmount = estimatedPrice - paidAmount;
-      const remainingAmountFormatted = new Intl.NumberFormat("es-ES", {
-        style: "currency",
-        currency: "EUR",
-      }).format(remainingAmount);
+  const centerTextPlugin = {
+    id: "centerText",
+    beforeDraw: (chart) => {
+      if (chart.config.options.plugins.centerText.display) {
+        const ctx = chart.ctx;
+        const paidAmountFormatted = new Intl.NumberFormat("es-ES", {
+          style: "currency",
+          currency: "EUR",
+        }).format(paidAmount);
+        const remainingAmount = estimatedPrice - paidAmount;
+        const remainingAmountFormatted = new Intl.NumberFormat("es-ES", {
+          style: "currency",
+          currency: "EUR",
+        }).format(remainingAmount);
 
-      const textLines = [paidAmountFormatted, remainingAmountFormatted]; // Cambiamos el texto de abajo
-      const color = chart.config.options.plugins.centerText.color || "#000";
-      const fontStyle =
-        chart.config.options.plugins.centerText.fontStyle || "normal";
-      const fontSizes =
-        chart.config.options.plugins.centerText.fontSize || [20, 14]; // Aumentamos el tamaño del primero
+        const textLines = [paidAmountFormatted, remainingAmountFormatted]; // Cambiamos el texto de abajo
+        const color = chart.config.options.plugins.centerText.color || "#000";
+        const fontStyle =
+            chart.config.options.plugins.centerText.fontStyle || "normal";
+        const fontSizes =
+            chart.config.options.plugins.centerText.fontSize || [20, 14]; // Aumentamos el tamaño del primero
 
-      const defaultFontFamily = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"; // Fuente por defecto si no hay otra definida
-      const fontFamily = chart.config.options.font && chart.config.options.font.family ? chart.config.options.font.family : defaultFontFamily;
+        const defaultFontFamily = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"; // Fuente por defecto si no hay otra definida
+        const fontFamily = chart.config.options.font && chart.config.options.font.family ? chart.config.options.font.family : defaultFontFamily;
 
-      const font = (size) => `${fontStyle} ${size}px ${fontFamily}`;
+        const font = (size) => `${fontStyle} ${size}px ${fontFamily}`;
+        const colors = ["#ff8c00", "#e0e0e0"]; // Colores naranja y gris
+        const textX = chart.width / 2;
+        const textY = chart.height / 2;
+        const lineHeight = 25;
 
-      const textX = chart.width / 2;
-      const textY = chart.height / 2;
-      const lineHeight = 25; // Espacio entre líneas
+        ctx.save();
+        ctx.textAlign = "center"; // Añade esta línea para centrar horizontalmente
+        ctx.textBaseline = "middle"; // Añade esta línea para centrar verticalmente
 
-      ctx.save();
-      ctx.font = font(fontSizes[0]); // Fuente más grande para el pagado
-      ctx.fillStyle = color;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(textLines[0], textX, textY - lineHeight / 2); // Pagado
+        ctx.fillStyle = colors[0];
+        ctx.font = font(fontSizes[0]);
+        ctx.fillText(textLines[0], textX, textY - lineHeight / 2);
 
-      ctx.font = font(fontSizes[1]); // Fuente más pequeña para el restante
-      ctx.fillText(textLines[1], textX, textY + lineHeight / 2); // Total - Pagado
+        ctx.fillStyle = colors[1]; // Asegúrate de usar el color correcto para el segundo texto
+        ctx.font = font(fontSizes[1]);
+        ctx.fillText(textLines[1], textX, textY + lineHeight / 2);
 
-      ctx.restore();
-    }
-  },
-};
+        ctx.restore();
+      }
+    },
+  };
 
   // Registrar el plugin
   ChartJS.register(centerTextPlugin);

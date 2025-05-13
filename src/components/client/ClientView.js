@@ -371,9 +371,9 @@ const ClientView = () => {
     },
   };
 
-   // Plugin personalizado para mostrar texto en el centro del Donut
   // Plugin personalizado para mostrar texto en el centro del Donut
- // Plugin personalizado para mostrar texto en el centro del Donut
+  // Plugin personalizado para mostrar texto en el centro del Donut
+  // Plugin personalizado para mostrar texto en el centro del Donut
   const centerTextPlugin = {
     id: "centerText",
     beforeDraw: (chart) => {
@@ -392,12 +392,17 @@ const ClientView = () => {
         const textLines = [paidAmountFormatted, remainingAmountFormatted]; // Cambiamos el texto de abajo
         const color = chart.config.options.plugins.centerText.color || "#000";
         const fontStyle =
-            chart.config.options.plugins.centerText.fontStyle || "normal";
-        const fontSizes =
-            chart.config.options.plugins.centerText.fontSize || [20, 14]; // Aumentamos el tamaño del primero
+          chart.config.options.plugins.centerText.fontStyle || "normal";
+        const fontSizes = chart.config.options.plugins.centerText.fontSize || [
+          20, 14,
+        ]; // Aumentamos el tamaño del primero
 
-        const defaultFontFamily = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"; // Fuente por defecto si no hay otra definida
-        const fontFamily = chart.config.options.font && chart.config.options.font.family ? chart.config.options.font.family : defaultFontFamily;
+        const defaultFontFamily =
+          "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"; // Fuente por defecto si no hay otra definida
+        const fontFamily =
+          chart.config.options.font && chart.config.options.font.family
+            ? chart.config.options.font.family
+            : defaultFontFamily;
 
         const font = (size) => `${fontStyle} ${size}px ${fontFamily}`;
         const colors = ["#ff8c00", "#e0e0e0"]; // Colores naranja y gris
@@ -523,8 +528,8 @@ const ClientView = () => {
             <div
               className="position-relative"
               style={{
-                height: "60px",
-                width: `${Math.max(1, totalDays * 12)}px`,
+                height: "80px", // Aumentamos la altura para dar espacio a los títulos
+                width: `${Math.max(1, timelineItems.length * 80)}px`,
               }}
               ref={timelineRef}
             >
@@ -537,53 +542,49 @@ const ClientView = () => {
                   transform: "translateY(-50%)",
                 }}
               ></div>
-              {projectStart &&
-                projectEnd &&
-                timelineItems.map((item, index) => {
-                  if (!item.date) return null;
-                  const totalDuration =
-                    projectEnd.getTime() - projectStart.getTime();
-                  const itemOffset =
-                    item.date.getTime() - projectStart.getTime();
-                  const percentage =
-                    totalDuration > 0 ? (itemOffset / totalDuration) * 100 : 0;
-                  const position = Math.max(0, Math.min(100, percentage));
-                  return (
+              {timelineItems.map((item, index) => {
+                if (!item.date) return null;
+                const position = (index / (timelineItems.length - 1)) * 100;
+                // Alternar la posición vertical del título
+                const titleTop = index % 2 === 0 ? "-20px" : "20px";
+                const titleTextAlign = "center"; // Centrar el texto
+                return (
+                  <div
+                    key={index}
+                    className="position-absolute"
+                    style={{
+                      left: `${timelineItems.length > 1 ? position : 50}%`,
+                      transform: "translateX(-50%)",
+                      top: "50%",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => handleEventClick(item)}
+                  >
                     <div
-                      key={index}
-                      className="position-absolute"
+                      className={`rounded-circle`}
                       style={{
-                        left: `${position}%`,
-                        transform: "translateX(-50%)",
-                        top: "50%",
-                        cursor: "pointer",
+                        width: "10px",
+                        height: "10px",
+                        backgroundColor: "#f5922c",
                       }}
-                      onClick={() => handleEventClick(item)}
+                      title={item.title}
+                    ></div>
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: titleTop,
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        fontSize: "0.8rem",
+                        whiteSpace: "nowrap",
+                        textAlign: titleTextAlign, // Aplicar centrado
+                      }}
                     >
-                      <div
-                        className={`rounded-circle`}
-                        style={{
-                          width: "10px",
-                          height: "10px",
-                          backgroundColor: "#f5922c",
-                        }}
-                        title={item.title}
-                      ></div>
-                      <div
-                        style={{
-                          position: "absolute",
-                          top: "-20px",
-                          left: "50%",
-                          transform: "translateX(-50%)",
-                          fontSize: "0.8rem",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {item.title}
-                      </div>
+                      {item.title}
                     </div>
-                  );
-                })}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </Col>

@@ -711,7 +711,7 @@ const ClientView = () => {
                   className="position-relative"
                   style={{
                     height: '80px',
-                    width: `${Math.max(1, timelineItems.length * 100)}px`,
+                    width: `${Math.max(1, timelineItems.length * 120)}px`,
                     paddingLeft: '20px',
                   }}
                   ref={timelineRef}

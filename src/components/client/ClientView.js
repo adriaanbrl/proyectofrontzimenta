@@ -36,29 +36,29 @@ const PrecioEstimado = ({ precio }) => {
   };
 
   return (
-      <div>
+    <div>
+      <div
+        style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}
+      >
         <div
-            style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}
+          onClick={toggleVerPrecio}
+          style={{ cursor: "pointer", marginRight: "5px" }}
         >
-          <div
-              onClick={toggleVerPrecio}
-              style={{ cursor: "pointer", marginRight: "5px" }}
-          >
-            {verPrecio ? <EyeFill size={20} /> : <EyeSlashFill size={20} />}
-          </div>
-          <span style={{ fontWeight: "bold" }}>PRECIO ESTIMADO</span>
+          {verPrecio ? <EyeFill size={20} /> : <EyeSlashFill size={20} />}
         </div>
-        <div
-            style={{
-              fontSize: "1.5em",
-              fontWeight: "bold",
-              color: "#ff8c00",
-              opacity: verPrecio ? 1 : 0.3,
-            }}
-        >
-          {verPrecio ? formatearPrecio(precio) : "********"}
-        </div>
+        <span style={{ fontWeight: "bold" }}>PRECIO ESTIMADO</span>
       </div>
+      <div
+        style={{
+          fontSize: "1.5em",
+          fontWeight: "bold",
+          color: "#ff8c00",
+          opacity: verPrecio ? 1 : 0.3,
+        }}
+      >
+        {verPrecio ? formatearPrecio(precio) : "********"}
+      </div>
+    </div>
   );
 };
 
@@ -70,7 +70,7 @@ const ClientView = () => {
   const [clientNameFromToken, setClientNameFromToken] = useState("");
   const [buildingAddressFromToken, setBuildingAddressFromToken] = useState("");
   const [buildingStartDateFromToken, setBuildingStartDateFromToken] =
-      useState("");
+    useState("");
   const [buildingEndDateFromToken, setBuildingEndDateFromToken] = useState("");
   const [events, setEvents] = useState([]);
   const [eventLoading, setEventLoading] = useState(false);
@@ -98,8 +98,8 @@ const ClientView = () => {
       const token = localStorage.getItem("authToken");
       if (!token) throw new Error("No se encontró el token de autenticación.");
       const response = await axios.get(
-          `http://localhost:8080/auth/building/<span class="math-inline">\{buildingId\}/events?year\=</span>{year}&month=${month}`,
-          { headers: { Authorization: `Bearer ${token}` } }
+        `http://localhost:8080/auth/building/${buildingId}/events?year=${year}&month=${month}`,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       if (response.data) {
         const eventsWithDates = response.data.map((event) => ({
@@ -126,8 +126,8 @@ const ClientView = () => {
       const token = localStorage.getItem("authToken");
       if (!token) throw new Error("No se encontró el token de autenticación.");
       const response = await axios.get(
-          `http://localhost:8080/api/budget/${buildingId}/budget`,
-          { headers: { Authorization: `Bearer ${token}` } }
+        `http://localhost:8080/api/budget/${buildingId}/budget`,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       if (response.data && response.data.amount !== undefined) {
         setBudgetAmount(response.data.amount);
@@ -150,15 +150,15 @@ const ClientView = () => {
       const token = localStorage.getItem("authToken");
       if (!token) throw new Error("No se encontró el token de autenticación.");
       const response = await axios.get(
-          `http://localhost:8080/api/invoices/building/${buildingId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
+        `http://localhost:8080/api/invoices/building/${buildingId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       if (response.data !== undefined && response.data !== null) {
         console.log("Monto de facturas recibido:", response.data);
         setInvoiceAmount(response.data);
       } else {
         setInvoiceError(
-            new Error("No se encontró el monto total de las facturas.")
+          new Error("No se encontró el monto total de las facturas.")
         );
         setInvoiceAmount(0);
       }
@@ -186,8 +186,8 @@ const ClientView = () => {
         setBuildingStartDateFromToken(decodedToken.start_date);
         setBuildingEndDateFromToken(decodedToken.end_date);
         const projectResponse = await axios.get(
-            `http://localhost:8080/auth/building/${buildingId}`,
-            { headers: { Authorization: `Bearer ${token}` } }
+          `http://localhost:8080/auth/building/${buildingId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         if (projectResponse.data) {
           setProjectData(projectResponse.data);
@@ -197,9 +197,9 @@ const ClientView = () => {
         await fetchBudget(buildingId);
         await fetchInvoiceAmount(buildingId); // Llamada para obtener el amount de las facturas
         await fetchEvents(
-            buildingId,
-            new Date().getFullYear(),
-            new Date().getMonth() + 1
+          buildingId,
+          new Date().getFullYear(),
+          new Date().getMonth() + 1
         );
       } catch (err) {
         setError(err);
@@ -213,9 +213,9 @@ const ClientView = () => {
   useEffect(() => {
     if (buildingIdFromToken) {
       fetchEvents(
-          buildingIdFromToken,
-          eventMonth.getFullYear(),
-          eventMonth.getMonth() + 1
+        buildingIdFromToken,
+        eventMonth.getFullYear(),
+        eventMonth.getMonth() + 1
       );
     }
   }, [buildingIdFromToken, eventMonth]);
@@ -263,11 +263,11 @@ const ClientView = () => {
     projectPhases,
   } = projectData;
   const estimatedPrice =
-      budgetAmount !== null ? budgetAmount : projectData.estimatedPrice || 0;
+    budgetAmount !== null ? budgetAmount : projectData.estimatedPrice || 0;
   const paidAmount =
-      invoiceAmount !== null ? invoiceAmount : projectPaidAmount || 0; // Usar invoiceAmount si está disponible
+    invoiceAmount !== null ? invoiceAmount : projectPaidAmount || 0; // Usar invoiceAmount si está disponible
   const paymentProgress =
-      estimatedPrice === 0 ? 0 : (paidAmount / estimatedPrice) * 100;
+    estimatedPrice === 0 ? 0 : (paidAmount / estimatedPrice) * 100;
   const pendingAmountValue = estimatedPrice - paidAmount;
   const formattedPendingAmountForGraph = new Intl.NumberFormat("es-ES", {
     style: "currency",
@@ -281,19 +281,19 @@ const ClientView = () => {
   const formattedBuildingEndDate = formatDate(buildingEndDateFromToken);
 
   const formattedPlazos = deadlines
-      ? deadlines.map((dateStr) => ({
+    ? deadlines.map((dateStr) => ({
         date: new Date(dateStr)
-            .toLocaleDateString("es-ES", { day: "numeric", month: "long" })
-            .replace(/ de /g, " "),
+          .toLocaleDateString("es-ES", { day: "numeric", month: "long" })
+          .replace(/ de /g, " "),
       }))
-      : [];
+    : [];
   const formattedFasesProyecto = projectPhases
-      ? projectPhases.map((phase) => ({
+    ? projectPhases.map((phase) => ({
         name: phase.nombre,
         startDate: phase.fechaInicio ? new Date(phase.fechaInicio) : null,
         endDate: phase.fechaFin ? new Date(phase.fechaFin) : null,
       }))
-      : [];
+    : [];
 
   const timelineItems = [
     ...formattedFasesProyecto.map((fase) => ({
@@ -308,22 +308,22 @@ const ClientView = () => {
       description: evento.description,
     })),
   ].sort(
-      (a, b) =>
-          (a.date ? a.date.getTime() : Infinity) -
-          (b.date ? b.date.getTime() : Infinity)
+    (a, b) =>
+      (a.date ? a.date.getTime() : Infinity) -
+      (b.date ? b.date.getTime() : Infinity)
   );
 
   const projectStart = buildingStartDateFromToken
-      ? new Date(buildingStartDateFromToken)
-      : null;
+    ? new Date(buildingStartDateFromToken)
+    : null;
   const projectEnd = buildingEndDateFromToken
-      ? new Date(buildingEndDateFromToken)
-      : null;
+    ? new Date(buildingEndDateFromToken)
+    : null;
 
   const totalDays =
-      projectStart && projectEnd
-          ? (projectEnd.getTime() - projectStart.getTime()) / (1000 * 60 * 60 * 24)
-          : 0;
+    projectStart && projectEnd
+      ? (projectEnd.getTime() - projectStart.getTime()) / (1000 * 60 * 60 * 24)
+      : 0;
 
   const chartData = {
     labels: ["Pagado", "Pendiente"],
@@ -371,11 +371,10 @@ const ClientView = () => {
         ],
         color: "#363636",
         fontStyle: "bold",
-        fontSize: [14, 14]
+        fontSize: [14, 14],
       },
     },
   };
-
 
   const centerTextPlugin = {
     id: "centerText",
@@ -395,17 +394,17 @@ const ClientView = () => {
         const textLines = [paidAmountFormatted, remainingAmountFormatted];
         const color = chart.config.options.plugins.centerText.color || "#000";
         const fontStyle =
-            chart.config.options.plugins.centerText.fontStyle || "normal";
+          chart.config.options.plugins.centerText.fontStyle || "normal";
         const fontSizes = chart.config.options.plugins.centerText.fontSize || [
           20, 14,
         ];
 
         const defaultFontFamily =
-            "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"; // Fuente por defecto si no hay otra definida
+          "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"; // Fuente por defecto si no hay otra definida
         const fontFamily =
-            chart.config.options.font && chart.config.options.font.family
-                ? chart.config.options.font.family
-                : defaultFontFamily;
+          chart.config.options.font && chart.config.options.font.family
+            ? chart.config.options.font.family
+            : defaultFontFamily;
 
         const font = (size) => `${fontStyle} ${size}px ${fontFamily}`;
         const colors = ["#ff8c00", "#e0e0e0"]; // Colores naranja y gris
@@ -434,237 +433,240 @@ const ClientView = () => {
   ChartJS.register(centerTextPlugin);
 
   return (
-      <Container className="mt-4">
-        <Row>
-          <Col md={12}>
-            <h2 className="text-start mb-4">
-              HOLA, {clientNameFromToken || "Cliente"}:
-            </h2>
-          </Col>
-        </Row>
-        <Row>
-          <Col md={6}>
-            <Card className="shadow-sm">
-              <Card.Body>
-                <Card.Title className="fs-4 fw-bold text-start mb-3">
-                  <PrecioEstimado precio={estimatedPrice} />
-                </Card.Title>
-                <div className="d-flex align-items-center mt-3">
-                  <div
-                      className="position-relative"
-                      style={{ width: "240px", height: "240px" }}
-                  >
-                    <Doughnut data={chartData} options={chartOptions} />
+    <Container className="mt-4">
+      <Row>
+        <Col md={12}>
+          <h2 className="text-start mb-4">
+            HOLA, {clientNameFromToken || "Cliente"}:
+          </h2>
+        </Col>
+      </Row>
+      <Row>
+        <Col md={6}>
+          <Card className="shadow-sm">
+            <Card.Body>
+              <Card.Title className="fs-4 fw-bold text-start mb-3">
+                <PrecioEstimado precio={estimatedPrice} />
+              </Card.Title>
+              <div className="d-flex align-items-center mt-3">
+                <div
+                  className="position-relative"
+                  style={{ width: "240px", height: "240px" }}
+                >
+                  <Doughnut data={chartData} options={chartOptions} />
+                </div>
+                <div className="ms-3">
+                  <div className="fw-bold" style={{ fontSize: "0.9rem" }}>
                     <div
-                        className="position-absolute top-50 start-50 translate-middle text-center"
-                        style={{ cursor: "pointer" }}
-                        onClick={toggleVerDetallePago}
+                      style={{ cursor: "pointer" }}
+                      onClick={toggleVerDetallePago}
                     >
                       {verDetallePago ? (
-                          <EyeFill size={20} />
+                        <EyeFill size={20} />
                       ) : (
-                          <EyeSlashFill size={20} />
-                      )}
+                        <EyeSlashFill size={20} />
+                      )}Visualizar
+                    </div>
+                    
+                  </div>
+                  <div className="d-flex align-items-center mb-2">
+                    <div
+                      style={{
+                        width: "12px",
+                        height: "12px",
+                        backgroundColor:
+                          chartData.datasets[0].backgroundColor[0],
+                        marginRight: "5px",
+                      }}
+                    ></div>
+
+                    <div className="fw-bold" style={{ fontSize: "0.9rem" }}>
+                      Pagado
                     </div>
                   </div>
-                  <div className="ms-3">
-                    <div className="d-flex align-items-center mb-2">
-                      <div
-                          style={{
-                            width: "12px",
-                            height: "12px",
-                            backgroundColor:
-                                chartData.datasets[0].backgroundColor[0],
-                            marginRight: "5px",
-                          }}
-                      ></div>
-                      <div className="fw-bold" style={{ fontSize: "0.9rem" }}>
-                        Pagado
-                      </div>
-                    </div>
-                    <div className="d-flex align-items-center mb-2">
-                      <div
-                          style={{
-                            width: "12px",
-                            height: "12px",
-                            backgroundColor:
-                                chartData.datasets[0].backgroundColor[1],
-                            marginRight: "5px",
-                          }}
-                      ></div>
-                      <div className="fw-bold" style={{ fontSize: "0.9rem" }}>
-                        Pendiente
-                      </div>
+                  <div className="d-flex align-items-center mb-2">
+                    <div
+                      style={{
+                        width: "12px",
+                        height: "12px",
+                        backgroundColor:
+                          chartData.datasets[0].backgroundColor[1],
+                        marginRight: "5px",
+                      }}
+                    ></div>
+                    <div className="fw-bold" style={{ fontSize: "0.9rem" }}>
+                      Pendiente
                     </div>
                   </div>
                 </div>
-              </Card.Body>
-            </Card>
-          </Col>
-          <Col md={6}>
-            <Card className="shadow-sm">
-              <Card.Body>
-                <Card.Title className="fs-5 fw-bold text-start mb-3">
-                  PLAZOS
-                </Card.Title>
-                <ListGroup variant="flush">
-                  {formattedPlazos.map((item, index) => (
-                      <ListGroup.Item
-                          key={index}
-                          className="d-flex align-items-center"
-                      >
-                        <div
-                            className="rounded-circle bg-secondary me-2"
-                            style={{ width: "8px", height: "8px" }}
-                        ></div>
-                        {item.date}
-                      </ListGroup.Item>
-                  ))}
-                </ListGroup>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-
-        <Row className="mt-4">
-          <Col md={12}>
-            <h2 className="fs-4 fw-bold text-start mb-3">
-              LÍNEA DE TIEMPO DEL PROYECTO
-            </h2>
-            <div style={{ overflowX: "auto" }}>
-              <div
-                  className="position-relative"
-                  style={{
-                    height: "80px", // Aumentamos la altura para dar espacio a los títulos
-                    width: `${Math.max(1, timelineItems.length * 80)}px`,
-                  }}
-                  ref={timelineRef}
-              >
-                <div
-                    className="w-100 bg-secondary"
-                    style={{
-                      height: "2px",
-                      position: "absolute",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                    }}
-                ></div>
-                {timelineItems.map((item, index) => {
-                  if (!item.date) return null;
-                  const position = (index / (timelineItems.length - 1)) * 100;
-                  // Alternar la posición vertical del título
-                  const titleTop = index % 2 === 0 ? "-20px" : "20px";
-                  const titleTextAlign = "center"; // Centrar el texto
-                  return (
-                      <div
-                          key={index}
-                          className="position-absolute"
-                          style={{
-                            left: `${timelineItems.length > 1 ? position : 50}%`,
-                            transform: "translateX(-50%)",
-                            top: "50%",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => handleEventClick(item)}
-                      >
-                        <div
-                            className={`rounded-circle`}
-                            style={{
-                              width: "10px",
-                              height: "10px",
-                              backgroundColor: "#f5922c",
-                            }}
-                            title={item.title}
-                        ></div>
-                        <div
-                            style={{
-                              position: "absolute",
-                              top: titleTop,
-                              left: "50%",
-                              transform: "translateX(-50%)",
-                              fontSize: "0.8rem",
-                              whiteSpace: "nowrap",
-                              textAlign: titleTextAlign, // Aplicar centrado
-                            }}
-                        >
-                          {item.title}
-                        </div>
-                      </div>
-                  );
-                })}
               </div>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col md={6}>
+          <Card className="shadow-sm">
+            <Card.Body>
+              <Card.Title className="fs-5 fw-bold text-start mb-3">
+                ULTIMA FACTURA
+              </Card.Title>
+              <ListGroup variant="flush">
+                {formattedPlazos.map((item, index) => (
+                  <ListGroup.Item
+                    key={index}
+                    className="d-flex align-items-center"
+                  >
+                    <div
+                      className="rounded-circle bg-secondary me-2"
+                      style={{ width: "8px", height: "8px" }}
+                    ></div>
+                    {item.date}
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+
+      <Row className="mt-4">
+        <Col md={12}>
+          <h2 className="fs-4 fw-bold text-start mb-3">
+            LÍNEA DE TIEMPO DEL PROYECTO
+          </h2>
+          <div style={{ overflowX: "auto" }}>
+            <div
+              className="position-relative"
+              style={{
+                height: "80px", // Aumentamos la altura para dar espacio a los títulos
+                width: `${Math.max(1, timelineItems.length * 80)}px`,
+              }}
+              ref={timelineRef}
+            >
+              <div
+                className="w-100 bg-secondary"
+                style={{
+                  height: "2px",
+                  position: "absolute",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
+              ></div>
+              {timelineItems.map((item, index) => {
+                if (!item.date) return null;
+                const position = (index / (timelineItems.length - 1)) * 100;
+                // Alternar la posición vertical del título
+                const titleTop = index % 2 === 0 ? "-20px" : "20px";
+                const titleTextAlign = "center"; // Centrar el texto
+                return (
+                  <div
+                    key={index}
+                    className="position-absolute"
+                    style={{
+                      left: `${timelineItems.length > 1 ? position : 50}%`,
+                      transform: "translateX(-50%)",
+                      top: "50%",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => handleEventClick(item)}
+                  >
+                    <div
+                      className={`rounded-circle`}
+                      style={{
+                        width: "10px",
+                        height: "10px",
+                        backgroundColor: "#f5922c",
+                      }}
+                      title={item.title}
+                    ></div>
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: titleTop,
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        fontSize: "0.8rem",
+                        whiteSpace: "nowrap",
+                        textAlign: titleTextAlign, // Aplicar centrado
+                      }}
+                    >
+                      {item.title}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-          </Col>
-        </Row>
-        <Row className="mt-4">
-          <Col md={12}>
-            <h2 className="fs-4 fw-bold text-start mb-3">INFORMACIÓN</h2>
-            <Card className="shadow-sm">
-              <Card.Body>
-                <ListGroup variant="flush">
-                  <ListGroup.Item className="d-flex align-items-center">
-                    <GeoAltFill className="me-2 text-secondary" size={20} />
-                    <div>
-                      <div className="fw-bold" style={{ fontSize: "0.9rem" }}>
-                        Dirección
-                      </div>
-                      <div className="text-muted" style={{ fontSize: "0.8rem" }}>
-                        {buildingAddressFromToken ||
-                            projectData.address ||
-                            "Dirección no disponible"}
-                      </div>
+          </div>
+        </Col>
+      </Row>
+      <Row className="mt-4">
+        <Col md={12}>
+          <h2 className="fs-4 fw-bold text-start mb-3">INFORMACIÓN</h2>
+          <Card className="shadow-sm">
+            <Card.Body>
+              <ListGroup variant="flush">
+                <ListGroup.Item className="d-flex align-items-center">
+                  <GeoAltFill className="me-2 text-secondary" size={20} />
+                  <div>
+                    <div className="fw-bold" style={{ fontSize: "0.9rem" }}>
+                      Dirección
                     </div>
-                  </ListGroup.Item>
-                  <ListGroup.Item className="d-flex align-items-center">
-                    <CalendarFill className="me-2 text-secondary" size={20} />
-                    <div>
-                      <div className="fw-bold" style={{ fontSize: "0.9rem" }}>
-                        Fecha de inicio
-                      </div>
-                      <div className="text-muted" style={{ fontSize: "0.8rem" }}>
-                        {formattedBuildingStartDate}
-                      </div>
+                    <div className="text-muted" style={{ fontSize: "0.8rem" }}>
+                      {buildingAddressFromToken ||
+                        projectData.address ||
+                        "Dirección no disponible"}
                     </div>
-                  </ListGroup.Item>
-                  <ListGroup.Item className="d-flex align-items-center">
-                    <CalendarFill className="me-2text-secondary" size={20} />
-                    <div>
-                      <div className="fw-bold" style={{ fontSize: "0.9rem" }}>
-                        Fecha de fin prevista
-                      </div>
-                      <div className="text-muted" style={{ fontSize: "0.8rem" }}>
-                        {formattedBuildingEndDate}
-                      </div>
+                  </div>
+                </ListGroup.Item>
+                <ListGroup.Item className="d-flex align-items-center">
+                  <CalendarFill className="me-2 text-secondary" size={20} />
+                  <div>
+                    <div className="fw-bold" style={{ fontSize: "0.9rem" }}>
+                      Fecha de inicio
                     </div>
-                  </ListGroup.Item>
-                </ListGroup>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-        <Modal show={modalVisible} onHide={handleCloseModal}>
-          {eventoModal && (
-              <>
-                <Modal.Header closeButton>
-                  <Modal.Title>{eventoModal.title}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <div className="mb-3">
+                    <div className="text-muted" style={{ fontSize: "0.8rem" }}>
+                      {formattedBuildingStartDate}
+                    </div>
+                  </div>
+                </ListGroup.Item>
+                <ListGroup.Item className="d-flex align-items-center">
+                  <CalendarFill className="me-2text-secondary" size={20} />
+                  <div>
+                    <div className="fw-bold" style={{ fontSize: "0.9rem" }}>
+                      Fecha de fin prevista
+                    </div>
+                    <div className="text-muted" style={{ fontSize: "0.8rem" }}>
+                      {formattedBuildingEndDate}
+                    </div>
+                  </div>
+                </ListGroup.Item>
+              </ListGroup>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+      <Modal show={modalVisible} onHide={handleCloseModal}>
+        {eventoModal && (
+          <>
+            <Modal.Header closeButton>
+              <Modal.Title>{eventoModal.title}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div className="mb-3">
                 <span className="fw-bold" style={{ color: "orange" }}>
                   {formatDate(eventoModal.date || eventoModal.fecha)}
                 </span>
-                  </div>
-                  <p>{eventoModal.description || "Sin descripción"}</p>
-                </Modal.Body>
-                <Modal.Footer>
-                  <Button variant="secondary" onClick={handleCloseModal}>
-                    Cerrar
-                  </Button>
-                </Modal.Footer>
-              </>
-          )}
-        </Modal>
-      </Container>
+              </div>
+              <p>{eventoModal.description || "Sin descripción"}</p>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleCloseModal}>
+                Cerrar
+              </Button>
+            </Modal.Footer>
+          </>
+        )}
+      </Modal>
+    </Container>
   );
 };
 

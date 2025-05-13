@@ -30,6 +30,11 @@
     border-color: #f5922c
 }
 
+
+.chapter-button:hover {
+    background-color: #f5922c !important;
+    color: #fff !important;
+}
 .chapter-total-header {
     min-width: 120px;
     text-align: right;

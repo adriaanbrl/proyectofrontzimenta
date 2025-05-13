@@ -538,7 +538,7 @@ const ClientView = () => {
               className="position-relative"
               style={{
                 height: "80px", // Aumentamos la altura para dar espacio a los títulos
-                width: `${Math.max(1, timelineItems.length * 80)}px`,
+                width: `${Math.max(1, timelineItems.length * 100)}px`,
               }}
               ref={timelineRef}
             >

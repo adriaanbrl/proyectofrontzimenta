@@ -1,82 +1,59 @@
-import React, { useState, useEffect, useRef } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  ListGroup,
-  Button,
-  Modal,
-} from "react-bootstrap";
-import {
-  GeoAltFill,
-  CalendarFill,
-  EyeFill,
-  EyeSlashFill,
-} from "react-bootstrap-icons";
-import axios from "axios";
-import { jwtDecode } from "jwt-decode";
-import { Doughnut } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Container, Row, Col, Card, ListGroup, Button, Modal } from 'react-bootstrap';
+import { GeoAltFill, CalendarFill, EyeFill, EyeSlashFill } from 'react-bootstrap-icons';
+import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
+import { Doughnut } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
+// Componente para mostrar el precio estimado con opción de ver/ocultar
 const PrecioEstimado = ({ precio }) => {
   const [verPrecio, setVerPrecio] = useState(false);
 
-  const toggleVerPrecio = () => {
-    setVerPrecio(!verPrecio);
-  };
+  const toggleVerPrecio = () => setVerPrecio(!verPrecio);
 
-  const formatearPrecio = (precio) => {
-    return new Intl.NumberFormat("es-ES", {
-      style: "currency",
-      currency: "EUR",
-    }).format(precio);
-  };
+  const formatearPrecio = (precio) =>
+      new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(precio);
 
   return (
       <div>
-        <div
-            style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}
-        >
-          <div
-              onClick={toggleVerPrecio}
-              style={{ cursor: "pointer", marginRight: "5px" }}
-          >
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '5px' }}>
+          <div onClick={toggleVerPrecio} style={{ cursor: 'pointer', marginRight: '5px' }}>
             {verPrecio ? <EyeFill size={20} /> : <EyeSlashFill size={20} />}
           </div>
-          <span style={{ fontWeight: "bold" }}>PRECIO ESTIMADO</span>
+          <span style={{ fontWeight: 'bold' }}>PRECIO ESTIMADO</span>
         </div>
         <div
             style={{
-              fontSize: "1.5em",
-              fontWeight: "bold",
-              color: "#ff8c00",
+              fontSize: '1.5em',
+              fontWeight: 'bold',
+              color: '#ff8c00',
               opacity: verPrecio ? 1 : 0.3,
             }}
         >
-          {verPrecio ? formatearPrecio(precio) : "********"}
+          {verPrecio ? formatearPrecio(precio) : '********'}
         </div>
       </div>
   );
 };
 
+// Componente principal para la vista del cliente
 const ClientView = () => {
+  // Estados
   const [projectData, setProjectData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [buildingIdFromToken, setBuildingIdFromToken] = useState("");
-  const [clientNameFromToken, setClientNameFromToken] = useState("");
-  const [buildingAddressFromToken, setBuildingAddressFromToken] = useState("");
-  const [buildingStartDateFromToken, setBuildingStartDateFromToken] =
-      useState("");
-  const [buildingEndDateFromToken, setBuildingEndDateFromToken] = useState("");
+  const [buildingIdFromToken, setBuildingIdFromToken] = useState('');
+  const [clientNameFromToken, setClientNameFromToken] = useState('');
+  const [buildingAddressFromToken, setBuildingAddressFromToken] = useState('');
+  const [buildingStartDateFromToken, setBuildingStartDateFromToken] = useState('');
+  const [buildingEndDateFromToken, setBuildingEndDateFromToken] = useState('');
   const [events, setEvents] = useState([]);
   const [eventLoading, setEventLoading] = useState(false);
   const [eventError, setEventError] = useState(null);
   const [eventMonth, setEventMonth] = useState(new Date());
-  const timelineRef = useRef(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [eventoModal, setEventoModal] = useState(null);
   const [budgetAmount, setBudgetAmount] = useState(null);
@@ -89,17 +66,34 @@ const ClientView = () => {
   const [lastInvoice, setLastInvoice] = useState(null);
   const [lastInvoiceLoading, setLastInvoiceLoading] = useState(false);
   const [lastInvoiceError, setLastInvoiceError] = useState(null);
+  const [invoicePdfUrl, setInvoicePdfUrl] = useState(null);
+  const [showPdfModal, setShowPdfModal] = useState(false);
+  const timelineRef = useRef(null);
 
-  const toggleVerDetallePago = () => {
-    setVerDetallePago(!verDetallePago);
+
+  // Función para formatear fechas
+  const formatDate = (dateString) => {
+    if (!dateString) return 'No disponible';
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('es-ES', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      }).replace(/ de /g, ' '); // Elimina " de " para mayor brevedad
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Fecha inválida';
+    }
   };
 
-  const fetchEvents = async (buildingId, year, month) => {
+  // Función para obtener eventos
+  const fetchEvents = useCallback(async (buildingId, year, month) => {
     setEventLoading(true);
     setEventError(null);
     try {
-      const token = localStorage.getItem("authToken");
-      if (!token) throw new Error("No se encontró el token de autenticación.");
+      const token = localStorage.getItem('authToken');
+      if (!token) throw new Error('No se encontró el token de autenticación.');
       const response = await axios.get(
           `http://localhost:8080/auth/building/${buildingId}/events?year=${year}&month=${month}`,
           { headers: { Authorization: `Bearer ${token}` } }
@@ -111,7 +105,7 @@ const ClientView = () => {
         }));
         setEvents(eventsWithDates);
       } else {
-        setEventError(new Error("No se encontraron eventos."));
+        setEventError(new Error('No se encontraron eventos.'));
         setEvents([]);
       }
     } catch (err) {
@@ -120,14 +114,15 @@ const ClientView = () => {
     } finally {
       setEventLoading(false);
     }
-  };
+  }, []);
 
-  const fetchBudget = async (buildingId) => {
+  // Función para obtener el presupuesto
+  const fetchBudget = useCallback(async (buildingId) => {
     setBudgetLoading(true);
     setBudgetError(null);
     try {
-      const token = localStorage.getItem("authToken");
-      if (!token) throw new Error("No se encontró el token de autenticación.");
+      const token = localStorage.getItem('authToken');
+      if (!token) throw new Error('No se encontró el token de autenticación.');
       const response = await axios.get(
           `http://localhost:8080/api/budget/${buildingId}/budget`,
           { headers: { Authorization: `Bearer ${token}` } }
@@ -135,7 +130,7 @@ const ClientView = () => {
       if (response.data && response.data.amount !== undefined) {
         setBudgetAmount(response.data.amount);
       } else {
-        setBudgetError(new Error("No se encontró el monto del presupuesto."));
+        setBudgetError(new Error('No se encontró el monto del presupuesto.'));
         setBudgetAmount(0);
       }
     } catch (err) {
@@ -144,25 +139,23 @@ const ClientView = () => {
     } finally {
       setBudgetLoading(false);
     }
-  };
+  }, []);
 
-  const fetchInvoiceAmount = async (buildingId) => {
+  // Función para obtener el monto de la factura
+  const fetchInvoiceAmount = useCallback(async (buildingId) => {
     setInvoiceLoading(true);
     setInvoiceError(null);
     try {
-      const token = localStorage.getItem("authToken");
-      if (!token) throw new Error("No se encontró el token de autenticación.");
+      const token = localStorage.getItem('authToken');
+      if (!token) throw new Error('No se encontró el token de autenticación.');
       const response = await axios.get(
           `http://localhost:8080/api/invoices/building/${buildingId}`,
           { headers: { Authorization: `Bearer ${token}` } }
       );
       if (response.data !== undefined && response.data !== null) {
-        console.log("Monto de facturas recibido:", response.data);
         setInvoiceAmount(response.data);
       } else {
-        setInvoiceError(
-            new Error("No se encontró el monto total de las facturas.")
-        );
+        setInvoiceError(new Error('No se encontró el monto total de las facturas.'));
         setInvoiceAmount(0);
       }
     } catch (err) {
@@ -171,43 +164,50 @@ const ClientView = () => {
     } finally {
       setInvoiceLoading(false);
     }
-  };
+  }, []);
 
-  const fetchLastInvoice = async (buildingId) => {
+  // Función para obtener la última factura
+  const fetchLastInvoice = useCallback(async (buildingId) => {
     setLastInvoiceLoading(true);
     setLastInvoiceError(null);
     try {
-      const token = localStorage.getItem("authToken");
-      if (!token) throw new Error("No se encontró el token de autenticación.");
-      // Corrected endpoint to fetch the last invoice.  The original endpoint `/api/invoices/last` likely requires buildingId.
+      const token = localStorage.getItem('authToken');
+      if (!token) throw new Error('No se encontró el token de autenticación.');
       const response = await axios.get(
-          `http://localhost:8080/api/invoices/last/${buildingId}`, // Added buildingId
+          `http://localhost:8080/api/invoices/last/${buildingId}`,
           { headers: { Authorization: `Bearer ${token}` } }
       );
+
+      if (response.status !== 200) {
+        throw new Error(`Error al obtener la última factura: ${response.status}`);
+      }
+
       if (response.data) {
-        console.log("Last invoice data:", response.data); // Add this line
         setLastInvoice(response.data);
+        setInvoicePdfUrl('http://localhost:8080/api/invoices/pdf');
       } else {
-        setLastInvoiceError(new Error("No se encontró la última factura."));
+        setLastInvoiceError(new Error('No se encontró la última factura.'));
         setLastInvoice(null);
+        setInvoicePdfUrl(null);
       }
     } catch (err) {
-      console.error("Error fetching last invoice:", err); // Log the error
+      console.error('Error fetching last invoice:', err);
       setLastInvoiceError(err);
       setLastInvoice(null);
+      setInvoicePdfUrl(null);
     } finally {
       setLastInvoiceLoading(false);
     }
-  };
+  }, []);
 
+  // Efecto para obtener los datos iniciales al cargar el componente
   useEffect(() => {
     const fetchInitialData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const token = localStorage.getItem("authToken");
-        if (!token)
-          throw new Error("No se encontró el token de autenticación.");
+        const token = localStorage.getItem('authToken');
+        if (!token) throw new Error('No se encontró el token de autenticación.');
         const decodedToken = jwtDecode(token);
         const buildingId = decodedToken.building_id;
         setBuildingIdFromToken(buildingId);
@@ -215,6 +215,7 @@ const ClientView = () => {
         setBuildingAddressFromToken(decodedToken.building_address);
         setBuildingStartDateFromToken(decodedToken.start_date);
         setBuildingEndDateFromToken(decodedToken.end_date);
+
         const projectResponse = await axios.get(
             `http://localhost:8080/auth/building/${buildingId}`,
             { headers: { Authorization: `Bearer ${token}` } }
@@ -222,16 +223,14 @@ const ClientView = () => {
         if (projectResponse.data) {
           setProjectData(projectResponse.data);
         } else {
-          setError(new Error("No se encontraron datos del proyecto."));
+          setError(new Error('No se encontraron datos del proyecto.'));
         }
+
         await fetchBudget(buildingId);
         await fetchInvoiceAmount(buildingId);
-        await fetchLastInvoice(buildingId); // Pass buildingId here
-        await fetchEvents(
-            buildingId,
-            new Date().getFullYear(),
-            new Date().getMonth() + 1
-        );
+        await fetchLastInvoice(buildingId);
+        await fetchEvents(buildingId, new Date().getFullYear(), new Date().getMonth() + 1);
+
       } catch (err) {
         setError(err);
       } finally {
@@ -239,33 +238,16 @@ const ClientView = () => {
       }
     };
     fetchInitialData();
-  }, []);
+  }, [fetchBudget, fetchEvents, fetchInvoiceAmount, fetchLastInvoice]);  // Dependencias para que el efecto se ejecute cuando cambian.
 
+  // Efecto para obtener eventos cuando cambia el mes
   useEffect(() => {
     if (buildingIdFromToken) {
-      fetchEvents(
-          buildingIdFromToken,
-          eventMonth.getFullYear(),
-          eventMonth.getMonth() + 1
-      );
+      fetchEvents(buildingIdFromToken, eventMonth.getFullYear(), eventMonth.getMonth() + 1);
     }
-  }, [buildingIdFromToken, eventMonth]);
+  }, [buildingIdFromToken, eventMonth, fetchEvents]);
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "No disponible";
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString("es-ES", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      });
-    } catch (error) {
-      console.error("Error formatting date:", error);
-      return "Fecha inválida";
-    }
-  };
-
+  // Handlers para la UI
   const handleCloseModal = () => {
     setModalVisible(false);
     setEventoModal(null);
@@ -276,53 +258,71 @@ const ClientView = () => {
     setModalVisible(true);
   };
 
+  const handleOpenPdf = () => {
+    if (invoicePdfUrl) {
+      setShowPdfModal(true);
+    }
+  };
+  const toggleVerDetallePago = () => {
+    setVerDetallePago(!verDetallePago);
+  };
+
+  // Renderizado condicional durante la carga de datos
   if (loading || budgetLoading || invoiceLoading || lastInvoiceLoading) {
     return <div>Cargando datos...</div>;
   }
 
+  // Renderizado condicional en caso de error
   if (error || lastInvoiceError) {
     return (
         <div>
-          Error al cargar los datos del proyecto: {error?.message || ""}
+          Error al cargar los datos del proyecto: {error?.message || ''}
           {lastInvoiceError?.message}
         </div>
     );
   }
 
+  // Renderizado condicional si no hay datos del proyecto
   if (!projectData) {
     return <div>No se encontraron datos para este proyecto.</div>;
   }
 
+  // Desestructuración de datos del proyecto
   const {
     paidAmount: projectPaidAmount,
     deadlines,
     projectPhases,
   } = projectData;
-  const estimatedPrice =
-      budgetAmount !== null ? budgetAmount : projectData.estimatedPrice || 0;
-  const paidAmount =
-      invoiceAmount !== null ? invoiceAmount : projectPaidAmount || 0;
-  const paymentProgress =
-      estimatedPrice === 0 ? 0 : (paidAmount / estimatedPrice) * 100;
+
+  // Cálculo de montos y progreso
+  const estimatedPrice = budgetAmount !== null ? budgetAmount : projectData.estimatedPrice || 0;
+  const paidAmount = invoiceAmount !== null ? invoiceAmount : projectPaidAmount || 0;
+  const paymentProgress = estimatedPrice === 0 ? 0 : (paidAmount / estimatedPrice) * 100;
   const pendingAmountValue = estimatedPrice - paidAmount;
-  const formattedPendingAmountForGraph = new Intl.NumberFormat("es-ES", {
-    style: "currency",
-    currency: "EUR",
+
+  // Formateo de montos para visualización
+  const formattedPendingAmountForGraph = new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
   }).format(pendingAmountValue);
-  const formattedPaidAmountForGraph = new Intl.NumberFormat("es-ES", {
-    style: "currency",
-    currency: "EUR",
+  const formattedPaidAmountForGraph = new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
   }).format(paidAmount);
+
+  // Formateo de fechas de inicio y fin del proyecto
   const formattedBuildingStartDate = formatDate(buildingStartDateFromToken);
   const formattedBuildingEndDate = formatDate(buildingEndDateFromToken);
 
+  // Formateo de plazos y fases del proyecto
   const formattedPlazos = deadlines
       ? deadlines.map((dateStr) => ({
         date: new Date(dateStr)
-            .toLocaleDateString("es-ES", { day: "numeric", month: "long" })
-            .replace(/ de /g, " "),
+            .toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })
+            .replace(/ de /g, ' '),
       }))
       : [];
+
   const formattedFasesProyecto = projectPhases
       ? projectPhases.map((phase) => ({
         name: phase.nombre,
@@ -331,48 +331,46 @@ const ClientView = () => {
       }))
       : [];
 
+  // Combinación y ordenamiento de eventos y fases para la línea de tiempo
   const timelineItems = [
     ...formattedFasesProyecto.map((fase) => ({
-      type: "fase",
+      type: 'fase',
       date: fase.startDate,
       title: fase.name,
     })),
     ...events.map((evento) => ({
-      type: "evento",
+      type: 'evento',
       date: new Date(evento.date),
       title: evento.title,
       description: evento.description,
     })),
   ].sort(
-      (a, b) =>
-          (a.date ? a.date.getTime() : Infinity) -
-          (b.date ? b.date.getTime() : Infinity)
+      (a, b) => (a.date ? a.date.getTime() : Infinity) - (b.date ? b.date.getTime() : Infinity)
   );
 
-  const projectStart = buildingStartDateFromToken
-      ? new Date(buildingStartDateFromToken)
-      : null;
-  const projectEnd = buildingEndDateFromToken
-      ? new Date(buildingEndDateFromToken)
-      : null;
+  // Cálculo de fechas de inicio y fin del proyecto
+  const projectStart = buildingStartDateFromToken ? new Date(buildingStartDateFromToken) : null;
+  const projectEnd = buildingEndDateFromToken ? new Date(buildingEndDateFromToken) : null;
 
-  const totalDays =
-      projectStart && projectEnd
-          ? (projectEnd.getTime() - projectStart.getTime()) / (1000 * 60 * 60 * 24)
-          : 0;
+  // Cálculo de la duración total del proyecto en días
+  const totalDays = projectStart && projectEnd
+      ? (projectEnd.getTime() - projectStart.getTime()) / (1000 * 60 * 60 * 24)
+      : 0;
 
+  // Datos para el gráfico de Doughnut
   const chartData = {
-    labels: ["Pagado", "Pendiente"],
+    labels: ['Pagado', 'Pendiente'],
     datasets: [
       {
         data: [paidAmount, pendingAmountValue],
-        backgroundColor: ["#ff8c00", "#e0e0e0"],
-        borderColor: ["#ff8c00", "#e0e0e0"],
+        backgroundColor: ['#ff8c00', '#e0e0e0'],
+        borderColor: ['#ff8c00', '#e0e0e0'],
         borderWidth: 1,
       },
     ],
   };
 
+  // Opciones para el gráfico de Doughnut
   const chartOptions = {
     plugins: {
       legend: {
@@ -381,11 +379,11 @@ const ClientView = () => {
       tooltip: {
         callbacks: {
           label: function (context) {
-            let label = context.label || "";
+            let label = context.label || '';
             if (context.parsed.toFixed(2)) {
-              label += `: ${new Intl.NumberFormat("es-ES", {
-                style: "currency",
-                currency: "EUR",
+              label += `: ${new Intl.NumberFormat('es-ES', {
+                style: 'currency',
+                currency: 'EUR',
               }).format(context.parsed)}`;
             }
             return label;
@@ -396,61 +394,56 @@ const ClientView = () => {
       centerText: {
         display: verDetallePago,
         text: [
-          new Intl.NumberFormat("es-ES", {
-            style: "currency",
-            currency: "EUR",
+          new Intl.NumberFormat('es-ES', {
+            style: 'currency',
+            currency: 'EUR',
           }).format(paidAmount),
-          new Intl.NumberFormat("es-ES", {
-            style: "currency",
-            currency: "EUR",
+          new Intl.NumberFormat('es-ES', {
+            style: 'currency',
+            currency: 'EUR',
           }).format(estimatedPrice),
         ],
-        color: "#363636",
-        fontStyle: "bold",
+        color: '#363636',
+        fontStyle: 'bold',
         fontSize: [14, 14],
       },
     },
   };
 
+  // Plugin para mostrar texto en el centro del gráfico
   const centerTextPlugin = {
-    id: "centerText",
+    id: 'centerText',
     beforeDraw: (chart) => {
       if (chart.config.options.plugins.centerText.display) {
         const ctx = chart.ctx;
-        const paidAmountFormatted = new Intl.NumberFormat("es-ES", {
-          style: "currency",
-          currency: "EUR",
+        const paidAmountFormatted = new Intl.NumberFormat('es-ES', {
+          style: 'currency',
+          currency: 'EUR',
         }).format(paidAmount);
         const remainingAmount = estimatedPrice - paidAmount;
-        const remainingAmountFormatted = new Intl.NumberFormat("es-ES", {
-          style: "currency",
-          currency: "EUR",
+        const remainingAmountFormatted = new Intl.NumberFormat('es-ES', {
+          style: 'currency',
+          currency: 'EUR',
         }).format(remainingAmount);
 
         const textLines = [paidAmountFormatted, remainingAmountFormatted];
-        const color = chart.config.options.plugins.centerText.color || "#000";
-        const fontStyle =
-            chart.config.options.plugins.centerText.fontStyle || "normal";
-        const fontSizes = chart.config.options.plugins.centerText.fontSize || [
-          20, 14,
-        ];
-
-        const defaultFontFamily =
-            "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
-        const fontFamily =
-            chart.config.options.font && chart.config.options.font.family
-                ? chart.config.options.font.family
-                : defaultFontFamily;
+        const color = chart.config.options.plugins.centerText.color || '#000';
+        const fontStyle = chart.config.options.plugins.centerText.fontStyle || 'normal';
+        const fontSizes = chart.config.options.plugins.centerText.fontSize || [20, 14];
+        const defaultFontFamily = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
+        const fontFamily = chart.config.options.font && chart.config.options.font.family
+            ? chart.config.options.font.family
+            : defaultFontFamily;
 
         const font = (size) => `${fontStyle} ${size}px ${fontFamily}`;
-        const colors = ["#ff8c00", "#e0e0e0"];
+        const colors = ['#ff8c00', '#e0e0e0'];
         const textX = chart.width / 2;
         const textY = chart.height / 2;
         const lineHeight = 25;
 
         ctx.save();
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
 
         ctx.fillStyle = colors[0];
         ctx.font = font(fontSizes[0]);
@@ -467,12 +460,13 @@ const ClientView = () => {
 
   ChartJS.register(centerTextPlugin);
 
+  // Renderizado del componente principal
   return (
       <Container className="mt-4">
         <Row>
           <Col md={12}>
             <h2 className="text-start mb-4">
-              HOLA, {clientNameFromToken || "Cliente"}:
+              HOLA, {clientNameFromToken || 'Cliente'}:
             </h2>
           </Col>
         </Row>
@@ -486,50 +480,44 @@ const ClientView = () => {
                 <div className="d-flex align-items-center mt-3">
                   <div
                       className="position-relative"
-                      style={{ width: "240px", height: "240px" }}
+                      style={{ width: '240px', height: '240px' }}
                   >
                     <Doughnut data={chartData} options={chartOptions} />
                   </div>
                   <div className="ms-3">
-                    <div className="fw-bold" style={{ fontSize: "0.9rem" }}>
+                    <div className="fw-bold" style={{ fontSize: '0.9rem' }}>
                       <div
-                          style={{ cursor: "pointer" }}
+                          style={{ cursor: 'pointer' }}
                           onClick={toggleVerDetallePago}
                       >
-                        {verDetallePago ? (
-                            <EyeFill size={20} />
-                        ) : (
-                            <EyeSlashFill size={20} />
-                        )}
+                        {verDetallePago ? <EyeFill size={20} /> : <EyeSlashFill size={20} />}
                         Visualizar
                       </div>
                     </div>
                     <div className="d-flex align-items-center mb-2">
                       <div
                           style={{
-                            width: "12px",
-                            height: "12px",
-                            backgroundColor:
-                                chartData.datasets[0].backgroundColor[0],
-                            marginRight: "5px",
+                            width: '12px',
+                            height: '12px',
+                            backgroundColor: chartData.datasets[0].backgroundColor[0],
+                            marginRight: '5px',
                           }}
                       ></div>
 
-                      <div className="fw-bold" style={{ fontSize: "0.9rem" }}>
+                      <div className="fw-bold" style={{ fontSize: '0.9rem' }}>
                         Pagado
                       </div>
                     </div>
                     <div className="d-flex align-items-center mb-2">
                       <div
                           style={{
-                            width: "12px",
-                            height: "12px",
-                            backgroundColor:
-                                chartData.datasets[0].backgroundColor[1],
-                            marginRight: "5px",
+                            width: '12px',
+                            height: '12px',
+                            backgroundColor: chartData.datasets[0].backgroundColor[1],
+                            marginRight: '5px',
                           }}
                       ></div>
-                      <div className="fw-bold" style={{ fontSize: "0.9rem" }}>
+                      <div className="fw-bold" style={{ fontSize: '0.9rem' }}>
                         Pendiente
                       </div>
                     </div>
@@ -546,23 +534,36 @@ const ClientView = () => {
                 </Card.Title>
                 <ListGroup variant="flush">
                   {lastInvoice ? (
-                      <ListGroup.Item>
-                        <div className="fw-bold" style={{ fontSize: "0.9rem" }}>
-                          Mes de la Factura:
-                        </div>
-                        <div className="text-muted" style={{ fontSize: "0.8rem" }}>
-                          {lastInvoice.title}
-                        </div>
-                        <div className="fw-bold" style={{ fontSize: "0.9rem" }}>
-                          Monto:
-                        </div>
-                        <div className="text-muted" style={{ fontSize: "0.8rem" }}>
-                          {new Intl.NumberFormat("es-ES", {
-                            style: "currency",
-                            currency: "EUR",
-                          }).format(lastInvoice.amount)}
-                        </div>
-                      </ListGroup.Item>
+                      <>
+                        <ListGroup.Item>
+                          <div className="fw-bold" style={{ fontSize: '0.9rem' }}>
+                            Mes de la Factura:
+                          </div>
+                          <div className="text-muted" style={{ fontSize: '0.8rem' }}>
+                            {lastInvoice.title}
+                          </div>
+                          <div className="fw-bold" style={{ fontSize: '0.9rem' }}>
+                            Monto:
+                          </div>
+                          <div className="text-muted" style={{ fontSize: '0.8rem' }}>
+                            {new Intl.NumberFormat('es-ES', {
+                              style: 'currency',
+                              currency: 'EUR',
+                            }).format(lastInvoice.amount)}
+                          </div>
+                        </ListGroup.Item>
+                        {invoicePdfUrl && (
+                            <ListGroup.Item>
+                              <Button
+                                  variant="outline-primary"
+                                  onClick={handleOpenPdf}
+                                  style={{ fontSize: '0.8rem' }}
+                              >
+                                Ver Factura
+                              </Button>
+                            </ListGroup.Item>
+                        )}
+                      </>
                   ) : (
                       <ListGroup.Item>No hay facturas disponibles</ListGroup.Item>
                   )}
@@ -577,11 +578,11 @@ const ClientView = () => {
             <h2 className="fs-4 fw-bold text-start mb-3">
               LÍNEA DE TIEMPO DEL PROYECTO
             </h2>
-            <div style={{ overflowX: "auto" }}>
+            <div style={{ overflowX: 'auto' }}>
               <div
                   className="position-relative"
                   style={{
-                    height: "80px",
+                    height: '80px',
                     width: `${Math.max(1, timelineItems.length * 100)}px`,
                   }}
                   ref={timelineRef}
@@ -589,46 +590,46 @@ const ClientView = () => {
                 <div
                     className="w-100 bg-secondary"
                     style={{
-                      height: "2px",
-                      position: "absolute",
-                      top: "50%",
-                      transform: "translateY(-50%)",
+                      height: '2px',
+                      position: 'absolute',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
                     }}
                 ></div>
                 {timelineItems.map((item, index) => {
                   if (!item.date) return null;
                   const position = (index / (timelineItems.length - 1)) * 100;
-                  const titleTop = index % 2 === 0 ? "-20px" : "20px";
-                  const titleTextAlign = "center";
+                  const titleTop = index % 2 === 0 ? '-20px' : '20px';
+                  const titleTextAlign = 'center';
                   return (
                       <div
                           key={index}
                           className="position-absolute"
                           style={{
                             left: `${timelineItems.length > 1 ? position : 50}%`,
-                            transform: "translateX(-50%)",
-                            top: "50%",
-                            cursor: "pointer",
+                            transform: 'translateX(-50%)',
+                            top: '50%',
+                            cursor: 'pointer',
                           }}
                           onClick={() => handleEventClick(item)}
                       >
                         <div
                             className={`rounded-circle`}
                             style={{
-                              width: "10px",
-                              height: "10px",
-                              backgroundColor: "#f5922c",
+                              width: '10px',
+                              height: '10px',
+                              backgroundColor: '#f5922c',
                             }}
                             title={item.title}
                         ></div>
                         <div
                             style={{
-                              position: "absolute",
+                              position: 'absolute',
                               top: titleTop,
-                              left: "50%",
-                              transform: "translateX(-50%)",
-                              fontSize: "0.8rem",
-                              whiteSpace: "nowrap",
+                              left: '50%',
+                              transform: 'translateX(-50%)',
+                              fontSize: '0.8rem',
+                              whiteSpace: 'nowrap',
                               textAlign: titleTextAlign,
                             }}
                         >
@@ -648,25 +649,23 @@ const ClientView = () => {
               <Card.Body>
                 <ListGroup variant="flush">
                   <ListGroup.Item className="d-flex align-items-center">
-                    <GeoAltFill className="me-2 text-secondary" size={20} />
+                    <GeoAltFill className="me-2 text-secondary" size={20}/>
                     <div>
-                      <div className="fw-bold" style={{ fontSize: "0.9rem" }}>
+                      <div className="fw-bold" style={{ fontSize: '0.9rem' }}>
                         Dirección
                       </div>
-                      <div className="text-muted" style={{ fontSize: "0.8rem" }}>
-                        {buildingAddressFromToken ||
-                            projectData.address ||
-                            "Dirección no disponible"}
+                      <div className="text-muted" style={{ fontSize: '0.8rem' }}>
+                        {buildingAddressFromToken || projectData.address || 'Dirección no disponible'}
                       </div>
                     </div>
                   </ListGroup.Item>
                   <ListGroup.Item className="d-flex align-items-center">
                     <CalendarFill className="me-2 text-secondary" size={20} />
                     <div>
-                      <div className="fw-bold" style={{ fontSize: "0.9rem" }}>
+                      <div className="fw-bold" style={{ fontSize: '0.9rem' }}>
                         Fecha de inicio
                       </div>
-                      <div className="text-muted" style={{ fontSize: "0.8rem" }}>
+                      <div className="text-muted" style={{ fontSize: '0.8rem' }}>
                         {formattedBuildingStartDate}
                       </div>
                     </div>
@@ -674,10 +673,10 @@ const ClientView = () => {
                   <ListGroup.Item className="d-flex align-items-center">
                     <CalendarFill className="me-2text-secondary" size={20} />
                     <div>
-                      <div className="fw-bold" style={{ fontSize: "0.9rem" }}>
+                      <div className="fw-bold" style={{ fontSize: '0.9rem' }}>
                         Fecha de fin prevista
                       </div>
-                      <div className="text-muted" style={{ fontSize: "0.8rem" }}>
+                      <div className="text-muted" style={{ fontSize: '0.8rem' }}>
                         {formattedBuildingEndDate}
                       </div>
                     </div>
@@ -687,6 +686,7 @@ const ClientView = () => {
             </Card>
           </Col>
         </Row>
+
         <Modal show={modalVisible} onHide={handleCloseModal}>
           {eventoModal && (
               <>
@@ -695,10 +695,11 @@ const ClientView = () => {
                 </Modal.Header>
                 <Modal.Body>
                   <div className="mb-3">
-                <span className="fw-bold" style={{ color: "orange" }}>
+                <span className="fw-bold" style={{ color: 'orange' }}>
                   {formatDate(eventoModal.date || eventoModal.fecha)}
                 </span>
-                  </div><p>{eventoModal.description || "Sin descripción"}</p>
+                  </div>
+                  <p>{eventoModal.description || 'Sin descripción'}</p>
                 </Modal.Body>
                 <Modal.Footer>
                   <Button variant="secondary" onClick={handleCloseModal}>
@@ -707,6 +708,25 @@ const ClientView = () => {
                 </Modal.Footer>
               </>
           )}
+        </Modal>
+        <Modal show={showPdfModal} onHide={() => setShowPdfModal(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Factura</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {invoicePdfUrl && (
+                <iframe
+                    src={invoicePdfUrl}
+                    style={{ width: '100%', height: '500px' }}
+                    title="Invoice PDF"
+                />
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowPdfModal(false)}>
+              Cerrar
+            </Button>
+          </Modal.Footer>
         </Modal>
       </Container>
   );

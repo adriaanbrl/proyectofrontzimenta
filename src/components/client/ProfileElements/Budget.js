@@ -152,12 +152,14 @@ function Budget() {
       <ListGroup className="chapters-list">
         {Array.isArray(chaptersToDisplay) ? (
           chaptersToDisplay.map((chapter) => {
-            let chapterTotal = parseFloat(chapter.amount || 0);
-            if (chapter.items && Array.isArray(chapter.items)) {
-              chapterTotal += chapter.items.reduce(
+            let chapterTotal = 0;
+            if (chapter.items && Array.isArray(chapter.items) && chapter.items.length > 0) {
+              chapterTotal = chapter.items.reduce(
                 (sum, item) => sum + parseFloat(item.amount || 0),
                 0
               );
+            } else {
+              chapterTotal = parseFloat(chapter.amount || 0);
             }
 
             return (

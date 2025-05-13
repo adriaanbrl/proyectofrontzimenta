@@ -584,6 +584,7 @@ const ClientView = () => {
                   style={{
                     height: '80px',
                     width: `${Math.max(1, timelineItems.length * 100)}px`,
+                    paddingLeft: '20px',
                   }}
                   ref={timelineRef}
               >
@@ -593,12 +594,21 @@ const ClientView = () => {
                       height: '2px',
                       position: 'absolute',
                       top: '50%',
-                      transform: 'translateY(-50%)',
+                      left: '0%',
+                      width: '100%',
                     }}
                 ></div>
                 {timelineItems.map((item, index) => {
                   if (!item.date) return null;
-                  const position = (index / (timelineItems.length - 1)) * 100;
+                  let position;
+                  if (timelineItems.length > 1) {
+                    position = (index / (timelineItems.length - 1)) * 100;
+                    if (index === 0) {
+                      position = 4;
+                    }
+                  } else {
+                    position = 50;
+                  }
                   const titleTop = index % 2 === 0 ? '-20px' : '20px';
                   const titleTextAlign = 'center';
                   return (
@@ -606,10 +616,10 @@ const ClientView = () => {
                           key={index}
                           className="position-absolute"
                           style={{
-                            left: `${timelineItems.length > 1 ? position : 50}%`,
-                            transform: 'translateX(-50%)',
+                            left: `${position}%`,
                             top: '50%',
                             cursor: 'pointer',
+                            transform: 'translateX(-50%) translateY(-50%)',
                           }}
                           onClick={() => handleEventClick(item)}
                       >

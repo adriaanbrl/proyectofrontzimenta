@@ -10,6 +10,9 @@ import {
   Modal,
 } from "react-bootstrap";
 
+// Importa una imagen predefinida para los planos (reemplaza con tu imagen)
+import planPlaceholderImage from "./planos.jpg";
+
 function ClientGallery() {
   const [groupedImages, setGroupedImages] = useState({});
   const [buildingIdFromToken, setBuildingIdFromToken] = useState(null);
@@ -92,7 +95,7 @@ function ClientGallery() {
   }, [buildingIdFromToken]);
 
   useEffect(() => {
-    const fetchBuildingPlan = async () => {
+    const fetchBuildingPlanUrl = async () => {
       if (buildingIdFromToken) {
         setLoadingPlan(true);
         setErrorPlan(null);
@@ -107,10 +110,21 @@ function ClientGallery() {
           });
 
           if (response.ok) {
-            const blob = await response.blob();
-            const urlCreator = window.URL || window.webkitURL;
-            const imageUrl = urlCreator.createObjectURL(blob);
-            setBuildingPlanUrl(imageUrl);
+            // No necesitamos el blob, solo la URL para abrir el PDF en una nueva pestaña
+            const contentDisposition = response.headers.get(
+              "Content-Disposition"
+            );
+            if (
+              contentDisposition &&
+              contentDisposition.includes("filename=")
+            ) {
+              // No podemos obtener la URL directa del blob con fetch,
+              // la mejor opción es abrir una nueva ventana con la URL de la API.
+              setBuildingPlanUrl(url);
+            } else {
+              // Si no hay filename, también podemos intentar abrir la URL directamente
+              setBuildingPlanUrl(url);
+            }
           } else if (response.status === 404) {
             setBuildingPlanUrl(null);
           } else {
@@ -118,10 +132,10 @@ function ClientGallery() {
           }
         } catch (error) {
           console.error(
-            `Error fetching plano del edificio ${buildingIdFromToken}:`,
+            `Error fetching URL del plano del edificio ${buildingIdFromToken}:`,
             error
           );
-          setErrorPlan("Error al cargar el plano.");
+          setErrorPlan("Error al obtener la URL del plano.");
           setBuildingPlanUrl(null);
         } finally {
           setLoadingPlan(false);
@@ -129,7 +143,7 @@ function ClientGallery() {
       }
     };
 
-    fetchBuildingPlan();
+    fetchBuildingPlanUrl();
   }, [buildingIdFromToken]);
 
   const toggleRoomExpansion = (roomId) => {
@@ -146,8 +160,45 @@ function ClientGallery() {
 
   const handleCloseModal = () => setShowModal(false);
 
-  const handleShowPlanModal = () => setShowPlanModal(true);
-  const handleClosePlanModal = () => setShowPlanModal(false);
+  const handlePlanClick = async () => {
+    if (buildingIdFromToken) {
+      setLoadingPlan(true);
+      setErrorPlan(null);
+      try {
+        const url = `http://localhost:8080/api/buildings/${buildingIdFromToken}/planos`;
+        const token = localStorage.getItem("authToken");
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const blob = await response.blob();
+          const urlCreator = window.URL || window.webkitURL;
+          const pdfUrl = urlCreator.createObjectURL(blob);
+          window.open(pdfUrl, "_blank");
+        } else if (response.status === 403) {
+          setErrorPlan("No tienes permiso para ver este plano.");
+        } else if (response.status === 404) {
+          setErrorPlan("El plano del edificio no se encontró.");
+          setBuildingPlanUrl(null);
+        } else {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+      } catch (error) {
+        console.error(
+          `Error fetching plano del edificio ${buildingIdFromToken}:`,
+          error
+        );
+        setErrorPlan("Error al cargar el plano.");
+        setBuildingPlanUrl(null);
+      } finally {
+        setLoadingPlan(false);
+      }
+    }
+  };
 
   const lastRoomId =
     Object.keys(groupedImages)[Object.keys(groupedImages).length - 1];
@@ -169,87 +220,105 @@ function ClientGallery() {
       )}
       {errorImages && <p className="error-message">{errorImages}</p>}
       {!loadingBuildingId &&
+      !errorBuildingId &&
+      !loadingImages &&
+      !errorImages &&
+      Object.keys(groupedImages).length > 0 ? (
+        <Row xs={1} md={2} lg={3} className="g-4 room-cards-grid">
+          {Object.entries(groupedImages).map(([roomId, roomData]) => (
+            <Col key={roomId}>
+              <Card>
+                <Card.Header
+                  onClick={() => toggleRoomExpansion(roomId)}
+                  style={{ cursor: "pointer" }}
+                >
+                  {roomData.images[0]?.imageBase64 && (
+                    <div
+                      className="card-image-container"
+                      style={{
+                        backgroundImage: `url(${roomData.images[0].imageBase64})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        height: "150px",
+                        marginBottom: "10px",
+                      }}
+                    ></div>
+                  )}
+                  <div className="card-info">
+                    <Card.Title>{roomData.name}</Card.Title>
+                    <Card.Subtitle className="mb-2 text-muted">
+                      {roomData.images.length} imágenes
+                    </Card.Subtitle>
+                  </div>
+                </Card.Header>
+                {expandedRoom === roomId && (
+                  <Card.Body className={`image-panel expanded`}>
+                    <div className="d-flex flex-wrap gap-2">
+                      {roomData.images.map((image) => (
+                        <Image
+                          key={image.id}
+                          src={image.imageBase64}
+                          alt={image.title || "Imagen"}
+                          className="panel-image"
+                          style={{
+                            width: "100px",
+                            height: "100px",
+                            objectFit: "cover",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => handleImageClick(image)}
+                        />
+                      ))}
+                    </div>
+                  </Card.Body>
+                )}
+              </Card>
+              {roomId === lastRoomId && (
+                <div className="gallery-footer mt-4">
+                  <hr className="footer-line text-align-center" />
+                  <h3 className="footer-title text-center">Planos</h3>
+                  <Card
+                    className="mt-3"
+                    style={{ cursor: "pointer" }}
+                    onClick={handlePlanClick}
+                  >
+                    <Card.Img
+                      variant="top"
+                      src={planPlaceholderImage}
+                      style={{ height: "150px", objectFit: "cover" }}
+                    />
+                    <Card.Body className="text-center">
+                      <Card.Title>Ver Plano del Edificio</Card.Title>
+                      {loadingPlan && (
+                        <Card.Text className="text-muted">
+                          Cargando...
+                        </Card.Text>
+                      )}
+                      {errorPlan && (
+                        <Card.Text className="text-danger">
+                          {errorPlan}
+                        </Card.Text>
+                      )}
+                      {!loadingPlan && !errorPlan && !buildingPlanUrl && (
+                        <Card.Text className="text-muted">
+                          No disponible
+                        </Card.Text>
+                      )}
+                    </Card.Body>
+                  </Card>
+                </div>
+              )}
+            </Col>
+          ))}
+        </Row>
+      ) : (
+        !loadingBuildingId &&
         !errorBuildingId &&
         !loadingImages &&
-        !errorImages &&
-        Object.keys(groupedImages).length > 0 ? (
-          <Row xs={1} md={2} lg={3} className="g-4 room-cards-grid">
-            {Object.entries(groupedImages).map(([roomId, roomData]) => (
-              <Col key={roomId}>
-                <Card>
-                  <Card.Header
-                    onClick={() => toggleRoomExpansion(roomId)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    {roomData.images[0]?.imageBase64 && (
-                      <div
-                        className="card-image-container"
-                        style={{
-                          backgroundImage: `url(${roomData.images[0].imageBase64})`,
-                          backgroundSize: "cover",
-                          backgroundPosition: "center",
-                          height: "150px",
-                          marginBottom: "10px",
-                        }}
-                      ></div>
-                    )}
-                    <div className="card-info">
-                      <Card.Title>{roomData.name}</Card.Title>
-                      <Card.Subtitle className="mb-2 text-muted">
-                        {roomData.images.length} imágenes
-                      </Card.Subtitle>
-                    </div>
-                  </Card.Header>
-                  {expandedRoom === roomId && (
-                    <Card.Body className={`image-panel expanded`}>
-                      <div className="d-flex flex-wrap gap-2">
-                        {roomData.images.map((image) => (
-                          <Image
-                            key={image.id}
-                            src={image.imageBase64}
-                            alt={image.title || "Imagen"}
-                            className="panel-image"
-                            style={{
-                              width: "100px",
-                              height: "100px",
-                              objectFit: "cover",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => handleImageClick(image)}
-                          />
-                        ))}
-                      </div>
-                    </Card.Body>
-                  )}
-                </Card>
-                {roomId === lastRoomId && (
-                  <div className="gallery-footer mt-4 text-center">
-                    <hr className="footer-line text-align-center" />
-                    <h3 className="footer-title">Planos</h3>
-                    {loadingPlan && <p className="loading-message">Cargando plano...</p>}
-                    {errorPlan && <p className="error-message">{errorPlan}</p>}
-                    {buildingPlanUrl ? (
-                      <Button variant="outline-primary" onClick={handleShowPlanModal}>
-                        Ver Plano del Edificio
-                      </Button>
-                    ) : (
-                      !loadingPlan && !errorPlan && (
-                        <p className="no-plan">No hay planos disponibles para este edificio.</p>
-                      )
-                    )}
-                  </div>
-                )}
-              </Col>
-            ))}
-          </Row>
-        ) : (
-          !loadingBuildingId &&
-          !errorBuildingId &&
-          !loadingImages &&
-          !errorImages && (
-            <p className="no-images">No hay imágenes para este edificio.</p>
-          )
-        )}
+        !errorImages && (
+          <p className="no-images">No hay imágenes para este edificio.</p>
+        )
+      )}
       {!loadingBuildingId && !errorBuildingId && !buildingIdFromToken && (
         <p className="no-id">ID del edificio no disponible.</p>
       )}
@@ -266,30 +335,6 @@ function ClientGallery() {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseModal}>
-            Cerrar
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      <Modal show={showPlanModal} onHide={handleClosePlanModal} centered size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Plano del Edificio</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {buildingPlanUrl ? (
-            <iframe
-              src={buildingPlanUrl}
-              type="application/pdf"
-              width="100%"
-              height="500px"
-              title="Plano del Edificio"
-            />
-          ) : (
-            <p>No se pudo cargar el plano del edificio.</p>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClosePlanModal}>
             Cerrar
           </Button>
         </Modal.Footer>

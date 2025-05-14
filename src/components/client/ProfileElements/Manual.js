@@ -122,36 +122,25 @@ function ManualsDoc() {
   return (
     <Container className="leg-doc-container">
       <Row>
-        <div className="d-flex align-items-center mb-4">
-          {" "}
-          {/* Added mb-4 here */}
-          <Button
-            variant="link"
-            onClick={handleGoBack}
-            className="back-button"
-            aria-label="Volver atrás"
-            style={{ padding: 0 }}
-          >
-            <ChevronLeft size={20} color="orange" />
-          </Button>
-          <h1
-            className="leg-doc-title text-center"
-            style={{ margin: "0 auto" }}
-          >
-            Manual de Usuario
-          </h1>
-          <div style={{ visibility: "hidden", width: "auto" }}>
-            {/* Este div invisible ocupa el espacio del botón para centrar */}
-            <ChevronLeft size={20} color="transparent" />
-          </div>
-        </div>
         <Col>
+          <div className="d-flex justify-content-center align-items-center mb-4">
+            <Button
+              variant="link"
+              onClick={handleGoBack}
+              className="back-button me-3"
+              aria-label="Volver atrás"
+              style={{ padding: 0 }}
+            >
+              <ChevronLeft size={20} color="orange" />
+            </Button>
+            <h1 className="leg-doc-title text-center mb-0">Manual de Usuario</h1>
+          </div>
           {error && <Alert variant="danger">{error}</Alert>}
           {loading && !error && (
-            <>
-              <p>Cargando manuales...</p>
+            <div className="d-flex justify-content-center">
               <Spinner animation="border" size="sm" />
-            </>
+              <span className="visually-hidden">Cargando manuales...</span>
+            </div>
           )}
           {pdfDataListWithInfo.length > 0 && (
             <Table striped bordered hover responsive>
@@ -182,9 +171,9 @@ function ManualsDoc() {
             </Table>
           )}
           {!pdfDataListWithInfo.length && !error && !loading && buildingId && (
-            <p>No hay manuales disponibles para este edificio.</p>
+            <p className="text-center">No hay manuales disponibles para este edificio.</p>
           )}
-          {!buildingId && !error && <p>Esperando el ID del edificio...</p>}
+          {!buildingId && !error && <p className="text-center">Esperando el ID del edificio...</p>}
         </Col>
       </Row>
     </Container>

@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  Container,
-  Row,
-  Col,
-  Table,
-  Button,
-  Alert,
-  Spinner,
-} from "react-bootstrap";
-import { ChevronLeft} from "lucide-react";
+import { Container, Row, Col, Button, Alert, Spinner } from "react-bootstrap";
+import { ChevronLeft, File } from "lucide-react";
 
 function ManualsDoc() {
   const location = useLocation();
   const [buildingId, setBuildingId] = useState("");
-  const [pdfDataListWithInfo, setPdfDataListWithInfo] = useState([]);
+  const [zipUrl, setZipUrl] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -30,14 +22,14 @@ function ManualsDoc() {
 
   useEffect(() => {
     if (buildingId) {
-      fetchManuals(buildingId);
+      fetchManualsZip(buildingId);
     }
   }, [buildingId]);
 
-  const fetchManuals = async (id) => {
+  const fetchManualsZip = async (id) => {
     setLoading(true);
     setError(null);
-    setPdfDataListWithInfo([]);
+    setZipUrl(null);
 
     const token = localStorage.getItem("authToken");
 
@@ -48,61 +40,33 @@ function ManualsDoc() {
     }
 
     try {
-      const responseIds = await fetch(
-        `http://localhost:8080/auth/building/${id}/manualIds`,
+      const response = await fetch(
+        `http://localhost:8080/auth/building/${id}/manual/zip`,
         {
+          method: "GET", // Asegúrate de que el método sea GET
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json", // Añade explícitamente el Content-Type
           },
         }
       );
 
-      if (!responseIds.ok) {
-        throw new Error(
-          `Error al obtener la lista de manuales: ${responseIds.status}`
-        );
-      }
-
-      const idList = await responseIds.json();
-
-      if (Array.isArray(idList) && idList.length > 0) {
-        const responsePdfs = await fetch(`http://localhost:8080/manual/pdfs`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(idList),
-        });
-
-        if (!responsePdfs.ok) {
-          throw new Error(
-            `Error al descargar los manuales: ${responsePdfs.status}`
-          );
+      if (!response.ok) {
+        // Intenta leer el cuerpo de la respuesta para obtener más información sobre el error
+        let errorMessage = `Error al obtener el archivo ZIP: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          errorMessage += ` - ${JSON.stringify(errorData)}`; // Añade detalles del error del servidor
+        } catch (jsonError) {
+          // Si falla al parsear el JSON, solo usa el mensaje de estado
         }
-
-        const pdfDataList = await responsePdfs.json();
-        const pdfsWithInfo = pdfDataList.map((pdfData) => {
-          const byteString = atob(pdfData.data);
-          const byteArray = new Uint8Array(byteString.length);
-          for (let i = 0; i < byteString.length; i++) {
-            byteArray[i] = byteString.charCodeAt(i);
-          }
-          const fileBlob = new Blob([byteArray], { type: "application/pdf" });
-          const url = URL.createObjectURL(fileBlob);
-          return { filename: pdfData.filename, url: url };
-        });
-        setPdfDataListWithInfo(pdfsWithInfo);
-        setLoading(false);
-      } else if (Array.isArray(idList) && idList.length === 0) {
-        setError("No hay manuales disponibles para este edificio.");
-        setLoading(false);
-      } else {
-        setError(
-          "Respuesta inesperada del servidor: Se esperaba una lista de IDs."
-        );
-        setLoading(false);
+        throw new Error(errorMessage);
       }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      setZipUrl(url);
+      setLoading(false);
     } catch (err) {
       setError(err.message);
       setLoading(false);
@@ -111,9 +75,11 @@ function ManualsDoc() {
 
   useEffect(() => {
     return () => {
-      pdfDataListWithInfo.forEach((item) => URL.revokeObjectURL(item.url));
+      if (zipUrl) {
+        URL.revokeObjectURL(zipUrl);
+      }
     };
-  }, [pdfDataListWithInfo]);
+  }, [zipUrl]);
 
   const handleGoBack = () => {
     navigate(-1);
@@ -142,38 +108,31 @@ function ManualsDoc() {
               <span className="visually-hidden">Cargando manuales...</span>
             </div>
           )}
-          {pdfDataListWithInfo.length > 0 && (
-            <Table striped bordered hover responsive>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Nombre del Archivo</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pdfDataListWithInfo.map((item, index) => (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{item.filename}</td>
-                    <td>
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={() => window.open(item.url, "_blank")}
-                      >
-                        <i className="bi bi-file-pdf-fill mr-2"></i> Abrir
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
+          {!loading && !error && zipUrl && (
+            <div
+              className="d-flex flex-column align-items-center justify-content-center"
+              style={{ minHeight: 200 }}
+            >
+              <a
+                href={zipUrl}
+                download="manuales_usuario.zip"
+                style={{ textDecoration: "none" }}
+              >
+                <Button variant="link" size="lg" className="text-center">
+                  <File size={100} color="#0078d7" />
+                  <p className="mt-2 text-primary">Descargar Manuales (ZIP)</p>
+                </Button>
+              </a>
+            </div>
           )}
-          {!pdfDataListWithInfo.length && !error && !loading && buildingId && (
-            <p className="text-center">No hay manuales disponibles para este edificio.</p>
+          {!loading && !error && !zipUrl && (
+            <p className="text-center">
+              No hay manuales disponibles para este edificio.
+            </p>
           )}
-          {!buildingId && !error && <p className="text-center">Esperando el ID del edificio...</p>}
+          {!buildingId && !error && (
+            <p className="text-center">Esperando el ID del edificio...</p>
+          )}
         </Col>
       </Row>
     </Container>

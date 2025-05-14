@@ -16,6 +16,7 @@ function Warranty() {
   const [error, setError] = useState('');
   const [buildingId, setBuildingId] = useState(null);
   const [loadingBuildingId, setLoadingBuildingId] = useState(true);
+  const [imagen, setImagen] = useState(null); // Nuevo estado para la imagen
 
   useEffect(() => {
     document.title = "Reportar Incidencia de Garantía";
@@ -65,6 +66,10 @@ function Warranty() {
     fetchEstancias();
   }, []);
 
+  const handleImagenChange = (event) => {
+    setImagen(event.target.files[0]);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsSubmitting(true);
@@ -76,22 +81,21 @@ function Warranty() {
       return;
     }
 
+    const formData = new FormData();
+    formData.append('title', titulo);
+    formData.append('description', descripcion);
+    formData.append('categoryId', parseInt(categoriaId, 10));
+    formData.append('roomId', parseInt(estanciaId, 10));
+    if (imagen) {
+      formData.append('image', imagen);
+    }
+
     try {
       const response = await fetch(
         `http://localhost:8080/api/buildings/${buildingId}/incidents?categoryId=${parseInt(categoriaId, 10)}&roomId=${parseInt(estanciaId, 10)}`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            title: titulo,
-            status: 'Pendiente',
-            description: descripcion,
-            building: {
-              id: buildingId,
-            },
-          }),
+          body: formData, // Usar FormData para enviar archivos
         }
       );
 
@@ -102,6 +106,7 @@ function Warranty() {
         setDescripcion('');
         setCategoriaId('');
         setEstanciaId('');
+        setImagen(null); // Limpiar el estado de la imagen
       } else {
         const errorText = await response.text();
         console.error('Error al registrar la incidencia:', response.status, errorText);
@@ -191,6 +196,15 @@ function Warranty() {
             onChange={(e) => setDescripcion(e.target.value)}
             required
             placeholder="Describa detalladamente el problema..."
+          />
+        </Form.Group>
+
+        {/* Nuevo campo para la imagen */}
+        <Form.Group className="mb-3" controlId="imagen">
+          <Form.Label>Imagen de la Incidencia (opcional):</Form.Label>
+          <Form.Control
+            type="file"
+            onChange={handleImagenChange}
           />
         </Form.Group>
 

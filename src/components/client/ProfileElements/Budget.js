@@ -25,7 +25,7 @@ function Budget() {
         setBuildingId(decodedToken.building_id || null);
       } catch (err) {
         setErrorBuildingId(
-          "Error al leer la información del edificio del token."
+            "Error al leer la información del edificio del token."
         );
         console.error("Error al decodificar el token:", err);
       } finally {
@@ -59,7 +59,7 @@ function Budget() {
             try {
               const errorData = await response.json();
               errorMessage += ` - ${
-                errorData.message || "Detalles no disponibles"
+                  errorData.message || "Detalles no disponibles"
               }`;
             } catch (e) {
               errorMessage = `Error al cargar el presupuesto: ${response.status}`;
@@ -109,9 +109,9 @@ function Budget() {
 
   if (errorBuildingId) {
     return (
-      <div className="error">
-        Error al cargar el ID del edificio: {errorBuildingId}
-      </div>
+        <div className="error">
+          Error al cargar el ID del edificio: {errorBuildingId}
+        </div>
     );
   }
 
@@ -125,7 +125,7 @@ function Budget() {
 
   if (!budgetData) {
     return (
-      <div className="no-data">No se han encontrado datos de presupuesto.</div>
+        <div className="no-data">No se han encontrado datos de presupuesto.</div>
     );
   }
 
@@ -136,121 +136,124 @@ function Budget() {
   }
 
   return (
-    <Container className="budget-container">
-      <div className="budget-header">
-        <Button
-          variant="link"
-          onClick={handleGoBack}
-          className="back-button"
-          aria-label="Volver atrás"
-        >
-          <ChevronLeft size={20} color="orange" />
-        </Button>
-        <h1 className="budget-title fw-bold">{budgetData.title}</h1>
-      </div>
+      <Container className="budget-container">
+        <div className="budget-header d-flex align-items-center justify-content-between">
+          <Button
+              variant="link"
+              onClick={handleGoBack}
+              className="back-button"
+              aria-label="Volver atrás"
+          >
+            <ChevronLeft size={20} color="orange" />
+          </Button>
+          <h1 className="budget-title fw-bold text-center m-0">Presupuesto</h1>
+          <div style={{ visibility: "hidden" }}>
+            <ChevronLeft size={20} color="orange" /> {/* Espaciador para alinear el título */}
+          </div>
+        </div>
 
-      <ListGroup className="chapters-list">
-        {Array.isArray(chaptersToDisplay) ? (
-          chaptersToDisplay.map((chapter) => {
-            let chapterTotal = 0;
-            if (chapter.items && Array.isArray(chapter.items) && chapter.items.length > 0) {
-              chapterTotal = chapter.items.reduce(
-                (sum, item) => sum + parseFloat(item.amount || 0),
-                0
-              );
-            } else {
-              chapterTotal = parseFloat(chapter.amount || 0);
-            }
+        <ListGroup className="chapters-list">
+          {Array.isArray(chaptersToDisplay) ? (
+              chaptersToDisplay.map((chapter) => {
+                let chapterTotal = 0;
+                if (chapter.items && Array.isArray(chapter.items) && chapter.items.length > 0) {
+                  chapterTotal = chapter.items.reduce(
+                      (sum, item) => sum + parseFloat(item.amount || 0),
+                      0
+                  );
+                } else {
+                  chapterTotal = parseFloat(chapter.amount || 0);
+                }
 
-            return (
-              <Card key={chapter.id} className="chapter-card">
-                <Card.Header className="chapter-header">
-                  <Button
-                    variant="btn-outline-custom"
-                    onClick={() => toggleChapter(chapter.id)}
-                    className={`chapter-button ${
-                      openChapters[chapter.id] ? "open" : ""
-                    }`}
-                    aria-expanded={openChapters[chapter.id]}
-                    aria-controls={`chapter-${chapter.id}`}
-                  >
-                    {chapter.title}{" "}
-                  </Button>
-                  <div className="chapter-total-header fw-bold ms-2">
-                    Total:{" "}
-                    {chapterTotal.toLocaleString("es-ES", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}{" "}
-                    €
-                  </div>
-                </Card.Header>
-                {openChapters[chapter.id] && (
-                  <Card.Body
-                    className="chapter-body"
-                    id={`chapter-${chapter.id}`}
-                  >
-                    <ListGroup className="items-list">
-                      {chapter.items && Array.isArray(chapter.items) ? (
-                        chapter.items.map((item) => (
-                          <ListGroup.Item key={item.id} className="item-item">
-                            <div className="item-header">
-                              <span className="item-title">{item.title}</span>
-                              {item.amount && (
-                                <span className="item-amount fw-bold">
+                return (
+                    <Card key={chapter.id} className="chapter-card">
+                      <Card.Header className="chapter-header">
+                        <Button
+                            variant="btn-outline-custom"
+                            onClick={() => toggleChapter(chapter.id)}
+                            className={`chapter-button ${
+                                openChapters[chapter.id] ? "open" : ""
+                            }`}
+                            aria-expanded={openChapters[chapter.id]}
+                            aria-controls={`chapter-${chapter.id}`}
+                        >
+                          {chapter.title}{" "}
+                        </Button>
+                        <div className="chapter-total-header fw-bold ms-2">
+                          Total:{" "}
+                          {chapterTotal.toLocaleString("es-ES", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}{" "}
+                          €
+                        </div>
+                      </Card.Header>
+                      {openChapters[chapter.id] && (
+                          <Card.Body
+                              className="chapter-body"
+                              id={`chapter-${chapter.id}`}
+                          >
+                            <ListGroup className="items-list">
+                              {chapter.items && Array.isArray(chapter.items) ? (
+                                  chapter.items.map((item) => (
+                                      <ListGroup.Item key={item.id} className="item-item">
+                                        <div className="item-header">
+                                          <span className="item-title">{item.title}</span>
+                                          {item.amount && (
+                                              <span className="item-amount fw-bold">
                                   {parseFloat(item.amount).toLocaleString(
-                                    "es-ES",
-                                    {
-                                      minimumFractionDigits: 2,
-                                      maximumFractionDigits: 2,
-                                    }
+                                      "es-ES",
+                                      {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                      }
                                   )}{" "}
-                                  €
+                                                €
                                 </span>
+                                          )}
+                                        </div>
+                                        {/* Eliminamos la sección de detalles del item */}
+                                      </ListGroup.Item>
+                                  ))
+                              ) : (
+                                  <ListGroup.Item className="no-items">
+                                    No hay partidas para este capítulo.
+                                  </ListGroup.Item>
                               )}
+                            </ListGroup>
+                            <div className="chapter-total-body fw-bold">
+                              Importe del capítulo:{" "}
+                              {chapterTotal.toLocaleString("es-ES", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })}{" "}
+                              €
                             </div>
-                            {/* Eliminamos la sección de detalles del item */}
-                          </ListGroup.Item>
-                        ))
-                      ) : (
-                        <ListGroup.Item className="no-items">
-                          No hay partidas para este capítulo.
-                        </ListGroup.Item>
+                          </Card.Body>
                       )}
-                    </ListGroup>
-                    <div className="chapter-total-body fw-bold">
-                      Importe del capítulo:{" "}
-                      {chapterTotal.toLocaleString("es-ES", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}{" "}
-                      €
-                    </div>
-                  </Card.Body>
-                )}
-              </Card>
-            );
-          })
-        ) : (
-          <ListGroup.Item>
-            Error: Los datos del presupuesto no tienen el formato esperado.
-          </ListGroup.Item>
-        )}
-      </ListGroup>
+                    </Card>
+                );
+              })
+          ) : (
+              <ListGroup.Item>
+                Error: Los datos del presupuesto no tienen el formato esperado.
+              </ListGroup.Item>
+          )}
+        </ListGroup>
 
-      {numberOfChapters > chaptersToShowInitially && (
-        <Button
-          variant="btn-outline-custom"
-          className="btn-outline-custom"
-          onClick={handleShowAllChapters}
-        >
-          Ver{" "}
-          {showAllChapters
-            ? "menos capítulos"
-            : `${numberOfChapters - chaptersToShowInitially} capítulos más`}
-        </Button>
-      )}
-    </Container>
+        {numberOfChapters > chaptersToShowInitially && (
+            <Button
+                variant="btn-outline-custom"
+                className="btn-outline-custom"
+                onClick={handleShowAllChapters}
+            >
+              Ver{" "}
+              {showAllChapters
+                  ? "menos capítulos"
+                  : `${numberOfChapters - chaptersToShowInitially} capítulos más`}
+            </Button>
+        )}
+      </Container>
   );
 }
 

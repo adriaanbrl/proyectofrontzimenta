@@ -19,6 +19,7 @@ import Warranty from "./components/client/ProfileElements/Warranty.js";
 import Manual from "./components/client/ProfileElements/Manual.js";
 import Historic from "./components/client/ProfileElements/Historic.js";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import ContactList from "./components/client/ContactList.js";
 
 
 
@@ -44,6 +45,7 @@ function App() {
             <Route path="/galeriaCliente" element={<ClientGallery />} />
             <Route path="/calendar" element={<EventCalendar />} />
             <Route path="/perfil" element={<Profile />} />
+            <Route path="/contactos" element={<ContactList />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/documentacion" element={<LegDoc />} />
             <Route path="/factura" element={<Invoice />} />

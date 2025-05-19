@@ -11,7 +11,7 @@ export default function Sidebar() {
     { name: "Inicio", icon: <House size={24} />, path: "/inicio" },
     { name: "Galeria", icon: <Image size={24} />, path: "/galeriaCliente" },
     { name: "Fecha", icon: <Calendar size={24} />, path: "/calendar" },
-    { name: "Chat", icon: <ChatDots size={24} />, path: "/chat" },
+    { name: "Chat", icon: <ChatDots size={24} />, path: "/contactos" },
     { name: "Perfil", icon: <Person size={24} />, path: "/perfil" }
   ];
 

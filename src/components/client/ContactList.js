@@ -1,35 +1,62 @@
 import React, { useState, useEffect } from 'react';
 import { TypeH1 } from 'react-bootstrap-icons';
-import { useParams } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
 function ContactList() {
-    const { buildingId } = useParams();
     const [workers, setWorkers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [buildingId, setBuildingId] = useState(null);
 
     useEffect(() => {
         const fetchWorkers = async () => {
+            if (!buildingId) {
+                console.warn('buildingId is undefined or null.  Cannot fetch.');
+                setError('ID del edificio no encontrado.');
+                setLoading(false);
+                return;
+            }
+
             try {
-                console.log(`Fetching workers for building ID: ${buildingId}`); // Add this line
+                console.log(`Fetching workers for building ID: ${buildingId}`);
                 const response = await fetch(`/api/buildings/${buildingId}/workers`);
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    const errorText = await response.text();
+                    console.error(`HTTP error! status: ${response.status}, response: ${errorText}`);
+                    throw new Error(`Error HTTP: ${response.status}, Mensaje: ${errorText}`);
                 }
                 const data = await response.json();
                 console.log('Received data:', data);
                 setWorkers(data);
                 setLoading(false);
             } catch (error) {
-                console.error('Error fetching data:', error); // Add this line
+                console.error('Error al obtener datos:', error);
                 setError(error);
                 setLoading(false);
             }
         };
 
-        if (buildingId) {
-            fetchWorkers();
+        // Get buildingId from JWT
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            try {
+                const decodedToken = jwtDecode(token);
+                console.log('Decoded Token:', decodedToken); // Add this line
+                setBuildingId(decodedToken.building_id);
+            } catch (decodeError) {
+                console.error('Error decoding token:', decodeError);
+                setError('Error al decodificar el token.');
+                setLoading(false);
+                return;
+            }
+        } else {
+            setError('Token de autenticación no encontrado.');
+            setLoading(false);
+            return;
         }
+
+
+        fetchWorkers();
     }, [buildingId]);
 
     if (loading) {
@@ -37,7 +64,12 @@ function ContactList() {
     }
 
     if (error) {
-        return <div>Error al cargar la lista de contactos: {error.message}</div>;
+        return (
+            <div>
+                <h1>Error</h1>
+                <p>Se produjo un error al cargar la lista de contactos: {error.message}</p>
+            </div>
+        );
     }
 
     return (
@@ -47,7 +79,7 @@ function ContactList() {
                 <ul>
                     {workers.map(worker => (
                         <li key={worker.id}>
-                            {worker.name} ({worker.email})
+                            {worker.name} ({worker.contact})
                         </li>
                     ))}
                 </ul>

@@ -3,14 +3,17 @@ import { Container, Row, Col, Button, Card, Form } from 'react-bootstrap';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 const AdminView = () => {
-    const [showForm, setShowForm] = useState(false);
+    const [showCustomerForm, setShowCustomerForm] = useState(false);
+    const [showConstructionForm, setShowConstructionForm] = useState(false);
     const [loading, setLoading] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const formik = useFormik({
+    // Formulario para crear cliente
+    const customerFormik = useFormik({
         initialValues: {
             email: '',
             name: '',
@@ -53,8 +56,8 @@ const AdminView = () => {
                 console.log(response);
                 if (response.status === 201) {
                     setSuccessMessage('Cliente creado con éxito');
-                    formik.resetForm();
-                    setShowForm(false);
+                    customerFormik.resetForm();
+                    setShowCustomerForm(false);
                 } else {
                     setErrorMessage('Error al crear el cliente. Por favor, inténtalo de nuevo.');
                 }
@@ -73,17 +76,83 @@ const AdminView = () => {
         },
     });
 
+    // Formulario para crear construcción
+    const constructionFormik = useFormik({
+        initialValues: {
+            address: '',
+            estimated_end_date: '',
+        },
+        validationSchema: Yup.object({
+            address: Yup.string().required('La dirección es requerida'),
+            estimated_end_date: Yup.date().required('La fecha de fin estimada es requerida'),
+        }),
+        onSubmit: async (values) => {
+            setLoading(true);
+            setSuccessMessage('');
+            setErrorMessage('');
+
+            try {
+                const constructionData = {
+                    address: values.address,
+                    estimatedEndDate: values.estimated_end_date,
+                };
+                //  Important:  Send a 'building' object as expected by the backend
+                const response = await axios.post('http://localhost:8080/api/buildings', {
+                    building: constructionData
+                });
+                console.log(response);
+                if (response.status === 201) {
+                    setSuccessMessage('Construcción creada con éxito');
+                    constructionFormik.resetForm();
+                    setShowConstructionForm(false);
+                } else {
+                    setErrorMessage('Error al crear la construcción. Por favor, inténtalo de nuevo.');
+                }
+            } catch (error) {
+                console.error('Error al crear la construcción:', error);
+                if (error.response) {
+                    setErrorMessage(`Error: ${error.response.data.message || 'Error desconocido'}`);
+                } else if (error.request) {
+                    setErrorMessage('No se pudo conectar con el servidor.');
+                } else {
+                    setErrorMessage('Error al procesar la solicitud.');
+                }
+            } finally {
+                setLoading(false);
+            }
+        },
+    });
+
     return (
         <Container className="d-flex justify-content-center align-items-center vh-100">
             <Card style={{ maxWidth: '600px', padding: '20px', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
                 <Card.Body className="text-center">
                     <Card.Title className="mb-4">
-                        <Button variant="link" onClick={() => setShowForm(!showForm)} style={{ padding: 0, margin: 0 }}>
+                        <Button
+                            variant="link"
+                            onClick={() => {
+                                setShowCustomerForm(!showCustomerForm);
+                                setShowConstructionForm(false);
+                            }}
+                            style={{ padding: 0, margin: 0 }}
+                        >
                             Crear Cliente
                         </Button>
+                        <span style={{ margin: '0 10px' }}>|</span>
+                        <Button
+                            variant="link"
+                            onClick={() => {
+                                setShowConstructionForm(!showConstructionForm);
+                                setShowCustomerForm(false);
+                            }}
+                            style={{ padding: 0, margin: 0 }}
+                        >
+                            Crear Construcción
+                        </Button>
                     </Card.Title>
-                    {showForm && (
-                        <Form onSubmit={formik.handleSubmit} className="mt-4">
+
+                    {showCustomerForm && (
+                        <Form onSubmit={customerFormik.handleSubmit} className="mt-4">
                             <Row className="mb-3">
                                 <Col>
                                     <Form.Group controlId="email">
@@ -91,14 +160,14 @@ const AdminView = () => {
                                         <Form.Control
                                             type="email"
                                             name="email"
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}
-                                            value={formik.values.email}
-                                            isInvalid={formik.touched.email && formik.errors.email}
+                                            onChange={customerFormik.handleChange}
+                                            onBlur={customerFormik.handleBlur}
+                                            value={customerFormik.values.email}
+                                            isInvalid={customerFormik.touched.email && customerFormik.errors.email}
                                             disabled={loading}
                                         />
                                         <Form.Control.Feedback type="invalid">
-                                            {formik.errors.email}
+                                            {customerFormik.errors.email}
                                         </Form.Control.Feedback>
                                     </Form.Group>
                                 </Col>
@@ -111,14 +180,14 @@ const AdminView = () => {
                                         <Form.Control
                                             type="text"
                                             name="name"
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}
-                                            value={formik.values.name}
-                                            isInvalid={formik.touched.name && formik.errors.name}
+                                            onChange={customerFormik.handleChange}
+                                            onBlur={customerFormik.handleBlur}
+                                            value={customerFormik.values.name}
+                                            isInvalid={customerFormik.touched.name && customerFormik.errors.name}
                                             disabled={loading}
                                         />
                                         <Form.Control.Feedback type="invalid">
-                                            {formik.errors.name}
+                                            {customerFormik.errors.name}
                                         </Form.Control.Feedback>
                                     </Form.Group>
                                 </Col>
@@ -130,14 +199,14 @@ const AdminView = () => {
                                         <Form.Control
                                             type="text"
                                             name="surname"
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}
-                                            value={formik.values.surname}
-                                            isInvalid={formik.touched.surname && formik.errors.surname}
+                                            onChange={customerFormik.handleChange}
+                                            onBlur={customerFormik.handleBlur}
+                                            value={customerFormik.values.surname}
+                                            isInvalid={customerFormik.touched.surname && customerFormik.errors.surname}
                                             disabled={loading}
                                         />
                                         <Form.Control.Feedback type="invalid">
-                                            {formik.errors.surname}
+                                            {customerFormik.errors.surname}
                                         </Form.Control.Feedback>
                                     </Form.Group>
                                 </Col>
@@ -150,14 +219,14 @@ const AdminView = () => {
                                         <Form.Control
                                             type="text"
                                             name="username"
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}
-                                            value={formik.values.username}
-                                            isInvalid={formik.touched.username && formik.errors.username}
+                                            onChange={customerFormik.handleChange}
+                                            onBlur={customerFormik.handleBlur}
+                                            value={customerFormik.values.username}
+                                            isInvalid={customerFormik.touched.username && customerFormik.errors.username}
                                             disabled={loading}
                                         />
                                         <Form.Control.Feedback type="invalid">
-                                            {formik.errors.username}
+                                            {customerFormik.errors.username}
                                         </Form.Control.Feedback>
                                     </Form.Group>
                                 </Col>
@@ -170,14 +239,14 @@ const AdminView = () => {
                                         <Form.Control
                                             type="password"
                                             name="password"
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}
-                                            value={formik.values.password}
-                                            isInvalid={formik.touched.password && formik.errors.password}
+                                            onChange={customerFormik.handleChange}
+                                            onBlur={customerFormik.handleBlur}
+                                            value={customerFormik.values.password}
+                                            isInvalid={customerFormik.touched.password && customerFormik.errors.password}
                                             disabled={loading}
                                         />
                                         <Form.Control.Feedback type="invalid">
-                                            {formik.errors.password}
+                                            {customerFormik.errors.password}
                                         </Form.Control.Feedback>
                                     </Form.Group>
                                 </Col>
@@ -191,14 +260,14 @@ const AdminView = () => {
                                         <Form.Control
                                             type="number"
                                             name="building_id"
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}
-                                            value={formik.values.building_id}
-                                            isInvalid={formik.touched.building_id && formik.errors.building_id}
+                                            onChange={customerFormik.handleChange}
+                                            onBlur={customerFormik.handleBlur}
+                                            value={customerFormik.values.building_id}
+                                            isInvalid={customerFormik.touched.building_id && customerFormik.errors.building_id}
                                             disabled={loading}
                                         />
                                         <Form.Control.Feedback type="invalid">
-                                            {formik.errors.building_id}
+                                            {customerFormik.errors.building_id}
                                         </Form.Control.Feedback>
                                     </Form.Group>
                                 </Col>
@@ -210,14 +279,14 @@ const AdminView = () => {
                                         <Form.Control
                                             type="number"
                                             name="rol_id"
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}
-                                            value={formik.values.rol_id}
-                                            isInvalid={formik.touched.rol_id && formik.errors.rol_id}
+                                            onChange={customerFormik.handleChange}
+                                            onBlur={customerFormik.handleBlur}
+                                            value={customerFormik.values.rol_id}
+                                            isInvalid={customerFormik.touched.rol_id && customerFormik.errors.rol_id}
                                             disabled={loading}
                                         />
                                         <Form.Control.Feedback type="invalid">
-                                            {formik.errors.rol_id}
+                                            {customerFormik.errors.rol_id}
                                         </Form.Control.Feedback>
                                     </Form.Group>
                                 </Col>
@@ -228,8 +297,64 @@ const AdminView = () => {
                             </Button>
                         </Form>
                     )}
+
+                    {showConstructionForm && (
+                        <Form onSubmit={constructionFormik.handleSubmit} className="mt-4">
+                            <Row className="mb-3">
+                                <Col>
+                                    <Form.Group controlId="address">
+                                        <Form.Label>Dirección</Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            name="address"
+                                            onChange={constructionFormik.handleChange}
+                                            onBlur={constructionFormik.handleBlur}
+                                            value={constructionFormik.values.address}
+                                            isInvalid={constructionFormik.touched.address && constructionFormik.errors.address}
+                                            disabled={loading}
+                                        />
+                                        <Form.Control.Feedback type="invalid">
+                                            {constructionFormik.errors.address}
+                                        </Form.Control.Feedback>
+                                    </Form.Group>
+                                </Col>
+                            </Row>
+
+                            <Row className="mb-3">
+                                <Col>
+                                    <Form.Group controlId="estimated_end_date">
+                                        <Form.Label>Fecha de Fin Estimada</Form.Label>
+                                        <Form.Control
+                                            type="date"
+                                            name="estimated_end_date"
+                                            onChange={constructionFormik.handleChange}
+                                            onBlur={constructionFormik.handleBlur}
+                                            value={constructionFormik.values.estimated_end_date}
+                                            isInvalid={constructionFormik.touched.estimated_end_date && constructionFormik.errors.estimated_end_date}
+                                            disabled={loading}
+                                        />
+                                        <Form.Control.Feedback type="invalid">
+                                            {constructionFormik.errors.estimated_end_date}
+                                        </Form.Control.Feedback>
+                                    </Form.Group>
+                                </Col>
+                            </Row>
+
+                            <Button type="submit" variant="primary" disabled={loading}>
+                                {loading ? 'Creando...' : 'Crear Construcción'}
+                            </Button>
+                        </Form>
+                    )}
+
                     {successMessage && <p className="text-success mt-3">{successMessage}</p>}
                     {errorMessage && <p className="text-danger mt-3">{errorMessage}</p>}
+                    <div className="mt-4">
+                        <Link to="/login">
+                            <Button variant="secondary">
+                                Volver a Inicio de Sesión
+                            </Button>
+                        </Link>
+                    </div>
                 </Card.Body>
             </Card>
         </Container>

@@ -4,12 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Front chat finiquitado">
-      <change afterPath="$PROJECT_DIR$/src/components/admin/Admin.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/worker/Worker.js" afterDir="false" />
+    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Vista worker y admin">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/shared/LoginForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/shared/LoginForm.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/admin/Admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/admin/Admin.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -260,7 +259,7 @@
       <workItem from="1747031427476" duration="1749000" />
       <workItem from="1747204049723" duration="9819000" />
       <workItem from="1747505075510" duration="620000" />
-      <workItem from="1747636574960" duration="10728000" />
+      <workItem from="1747636574960" duration="12532000" />
     </task>
     <task id="LOCAL-00001" summary="Imagenes">
       <option name="closed" value="true" />
@@ -638,7 +637,15 @@
       <option name="project" value="LOCAL" />
       <updated>1747653383828</updated>
     </task>
-    <option name="localTasksCounter" value="48" />
+    <task id="LOCAL-00048" summary="Vista worker y admin">
+      <option name="closed" value="true" />
+      <created>1747662753000</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1747662753000</updated>
+    </task>
+    <option name="localTasksCounter" value="49" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -688,6 +695,7 @@
     <MESSAGE value="INICIO" />
     <MESSAGE value="chat" />
     <MESSAGE value="Front chat finiquitado" />
-    <option name="LAST_COMMIT_MESSAGE" value="Front chat finiquitado" />
+    <MESSAGE value="Vista worker y admin" />
+    <option name="LAST_COMMIT_MESSAGE" value="Vista worker y admin" />
   </component>
 </project>

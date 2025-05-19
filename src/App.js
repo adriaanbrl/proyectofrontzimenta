@@ -20,9 +20,8 @@ import Manual from "./components/client/ProfileElements/Manual.js";
 import Historic from "./components/client/ProfileElements/Historic.js";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ContactList from "./components/client/ContactList.js";
-
-
-
+import Admin from "./components/admin/Admin.js";
+import Worker from "./components/worker/Worker.js";
 
 function App() {
   return (
@@ -54,6 +53,19 @@ function App() {
             <Route path="/manual" element={<Manual />} />
             <Route path="/historial" element={<Historic />} />
           </Route>
+
+
+          {/* Rutas de Vista Admin */}
+          <Route element={<Admin />}>
+            <Route path="/admin" element={<Admin />} />
+          </Route>
+
+
+          {/* Rutas de Vista Trabajador */}
+          <Route element={<Worker />}>
+            <Route path="/trabajador" element={<Worker />} />
+          </Route>
+
         </Routes>
       </div>
     </Router>

@@ -7,19 +7,55 @@ function ContactList() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [buildingId, setBuildingId] = useState(null);
+    const [authToken, setAuthToken] = useState(null); // Nuevo estado para el token
+
+    useEffect(() => {
+        const fetchBuildingId = () => {
+            const token = localStorage.getItem('authToken');
+            if (token) {
+                try {
+                    const decodedToken = jwtDecode(token);
+                    console.log('Decoded Token:', decodedToken);
+                    setBuildingId(decodedToken.building_id);
+                    setAuthToken(token); // Guarda el token en el estado
+                } catch (decodeError) {
+                    console.error('Error decoding token:', decodeError);
+                    setError('Error al decodificar el token.');
+                    setLoading(false);
+                }
+            } else {
+                setError('Token de autenticación no encontrado.');
+                setLoading(false);
+            }
+        };
+
+        fetchBuildingId();
+    }, []);
 
     useEffect(() => {
         const fetchWorkers = async () => {
             if (!buildingId) {
-                console.warn('buildingId is undefined or null.  Cannot fetch.');
+                console.warn('buildingId is undefined or null. Cannot fetch.');
                 setError('ID del edificio no encontrado.');
+                setLoading(false);
+                return;
+            }
+
+            if (!authToken) {
+                console.warn('authToken is undefined or null. Cannot fetch.');
+                setError('Token de autenticación no encontrado.');
                 setLoading(false);
                 return;
             }
 
             try {
                 console.log(`Fetching workers for building ID: ${buildingId}`);
-                const response = await fetch(`/api/buildings/${buildingId}/workers`);
+                const response = await fetch(`http://localhost:8080/api/buildings/${buildingId}/workers`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`, // Usa el token del estado
+                        'Content-Type': 'application/json',
+                    },
+                });
                 if (!response.ok) {
                     const errorText = await response.text();
                     console.error(`HTTP error! status: ${response.status}, response: ${errorText}`);
@@ -36,28 +72,10 @@ function ContactList() {
             }
         };
 
-        // Get buildingId from JWT
-        const token = localStorage.getItem('authToken');
-        if (token) {
-            try {
-                const decodedToken = jwtDecode(token);
-                console.log('Decoded Token:', decodedToken); // Add this line
-                setBuildingId(decodedToken.building_id);
-            } catch (decodeError) {
-                console.error('Error decoding token:', decodeError);
-                setError('Error al decodificar el token.');
-                setLoading(false);
-                return;
-            }
-        } else {
-            setError('Token de autenticación no encontrado.');
-            setLoading(false);
-            return;
+        if (buildingId && authToken) { // Verifica ambos
+            fetchWorkers();
         }
-
-
-        fetchWorkers();
-    }, [buildingId]);
+    }, [buildingId, authToken]); // Depende de ambos
 
     if (loading) {
         return <div>Cargando lista de contactos...</div>;

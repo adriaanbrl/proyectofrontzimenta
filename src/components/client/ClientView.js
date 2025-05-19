@@ -10,7 +10,7 @@ import "./ClientView.css";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-// Componente para mostrar el precio estimado con opción de ver/ocultar
+
 const PrecioEstimado = ({ precio }) => {
   const [verPrecio, setVerPrecio] = useState(false);
 

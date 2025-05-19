@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, Form, Button } from 'react-bootstrap';
 
-function ClientChat() {
+function AdminChat() {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const chatContainerRef = useRef(null);
     const websocket = useRef(null);
 
     useEffect(() => {
-        // Conectar al WebSocket al montar el componente
-        websocket.current = new WebSocket('http://localhost:8080/chat'); // Reemplaza con la URL de tu backend
+        websocket.current = new WebSocket('http://localhost:8080/chat');
 
         websocket.current.onopen = () => {
-            console.log('Conexión WebSocket establecida.');
+            console.log('Conexión WebSocket del administrador establecida.');
         };
 
         websocket.current.onmessage = (event) => {
@@ -21,11 +20,11 @@ function ClientChat() {
         };
 
         websocket.current.onclose = () => {
-            console.log('Conexión WebSocket cerrada.');
+            console.log('Conexión WebSocket del administrador cerrada.');
         };
 
         websocket.current.onerror = (error) => {
-            console.error('Error en la conexión WebSocket:', error);
+            console.error('Error en la conexión WebSocket del administrador:', error);
         };
 
         // Limpiar la conexión al desmontar el componente
@@ -46,7 +45,7 @@ function ClientChat() {
     const handleSendMessage = () => {
         if (newMessage.trim() && websocket.current && websocket.current.readyState === WebSocket.OPEN) {
             const messagePayload = JSON.stringify({
-                sender: 'client', // O podrías tener un estado para el nombre del cliente
+                sender: 'admin', // Indica que el remitente es el administrador
                 text: newMessage,
             });
             websocket.current.send(messagePayload);
@@ -66,7 +65,7 @@ function ClientChat() {
                         <div
                             key={index}
                             className={`alert ${msg.sender === 'admin' ? 'alert-secondary' : 'alert-info'} m-1 ${
-                                msg.sender === 'client' ? 'text-end' : ''
+                                msg.sender === 'admin' ? '' : 'text-end'
                             }`}
                         >
                             <strong>{msg.sender === 'admin' ? 'Admin' : 'Cliente'}:</strong> {msg.text}
@@ -82,11 +81,11 @@ function ClientChat() {
                             onChange={(e) => setNewMessage(e.target.value)}
                         />
                     </Form.Group>
-                    <Button variant="info" type="submit">Enviar</Button>
+                    <Button variant="primary" type="submit">Enviar</Button>
                 </Form>
             </Card.Body>
         </Card>
     );
 }
 
-export default ClientChat;
+export default AdminChat;

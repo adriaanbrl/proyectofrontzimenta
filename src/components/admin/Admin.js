@@ -5,18 +5,17 @@ import * as Yup from "yup";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import "./Admin.css";
-import WorkerRol from "./WorkerRol"; /
+import WorkerRol from "./WorkerRol";
 
 const AdminView = () => {
   const [showCustomerForm, setShowCustomerForm] = useState(false);
   const [showConstructionForm, setShowConstructionForm] = useState(false);
   const [showWorkerForm, setShowWorkerForm] = useState(false);
-  const [showFourthForm, setShowFourthForm] = useState(false); // New state for the fourth form (placeholder)
+  const [showFourthForm, setShowFourthForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Formulario para crear cliente
   const customerFormik = useFormik({
     initialValues: {
       email: "",
@@ -64,11 +63,10 @@ const AdminView = () => {
             customerData,
             {
               headers: {
-                "Content-Type": "application/json", // Aseguramos enviar JSON
+                "Content-Type": "application/json",
               },
             }
         );
-        console.log(response);
         if (response.status === 201) {
           setSuccessMessage("Cliente creado con éxito");
           customerFormik.resetForm();
@@ -95,15 +93,14 @@ const AdminView = () => {
     },
   });
 
-  // Formulario para crear construcción
   const constructionFormik = useFormik({
     initialValues: {
       address: "",
-      endDate: "", // Cambiado de estimated_end_date a endDate
+      endDate: "",
     },
     validationSchema: Yup.object({
       address: Yup.string().required("La dirección es requerida"),
-      endDate: Yup.date().required("La fecha de fin estimada es requerida"), // Cambiado a endDate
+      endDate: Yup.date().required("La fecha de fin estimada es requerida"),
     }),
     onSubmit: async (values) => {
       setLoading(true);
@@ -113,7 +110,7 @@ const AdminView = () => {
       try {
         const constructionData = {
           address: values.address,
-          endDate: values.endDate, // Cambiado a endDate
+          endDate: values.endDate,
         };
         const response = await axios.post(
             "http://localhost:8080/api/buildings",
@@ -124,7 +121,6 @@ const AdminView = () => {
               },
             }
         );
-        console.log(response);
         if (response.status === 201) {
           setSuccessMessage("Construcción creada con éxito");
           constructionFormik.resetForm();
@@ -151,10 +147,9 @@ const AdminView = () => {
     },
   });
 
-  // Placeholder formik for the fourth button, if needed
   const fourthFormik = useFormik({
-    initialValues: {}, // Define initial values
-    validationSchema: Yup.object({}), // Define validation schema
+    initialValues: {},
+    validationSchema: Yup.object({}),
     onSubmit: (values) => {
       console.log("Fourth form submitted", values);
       setSuccessMessage("Acción del cuarto botón ejecutada.");
@@ -162,12 +157,11 @@ const AdminView = () => {
     },
   });
 
-
   const hideAllForms = () => {
     setShowCustomerForm(false);
     setShowConstructionForm(false);
     setShowWorkerForm(false);
-    setShowFourthForm(false); // Hide the new form too
+    setShowFourthForm(false);
   };
 
   return (
@@ -187,21 +181,20 @@ const AdminView = () => {
               <h2 className="fw-bold">Panel de Administración</h2>
             </Card.Title>
 
-            {/* Buttons arranged in a 2x2 grid */}
-            <Row className="mb-3 justify-content-center"> {/* Added justify-content-center for small screens if needed */}
-              <Col xs={6} className="mb-2"> {/* Col for "Crear Cliente" */}
+            <Row className="mb-3 justify-content-center">
+              <Col xs={6} className="mb-2">
                 <Button
                     variant={showCustomerForm ? "btn-custom" : "btn-outline-custom"}
                     onClick={() => {
                       hideAllForms();
                       setShowCustomerForm(!showCustomerForm);
                     }}
-                    className="w-100 btn-outline-custom" // w-100 to fill the column
+                    className="w-100 btn-outline-custom"
                 >
                   Crear Cliente
                 </Button>
               </Col>
-              <Col xs={6} className="mb-2"> {/* Col for "Crear Trabajador" */}
+              <Col xs={6} className="mb-2">
                 <Button
                     variant={showWorkerForm ? "btn-custom" : "btn-outline-custom"}
                     onClick={() => {
@@ -213,7 +206,7 @@ const AdminView = () => {
                   Crear Trabajador
                 </Button>
               </Col>
-              <Col xs={6} className="mb-2"> {/* Col for "Crear Construcción" */}
+              <Col xs={6} className="mb-2">
                 <Button
                     variant={showConstructionForm ? "btn-custom" : "btn-outline-custom"}
                     onClick={() => {
@@ -225,7 +218,7 @@ const AdminView = () => {
                   Crear Construcción
                 </Button>
               </Col>
-              <Col xs={6} className="mb-2"> {/* Col for a new, fourth button */}
+              <Col xs={6} className="mb-2">
                 <Button
                     variant={showFourthForm ? "btn-custom" : "btn-outline-custom"}
                     onClick={() => {
@@ -234,7 +227,7 @@ const AdminView = () => {
                     }}
                     className="w-100 btn-outline-custom"
                 >
-                  Gestión de Roles {/* Placeholder text, change as needed */}
+                  Gestión de Roles
                 </Button>
               </Col>
             </Row>
@@ -391,7 +384,7 @@ const AdminView = () => {
                 </Card>
             )}
 
-            {showWorkerForm && <WorkerRol />} {/* Moved here for conditional rendering */}
+            {showWorkerForm && <WorkerRol />}
 
             {showConstructionForm && (
                 <Card className="mt-4 p-3 shadow-sm card-custom">
@@ -454,15 +447,12 @@ const AdminView = () => {
                   </Form>
                 </Card>
             )}
-
-            {/* Conditional rendering for the fourth form (placeholder) */}
             {showFourthForm && (
                 <Card className="mt-4 p-3 shadow-sm card-custom">
                   <Card.Title className="mb-3 text-custom">
-                    Formulario de Gestión de Roles {/* Placeholder title */}
+                    Formulario de Gestión de Roles
                   </Card.Title>
                   <Form onSubmit={fourthFormik.handleSubmit}>
-                    {/* Add form fields for your fourth action here */}
                     <Form.Group controlId="roleName" className="mb-3">
                       <Form.Label className="fw-bold">Nombre del Rol</Form.Label>
                       <Form.Control type="text" placeholder="Ej: Administrador" />

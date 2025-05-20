@@ -8,9 +8,7 @@ function ClientChat() {
     const websocket = useRef(null);
 
     useEffect(() => {
-        // Conectar al WebSocket al montar el componente
-        websocket.current = new WebSocket('http://localhost:8080/chat'); // Reemplaza con la URL de tu backend
-
+        websocket.current = new WebSocket('http://localhost:8080/chat');
         websocket.current.onopen = () => {
             console.log('Conexión WebSocket establecida.');
         };

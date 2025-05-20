@@ -1,6 +1,6 @@
 import "./App.css";
 import GlobalView from "./components/global/GlobalView";
-import ClientView from "./components/client/ClientView";
+import ClientView from "./components/client/clientView/ClientView";
 import LoginForm from "./components/shared/LoginForm";
 import PrivacyPolicy from "./components/shared/PrivacyPolicy";
 import TermsUse from "./components/shared/TermsUse";

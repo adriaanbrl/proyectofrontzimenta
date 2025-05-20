@@ -5,8 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Vista admin">
+      <change afterPath="$PROJECT_DIR$/src/components/client/clientView/ClientData.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/client/clientView/ClientOverview.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/client/clientView/EstimatedPrice.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/client/clientView/ProjectInfo.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/client/clientView/ProjectTimeline.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/admin/WorkerRol.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/admin/WorkerRol.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/client/Chat.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/Chat.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/client/ClientLayout.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/client/ClientView.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/clientView/ClientView.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/client/ClientView.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/clientView/ClientView.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +72,7 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/adrxx/Desktop/InteliJ/proyectofrontzimenta",
+    "last_opened_file_path": "C:/Users/adrxx/Desktop/InteliJ/proyectofrontzimenta/src/components/client",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -78,9 +87,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\adrxx\Desktop\InteliJ\proyectofrontzimenta\src\components\client" />
       <recent name="C:\Users\adrxx\Desktop\InteliJ\proyectofrontzimenta" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\adrxx\Desktop\InteliJ\proyectofrontzimenta\src\components\client\clientView" />
       <recent name="C:\Users\adrxx\Desktop\InteliJ\proyectofrontzimenta\src\components\client\ProfileElements" />
       <recent name="C:\Users\adrxx\Desktop\InteliJ\proyectofrontzimenta\src" />
     </key>
@@ -262,15 +273,7 @@
       <workItem from="1747679913938" duration="275000" />
       <workItem from="1747722765860" duration="1252000" />
       <workItem from="1747740115425" duration="314000" />
-      <workItem from="1747740778223" duration="4050000" />
-    </task>
-    <task id="LOCAL-00006" summary="nombre y apellidos perfil">
-      <option name="closed" value="true" />
-      <created>1743706880722</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1743706880722</updated>
+      <workItem from="1747740778223" duration="5500000" />
     </task>
     <task id="LOCAL-00007" summary="LegDoc finalizado">
       <option name="closed" value="true" />
@@ -656,7 +659,15 @@
       <option name="project" value="LOCAL" />
       <updated>1747749338336</updated>
     </task>
-    <option name="localTasksCounter" value="55" />
+    <task id="LOCAL-00055" summary="Vista admin">
+      <option name="closed" value="true" />
+      <created>1747749886375</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1747749886375</updated>
+    </task>
+    <option name="localTasksCounter" value="56" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

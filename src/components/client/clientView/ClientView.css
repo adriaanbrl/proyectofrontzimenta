@@ -1,0 +1,49 @@
+.text {
+    color: #f5922c !important;
+}
+
+.price-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.price-toggle {
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.price-display {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #ff8c00;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.text {
+    color: #f5922c !important;
+}
+
+/* Styles for PriceEstimated component, if needed */
+.price-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.price-toggle {
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.price-display {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #ff8c00;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* New rule for the bottom margin of the information section */
+.info-section-spacing {
+    margin-bottom: 80px; /* Adjust this value as needed, e.g., 60px, 100px */
+}

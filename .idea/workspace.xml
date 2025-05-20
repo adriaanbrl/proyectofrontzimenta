@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Vista admin">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/admin/Admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/admin/Admin.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/admin/WorkerRol.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/admin/WorkerRol.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -263,15 +262,7 @@
       <workItem from="1747679913938" duration="275000" />
       <workItem from="1747722765860" duration="1252000" />
       <workItem from="1747740115425" duration="314000" />
-      <workItem from="1747740778223" duration="3173000" />
-    </task>
-    <task id="LOCAL-00005" summary="nombre y apellidos perfil">
-      <option name="closed" value="true" />
-      <created>1743691784999</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1743691784999</updated>
+      <workItem from="1747740778223" duration="4050000" />
     </task>
     <task id="LOCAL-00006" summary="nombre y apellidos perfil">
       <option name="closed" value="true" />
@@ -657,7 +648,15 @@
       <option name="project" value="LOCAL" />
       <updated>1747741849986</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="Vista admin">
+      <option name="closed" value="true" />
+      <created>1747749338336</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1747749338336</updated>
+    </task>
+    <option name="localTasksCounter" value="55" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

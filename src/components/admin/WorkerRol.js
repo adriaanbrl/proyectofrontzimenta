@@ -40,7 +40,7 @@ function WorkerRol() {
                     },
                 }
             );
-            if (response.status === 201 || response.status === 200) {
+            if (response.status === 201) {
                 setSuccessMessage("Trabajador creado con éxito!");
                 setFormData({ nombre: "", apellidos: "", contacto: "" });
             } else {

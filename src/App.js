@@ -22,6 +22,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ContactList from "./components/client/ContactList.js";
 import Admin from "./components/admin/Admin.js";
 import Worker from "./components/worker/Worker.js";
+import WorkerRol from "./components/admin/WorkerRol.js";
 
 function App() {
   return (
@@ -58,6 +59,7 @@ function App() {
           {/* Rutas de Vista Admin */}
           <Route element={<Admin />}>
             <Route path="/admin" element={<Admin />} />
+            <Route path="/rolTrabajador" element={<WorkerRol/>} />
           </Route>
 
 

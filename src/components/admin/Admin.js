@@ -52,7 +52,11 @@ const AdminView = () => {
                     },
                 };
 
-                const response = await axios.post('http://localhost:8080/auth/customers', customerData);
+                const response = await axios.post('http://localhost:8080/auth/customers', customerData, {
+                    headers: {
+                        'Content-Type': 'application/json', // Aseguramos enviar JSON
+                    },
+                });
                 console.log(response);
                 if (response.status === 201) {
                     setSuccessMessage('Cliente creado con éxito');
@@ -96,9 +100,10 @@ const AdminView = () => {
                     address: values.address,
                     estimatedEndDate: values.estimated_end_date,
                 };
-                //  Important:  Send a 'building' object as expected by the backend
-                const response = await axios.post('http://localhost:8080/api/buildings', {
-                    building: constructionData
+                const response = await axios.post('http://localhost:8080/api/buildings', constructionData, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
                 });
                 console.log(response);
                 if (response.status === 201) {

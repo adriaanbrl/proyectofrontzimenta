@@ -22,7 +22,7 @@ const AdminView = () => {
       surname: "",
       username: "",
       building_id: "",
-      rol_id: "",
+      rol_id: 1,
     },
     validationSchema: Yup.object({
       email: Yup.string()
@@ -34,9 +34,6 @@ const AdminView = () => {
       username: Yup.string().required("El nombre de usuario es requerido"),
       building_id: Yup.number()
         .required("El ID del edificio es requerido")
-        .integer("Debe ser un número entero"),
-      rol_id: Yup.number()
-        .required("El ID del rol es requerido")
         .integer("Debe ser un número entero"),
     }),
     onSubmit: async (values) => {
@@ -330,26 +327,7 @@ const AdminView = () => {
                   </Col>
                 </Row>
                 <Row className="mb-3">
-                  <Col md={6}>
-                    <Form.Group controlId="rol_id">
-                      <Form.Label className="fw-bold ">ID del Rol</Form.Label>
-                      <Form.Control
-                        type="number"
-                        name="rol_id"
-                        onChange={customerFormik.handleChange}
-                        onBlur={customerFormik.handleBlur}
-                        value={customerFormik.values.rol_id}
-                        isInvalid={
-                          customerFormik.touched.rol_id &&
-                          customerFormik.errors.rol_id
-                        }
-                        disabled={loading}
-                      />
-                      <Form.Control.Feedback type="invalid">
-                        {customerFormik.errors.rol_id}
-                      </Form.Control.Feedback>
-                    </Form.Group>
-                  </Col>
+                  
                   <Col md={12}>
                     <Button
                       type="submit"

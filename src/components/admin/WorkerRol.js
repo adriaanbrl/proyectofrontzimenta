@@ -10,8 +10,7 @@ function WorkerRol() {
     const [buildings, setBuildings] = useState([]);
     const [loadingWorkers, setLoadingWorkers] = useState(false);
     const [loadingBuildings, setLoadingBuildings] = useState(false);
-    const [selectedWorkerId, setSelectedWorkerId] = useState<string | undefined>(undefined);
-    const [selectedBuildingId, setSelectedBuildingId] = useState<string | undefined>(undefined);
+
 
     // Fetch workers from the backend
     useEffect(() => {

@@ -5,6 +5,7 @@ import * as Yup from "yup";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import "./Admin.css";
+import WorkerRol from "./WorkerRol";
 
 const AdminView = () => {
   const [showCustomerForm, setShowCustomerForm] = useState(false);
@@ -187,6 +188,18 @@ const AdminView = () => {
               className="w-50 ms-2 btn-outline-custom"
             >
               Crear Construcción
+            </Button>
+            <Button
+              variant={
+                showConstructionForm ? "btn-custom" : "btn-outline-custom"
+              }
+              onClick={() => {
+                setShowConstructionForm(!showConstructionForm);
+                setShowCustomerForm(false);
+              }}
+              className="w-50 ms-2 btn-outline-custom"
+            >
+              <WorkerRol />
             </Button>
           </div>
 

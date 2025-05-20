@@ -84,11 +84,11 @@ const AdminView = () => {
     const constructionFormik = useFormik({
         initialValues: {
             address: '',
-            estimated_end_date: '',
+            endDate: '', // Cambiado de estimated_end_date a endDate
         },
         validationSchema: Yup.object({
             address: Yup.string().required('La dirección es requerida'),
-            estimated_end_date: Yup.date().required('La fecha de fin estimada es requerida'),
+            endDate: Yup.date().required('La fecha de fin estimada es requerida'), // Cambiado a endDate
         }),
         onSubmit: async (values) => {
             setLoading(true);
@@ -98,7 +98,7 @@ const AdminView = () => {
             try {
                 const constructionData = {
                     address: values.address,
-                    estimatedEndDate: values.estimated_end_date,
+                    endDate: values.endDate, // Cambiado a endDate
                 };
                 const response = await axios.post('http://localhost:8080/api/buildings', constructionData, {
                     headers: {
@@ -327,19 +327,19 @@ const AdminView = () => {
 
                             <Row className="mb-3">
                                 <Col>
-                                    <Form.Group controlId="estimated_end_date">
+                                    <Form.Group controlId="endDate"> {/* Cambiado a endDate */}
                                         <Form.Label>Fecha de Fin Estimada</Form.Label>
                                         <Form.Control
                                             type="date"
-                                            name="estimated_end_date"
+                                            name="endDate" 
                                             onChange={constructionFormik.handleChange}
                                             onBlur={constructionFormik.handleBlur}
-                                            value={constructionFormik.values.estimated_end_date}
-                                            isInvalid={constructionFormik.touched.estimated_end_date && constructionFormik.errors.estimated_end_date}
+                                            value={constructionFormik.values.endDate} 
+                                            isInvalid={constructionFormik.touched.endDate && constructionFormik.errors.endDate} 
                                             disabled={loading}
                                         />
                                         <Form.Control.Feedback type="invalid">
-                                            {constructionFormik.errors.estimated_end_date}
+                                            {constructionFormik.errors.endDate} {/* Cambiado a endDate */}
                                         </Form.Control.Feedback>
                                     </Form.Group>
                                 </Col>

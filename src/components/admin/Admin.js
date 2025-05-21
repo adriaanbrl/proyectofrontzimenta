@@ -1,3 +1,5 @@
+// src/components/client/AdminView.js
+
 import React, { useState } from "react";
 import { Container, Row, Col, Button, Card, Form } from "react-bootstrap";
 import { useFormik } from "formik";
@@ -5,102 +7,127 @@ import * as Yup from "yup";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import "./Admin.css";
-import WorkerRol from "./WorkerRol";
+import WorkerRol from "./WorkerRol"; // Assuming WorkerRol is the component for creating workers
+import WorkerAssigment from "./WorkerAssigment";
 
 const AdminView = () => {
   const [showCustomerForm, setShowCustomerForm] = useState(false);
   const [showConstructionForm, setShowConstructionForm] = useState(false);
-  const [showWorkerForm, setShowWorkerForm] = useState(false);
+  const [showWorkerForm, setShowWorkerForm] = useState(false); // This will now control WorkerRol form visibility
   const [showFourthForm, setShowFourthForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  // --- customerFormik (unchanged, as provided) ---
   const customerFormik = useFormik({
     initialValues: {
       email: "",
-      name: "",
-      password: "",
-      surname: "",
       username: "",
+      name: "",
+      surname: "",
+      password: "",
       building_id: "",
-      rol_id: 1,
     },
     validationSchema: Yup.object({
-      email: Yup.string()
-          .email("Introduce un email válido")
-          .required("El email es requerido"),
-      name: Yup.string().required("El nombre es requerido"),
-      password: Yup.string().required("La contraseña es requerida"),
-      surname: Yup.string().required("El apellido es requerido"),
-      username: Yup.string().required("El nombre de usuario es requerido"),
-      building_id: Yup.number()
-          .required("El ID del edificio es requerido")
-          .integer("Debe ser un número entero"),
+      email: Yup.string().email("Correo electrónico inválido").required("El correo electrónico es obligatorio."),
+      username: Yup.string().required("El nombre de usuario es obligatorio."),
+      name: Yup.string().required("El nombre es obligatorio."),
+      surname: Yup.string().required("El apellido es obligatorio."),
+      password: Yup.string().min(6, "La contraseña debe tener al menos 6 caracteres.").required("La contraseña es obligatoria."),
+      building_id: Yup.number().nullable().min(1, "El ID del edificio debe ser un número positivo."),
     }),
     onSubmit: async (values) => {
       setLoading(true);
       setSuccessMessage("");
       setErrorMessage("");
-
       try {
-        const customerData = {
-          email: values.email,
-          name: values.name,
-          password: values.password,
-          surname: values.surname,
-          username: values.username,
-          building: {
-            id: parseInt(values.building_id, 10),
-          },
-          rol: {
-            id: parseInt(values.rol_id, 10),
-          },
-        };
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          setErrorMessage("Error: Token de autenticación no encontrado.");
+          setLoading(false);
+          return;
+        }
 
-        const response = await axios.post(
-            "http://localhost:8080/auth/customers",
-            customerData,
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-        );
+        const response = await axios.post("http://localhost:8080/auth/register/client", values, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (response.status === 201) {
-          setSuccessMessage("Cliente creado con éxito");
+          setSuccessMessage("Cliente creado con éxito.");
           customerFormik.resetForm();
-          setShowCustomerForm(false);
         } else {
-          setErrorMessage(
-              "Error al crear el cliente. Por favor, inténtalo de nuevo."
-          );
+          setErrorMessage("Error al crear el cliente.");
         }
       } catch (error) {
-        console.error("Error al crear el cliente:", error);
-        if (error.response) {
-          setErrorMessage(
-              `Error: ${error.response.data.message || "Error desconocido"}`
-          );
-        } else if (error.request) {
-          setErrorMessage("No se pudo conectar con el servidor.");
-        } else {
-          setErrorMessage("Error al procesar la solicitud.");
-        }
+        console.error("Error creating customer:", error);
+        setErrorMessage(
+            error.response?.data?.message || "Error al crear el cliente."
+        );
       } finally {
         setLoading(false);
       }
     },
   });
+  // --- END customerFormik ---
 
+
+  // --- constructionFormik (unchanged, as provided) ---
   const constructionFormik = useFormik({
     initialValues: {
       address: "",
       endDate: "",
     },
     validationSchema: Yup.object({
-      address: Yup.string().required("La dirección es requerida"),
-      endDate: Yup.date().required("La fecha de fin estimada es requerida"),
+      address: Yup.string().required("La dirección es obligatoria."),
+      endDate: Yup.date().required("La fecha de fin estimada es obligatoria.").nullable(),
+    }),
+    onSubmit: async (values) => {
+      setLoading(true);
+      setSuccessMessage("");
+      setErrorMessage("");
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          setErrorMessage("Error: Token de autenticación no encontrado.");
+          setLoading(false);
+          return;
+        }
+
+        const response = await axios.post("http://localhost:8080/api/buildings", values, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.status === 201) {
+          setSuccessMessage("Construcción creada con éxito.");
+          constructionFormik.resetForm();
+        } else {
+          setErrorMessage("Error al crear la construcción.");
+        }
+      } catch (error) {
+        console.error("Error creating construction:", error);
+        setErrorMessage(
+            error.response?.data?.message || "Error al crear la construcción."
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+  });
+  // --- END constructionFormik ---
+
+
+  // --- workerAssigmentFormik (unchanged, as provided) ---
+  const workerAssigmentFormik = useFormik({
+    initialValues: {
+      buildingId: "",
+      workerId: "",
+    },
+    validationSchema: Yup.object({
+      buildingId: Yup.string().required("Por favor, seleccione una construcción."),
+      workerId: Yup.string().required("Por favor, seleccione un trabajador."),
     }),
     onSubmit: async (values) => {
       setLoading(true);
@@ -108,60 +135,129 @@ const AdminView = () => {
       setErrorMessage("");
 
       try {
-        const constructionData = {
-          address: values.address,
-          endDate: values.endDate,
-        };
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          setErrorMessage("Error: Token de autenticación no encontrado.");
+          setLoading(false);
+          return;
+        }
+
+        const buildingId = parseInt(values.buildingId, 10);
+        const workerId = parseInt(values.workerId, 10);
+
+        const params = new URLSearchParams();
+        params.append('workerId', workerId);
+        params.append('buildingId', buildingId);
+
         const response = await axios.post(
-            "http://localhost:8080/api/buildings",
-            constructionData,
+            "http://localhost:8080/api/assignments/worker-building",
+            params,
             {
               headers: {
-                "Content-Type": "application/json",
+                "Content-Type": "application/x-www-form-urlencoded",
+                Authorization: `Bearer ${token}`,
               },
             }
         );
-        if (response.status === 201) {
-          setSuccessMessage("Construcción creada con éxito");
-          constructionFormik.resetForm();
-          setShowConstructionForm(false);
+
+        if (response.status === 200 || response.status === 201) {
+          setSuccessMessage("Trabajador asignado a la construcción con éxito.");
+          workerAssigmentFormik.resetForm();
         } else {
           setErrorMessage(
-              "Error al crear la construcción. Por favor, inténtalo de nuevo."
+              `Error al asignar trabajador: ${response.statusText || "Respuesta inesperada."}`
           );
         }
       } catch (error) {
-        console.error("Error al crear la construcción:", error);
+        console.error("Error al asignar trabajador:", error);
         if (error.response) {
           setErrorMessage(
-              `Error: ${error.response.data.message || "Error desconocido"}`
+              `Error: ${error.response.data.message || error.response.status || "Error desconocido del servidor"}`
           );
         } else if (error.request) {
-          setErrorMessage("No se pudo conectar con el servidor.");
+          setErrorMessage("No se pudo conectar con el servidor. Por favor, verifica tu conexión o el estado del backend.");
         } else {
-          setErrorMessage("Error al procesar la solicitud.");
+          setErrorMessage("Error al procesar la solicitud de asignación.");
         }
       } finally {
         setLoading(false);
       }
     },
   });
+  // --- END workerAssigmentFormik ---
 
-  const fourthFormik = useFormik({
-    initialValues: {},
-    validationSchema: Yup.object({}),
-    onSubmit: (values) => {
-      console.log("Fourth form submitted", values);
-      setSuccessMessage("Acción del cuarto botón ejecutada.");
-      setShowFourthForm(false);
+
+  // --- workerFormik for creating new workers (MODIFIED URL) ---
+  const workerFormik = useFormik({
+    initialValues: {
+      name: "",
+      surname: "",
+      contact: "",
+    },
+    validationSchema: Yup.object({
+      name: Yup.string().required("El nombre del trabajador es obligatorio."),
+      surname: Yup.string().required("El apellido del trabajador es obligatorio."),
+      contact: Yup.string().required("El contacto del trabajador es obligatorio."),
+    }),
+    onSubmit: async (values) => {
+      setLoading(true);
+      setSuccessMessage("");
+      setErrorMessage("");
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          setErrorMessage("Error: Token de autenticación no encontrado.");
+          setLoading(false);
+          return;
+        }
+
+        // --- THE CRITICAL CHANGE IS HERE:
+        // Changed endpoint from /auth/workers to /api/workers
+        const response = await axios.post("http://localhost:8080/api/workers", values, {
+          //                                                      ^^^^^^^^^
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.status === 201 || response.status === 200) {
+          setSuccessMessage("Trabajador creado con éxito.");
+          workerFormik.resetForm();
+        } else {
+          setErrorMessage("Error al crear el trabajador.");
+        }
+      } catch (error) {
+        console.error("Error creating worker:", error);
+        // More robust error message display
+        if (error.response) {
+          // Server responded with a status code outside the 2xx range
+          setErrorMessage(`Error: ${error.response.data.message || error.response.statusText || 'Error desconocido del servidor.'}`);
+        } else if (error.request) {
+          // The request was made but no response was received
+          setErrorMessage("No se pudo conectar con el servidor. Por favor, verifica tu conexión o el estado del backend.");
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          setErrorMessage(`Error al procesar la solicitud: ${error.message}`);
+        }
+      } finally {
+        setLoading(false);
+      }
     },
   });
+  // --- END workerFormik ---
+
 
   const hideAllForms = () => {
     setShowCustomerForm(false);
     setShowConstructionForm(false);
     setShowWorkerForm(false);
     setShowFourthForm(false);
+    setSuccessMessage("");
+    setErrorMessage("");
+    customerFormik.resetForm();
+    constructionFormik.resetForm();
+    workerFormik.resetForm();
+    workerAssigmentFormik.resetForm();
   };
 
   return (
@@ -227,7 +323,7 @@ const AdminView = () => {
                     }}
                     className="w-100 btn-outline-custom"
                 >
-                  Gestión de Roles
+                  Asignar Trabajador
                 </Button>
               </Col>
             </Row>
@@ -384,7 +480,16 @@ const AdminView = () => {
                 </Card>
             )}
 
-            {showWorkerForm && <WorkerRol />}
+            {showWorkerForm && (
+                <WorkerRol
+                    formik={workerFormik}
+                    loading={loading}
+                    successMessage={successMessage}
+                    errorMessage={errorMessage}
+                    setSuccessMessage={setSuccessMessage}
+                    setErrorMessage={setErrorMessage}
+                />
+            )}
 
             {showConstructionForm && (
                 <Card className="mt-4 p-3 shadow-sm card-custom">
@@ -447,32 +552,14 @@ const AdminView = () => {
                   </Form>
                 </Card>
             )}
-            {showFourthForm && (
-                <Card className="mt-4 p-3 shadow-sm card-custom">
-                  <Card.Title className="mb-3 text-custom">
-                    Formulario de Gestión de Roles
-                  </Card.Title>
-                  <Form onSubmit={fourthFormik.handleSubmit}>
-                    <Form.Group controlId="roleName" className="mb-3">
-                      <Form.Label className="fw-bold">Nombre del Rol</Form.Label>
-                      <Form.Control type="text" placeholder="Ej: Administrador" />
-                    </Form.Group>
-                    <Button
-                        type="submit"
-                        variant="btn btn-outline-custom"
-                        className="w-100"
-                    >
-                      Guardar Rol
-                    </Button>
-                  </Form>
-                </Card>
-            )}
 
-            {successMessage && (
-                <div className="alert alert-success mt-3">{successMessage}</div>
-            )}
-            {errorMessage && (
-                <div className="alert alert-danger mt-3">{errorMessage}</div>
+            {showFourthForm && (
+                <WorkerAssigment
+                    formik={workerAssigmentFormik}
+                    loading={loading}
+                    successMessage={successMessage}
+                    errorMessage={errorMessage}
+                />
             )}
 
             <div className="mt-4">

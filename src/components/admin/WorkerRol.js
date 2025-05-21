@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { Container, Row, Col, Button, Card, Form, Alert } from "react-bootstrap";
+import React, { useState } from "react"; // Removed useEffect as it's not used in this version
+import { Card, Form, Button, Row, Col, Alert, Container } from "react-bootstrap"; // <-- ADDED Container HERE
 import axios from "axios";
 
 function WorkerRol() {
     const [formData, setFormData] = useState({
         nombre: "",
         apellidos: "",
-        contacto: "",
+        contacto: "", // Keep this as a string for input handling
     });
     const [loading, setLoading] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
@@ -15,7 +15,9 @@ function WorkerRol() {
     const handleChange = (e) => {
         let value = e.target.value;
         if (e.target.name === "contacto") {
-            value = value.replace(/[^0-9]/g, '').slice(0, 9);
+            // Only allow digits for contact, but keep it as a string in formData
+            value = value.replace(/[^0-9]/g, '');
+            // You can also add a length limit here if needed, e.g., .slice(0, 9);
         }
         setFormData({ ...formData, [e.target.name]: value });
     };
@@ -26,23 +28,45 @@ function WorkerRol() {
         setSuccessMessage("");
         setErrorMessage("");
 
+        // Basic validation for all fields
+        if (!formData.nombre || !formData.apellidos || !formData.contacto) {
+            setErrorMessage("Todos los campos son obligatorios.");
+            setLoading(false);
+            return;
+        }
+
+        // Validate contact before parsing
+        if (!/^\d+$/.test(formData.contacto)) {
+            setErrorMessage("El campo 'Contacto' debe ser un número válido.");
+            setLoading(false);
+            return;
+        }
+
         const workerData = {
-            contact: parseInt(formData.contacto, 10), 
+            contact: parseInt(formData.contacto, 10), // Now it's explicitly an integer
             name: formData.nombre,
             surname: formData.apellidos,
         };
 
         try {
+            const token = localStorage.getItem("authToken");
+            if (!token) {
+                setErrorMessage("Error: Token de autenticación no encontrado.");
+                setLoading(false);
+                return;
+            }
+
             const response = await axios.post("http://localhost:8080/api/workers", workerData,
                 {
                     headers: {
                         "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
                     },
                 }
             );
-            if (response.status === 201) {
+            if (response.status === 201 || response.status === 200) {
                 setSuccessMessage("Trabajador creado con éxito!");
-                setFormData({ nombre: "", apellidos: "", contacto: "" });
+                setFormData({ nombre: "", apellidos: "", contacto: "" }); // Reset form
             } else {
                 setErrorMessage(`Error al crear trabajador: ${response.statusText || 'Error desconocido'}`);
             }
@@ -50,7 +74,7 @@ function WorkerRol() {
             console.error("Error al crear el trabajador:", error);
             if (error.response) {
                 setErrorMessage(
-                    `Error: ${error.response.data.message || error.response.data || "Error al conectar con el servidor"}`
+                    `Error: ${error.response.data.message || error.response.data || error.response.statusText || "Error al conectar con el servidor"}`
                 );
             } else if (error.request) {
                 setErrorMessage("No se pudo conectar con el servidor. Por favor, revisa tu conexión.");
@@ -61,8 +85,9 @@ function WorkerRol() {
             setLoading(false);
         }
     };
+
     return (
-        <Container>
+        <Container> {/* This is the Container that needed to be imported */}
             <Card className="mt-4 p-3 shadow-sm card-custom">
                 <Card.Title className="mb-3 text-custom">
                     Crear Nuevo Trabajador
@@ -79,6 +104,7 @@ function WorkerRol() {
                                     value={formData.nombre}
                                     onChange={handleChange}
                                     disabled={loading}
+                                    required
                                 />
                             </Form.Group>
                         </Col>
@@ -94,6 +120,7 @@ function WorkerRol() {
                                     value={formData.apellidos}
                                     onChange={handleChange}
                                     disabled={loading}
+                                    required
                                 />
                             </Form.Group>
                         </Col>
@@ -110,6 +137,7 @@ function WorkerRol() {
                                     value={formData.contacto}
                                     onChange={handleChange}
                                     disabled={loading}
+                                    required
                                 />
                             </Form.Group>
                         </Col>

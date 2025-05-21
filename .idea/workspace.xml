@@ -4,18 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Vista admin">
-      <change afterPath="$PROJECT_DIR$/src/components/client/clientView/ClientData.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/client/clientView/ClientOverview.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/client/clientView/EstimatedPrice.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/client/clientView/ProjectInfo.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/components/client/clientView/ProjectTimeline.js" afterDir="false" />
+    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Separacion inicio en archivos">
+      <change afterPath="$PROJECT_DIR$/src/components/admin/WorkerAssigment.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/client/Chat.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/Chat.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/client/ClientLayout.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/client/ClientView.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/clientView/ClientView.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/client/ClientView.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/clientView/ClientView.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/admin/Admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/admin/Admin.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,33 +50,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Node.js.Admin.js.executor": "Run",
-    "Node.js.App.js.executor": "Run",
-    "Node.js.LoginForm.js.executor": "Run",
-    "Node.js.TestProfileImage.js.executor": "Run",
-    "Node.js.globalView.js.executor": "Run",
-    "Node.js.testprofileimage.js.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/adrxx/Desktop/InteliJ/proyectofrontzimenta/src/components/client",
-    "list.type.of.created.stylesheet": "CSS",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Node.js.Admin.js.executor&quot;: &quot;Run&quot;,
+    &quot;Node.js.App.js.executor&quot;: &quot;Run&quot;,
+    &quot;Node.js.LoginForm.js.executor&quot;: &quot;Run&quot;,
+    &quot;Node.js.TestProfileImage.js.executor&quot;: &quot;Run&quot;,
+    &quot;Node.js.globalView.js.executor&quot;: &quot;Run&quot;,
+    &quot;Node.js.testprofileimage.js.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/adrxx/Desktop/InteliJ/proyectofrontzimenta/src/components/client&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\adrxx\Desktop\InteliJ\proyectofrontzimenta\src\components\client" />
@@ -273,23 +265,8 @@
       <workItem from="1747679913938" duration="275000" />
       <workItem from="1747722765860" duration="1252000" />
       <workItem from="1747740115425" duration="314000" />
-      <workItem from="1747740778223" duration="5500000" />
-    </task>
-    <task id="LOCAL-00007" summary="LegDoc finalizado">
-      <option name="closed" value="true" />
-      <created>1745314026545</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1745314026545</updated>
-    </task>
-    <task id="LOCAL-00008" summary="LegDoc finalizado">
-      <option name="closed" value="true" />
-      <created>1745315053395</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1745315053395</updated>
+      <workItem from="1747740778223" duration="6537000" />
+      <workItem from="1747809090808" duration="3604000" />
     </task>
     <task id="LOCAL-00009" summary="Global view actualizado">
       <option name="closed" value="true" />
@@ -667,7 +644,23 @@
       <option name="project" value="LOCAL" />
       <updated>1747749886375</updated>
     </task>
-    <option name="localTasksCounter" value="56" />
+    <task id="LOCAL-00056" summary="Separacion inicio en archivos">
+      <option name="closed" value="true" />
+      <created>1747751645176</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1747751645176</updated>
+    </task>
+    <task id="LOCAL-00057" summary="Separacion inicio en archivos">
+      <option name="closed" value="true" />
+      <created>1747752252051</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1747752252051</updated>
+    </task>
+    <option name="localTasksCounter" value="58" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -719,6 +712,7 @@
     <MESSAGE value="Front chat finiquitado" />
     <MESSAGE value="Vista worker y admin" />
     <MESSAGE value="Vista admin" />
-    <option name="LAST_COMMIT_MESSAGE" value="Vista admin" />
+    <MESSAGE value="Separacion inicio en archivos" />
+    <option name="LAST_COMMIT_MESSAGE" value="Separacion inicio en archivos" />
   </component>
 </project>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Spinner, Alert, Tabs, Tab, Button } from 'react-bootstrap';
 import { jwtDecode } from 'jwt-decode';
-import { useNavigate, useSearchParams } from 'react-router-dom'; // Importa useSearchParams
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
 
 const DataList = () => {
@@ -11,14 +11,11 @@ const DataList = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // 1. Usa useSearchParams para leer y establecer parámetros de URL
     const [searchParams, setSearchParams] = useSearchParams();
-    // 2. Inicializa activeTab basándose en el parámetro 'tab' de la URL, o 'buildings' por defecto
     const initialTabFromUrl = searchParams.get('tab') || 'buildings';
     const [activeTab, setActiveTab] = useState(initialTabFromUrl);
 
     const navigate = useNavigate();
-    const API_BASE_URL = 'http://localhost:8080/auth';
 
     useEffect(() => {
         document.title = `Panel de Administración - ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`;
@@ -39,17 +36,14 @@ const DataList = () => {
             setError("Error al autenticar. El token es inválido o ha expirado.");
             setLoading(false);
         }
-    }, [activeTab]); // Ejecuta cuando `activeTab` cambie para actualizar el título
+    }, [activeTab]);
 
-    // 3. Este useEffect se encarga de sincronizar el estado `activeTab`
-    // con el parámetro `tab` de la URL si el usuario navega directamente
-    // a una URL con un parámetro diferente (ej. desde el sidebar con /dataList?tab=workers)
     useEffect(() => {
         const tabFromUrl = searchParams.get('tab');
         if (tabFromUrl && tabFromUrl !== activeTab) {
             setActiveTab(tabFromUrl);
         }
-    }, [searchParams, activeTab]); // Depende de searchParams y activeTab
+    }, [searchParams, activeTab]);
 
     const fetchData = async (token) => {
         setLoading(true);
@@ -61,33 +55,50 @@ const DataList = () => {
         };
 
         try {
-            const buildingsResponse = await fetch(`${API_BASE_URL}/admin/buildings`, { headers });
-            if (!buildingsResponse.ok) throw new Error(`Error al cargar construcciones: ${buildingsResponse.statusText}`);
+            const buildingsResponse = await fetch(`http://localhost:8080/auth/admin/buildings`, { headers });
+            if (!buildingsResponse.ok) {
+                if (buildingsResponse.status === 403) {
+                    throw new Error("Acceso denegado. Es posible que no tenga los permisos necesarios o su sesión haya expirado.");
+                }
+                throw new Error(`Error al cargar construcciones: ${buildingsResponse.statusText}`);
+            }
             const buildingsData = await buildingsResponse.json();
             setBuildings(buildingsData);
 
-            const workersResponse = await fetch(`${API_BASE_URL}/admin/workers`, { headers });
-            if (!workersResponse.ok) throw new Error(`Error al cargar trabajadores: ${workersResponse.statusText}`);
+            const workersResponse = await fetch(`http://localhost:8080/auth/admin/workers`, { headers });
+            if (!workersResponse.ok) {
+                if (workersResponse.status === 403) {
+                    throw new Error("Acceso denegado. Es posible que no tenga los permisos necesarios o su sesión haya expirado.");
+                }
+                throw new Error(`Error al cargar trabajadores: ${workersResponse.statusText}`);
+            }
             const workersData = await workersResponse.json();
             setWorkers(workersData);
 
-            const customersResponse = await fetch(`${API_BASE_URL}/admin/customers`, { headers });
-            if (!customersResponse.ok) throw new Error(`Error al cargar clientes: ${customersResponse.statusText}`);
+            const customersResponse = await fetch(`http://localhost:8080/auth/admin/customers`, { headers });
+            if (!customersResponse.ok) {
+                if (customersResponse.status === 403) {
+                    throw new Error("Acceso denegado. Es posible que no tenga los permisos necesarios o su sesión haya expirado.");
+                }
+                throw new Error(`Error al cargar clientes: ${customersResponse.statusText}`);
+            }
             const customersData = await customersResponse.json();
             setCustomers(customersData);
 
         } catch (err) {
             console.error("Error al cargar datos:", err);
             setError(`Error al cargar datos: ${err.message}`);
+            if (err.message.includes("Acceso denegado") || err.message.includes("token es inválido o ha expirado")) {
+                setTimeout(() => navigate('/login'), 3000);
+            }
         } finally {
             setLoading(false);
         }
     };
 
-    // 4. Función para manejar el cambio de pestaña y actualizar la URL
     const handleTabSelect = (key) => {
         setActiveTab(key);
-        setSearchParams({ tab: key }); // Actualiza el parámetro 'tab' en la URL
+        setSearchParams({ tab: key });
     };
 
     if (loading) {
@@ -124,7 +135,7 @@ const DataList = () => {
                 <Tabs
                     id="admin-dashboard-tabs"
                     activeKey={activeTab}
-                    onSelect={handleTabSelect} // Usa la función handleTabSelect aquí
+                    onSelect={handleTabSelect}
                     className="mb-3"
                 >
                     <Tab eventKey="buildings" title="Construcciones">
@@ -134,12 +145,13 @@ const DataList = () => {
                                     <Col md={6} lg={4} className="mb-4" key={building.id}>
                                         <Card className="shadow-sm">
                                             <Card.Body>
-                                                <Card.Title className="text-primary">{building.name}</Card.Title>
-                                                <Card.Subtitle className="mb-2 text-muted">{building.address}</Card.Subtitle>
+                                                {/* Building entity now only has address, startDate, endDate */}
+                                                <Card.Title className="text-primary">{building.address}</Card.Title>
+                                                <Card.Subtitle className="mb-2 text-muted">ID: {building.id}</Card.Subtitle> {/* Displaying ID as it's a primary key and useful */}
                                                 <Card.Text>
-                                                    Ciudad: {building.city}<br/>
-                                                    Código Postal: {building.postalCode}<br/>
-                                                    País: {building.country}
+                                                    Dirección: {building.address}<br/>
+                                                    Fecha de Inicio: {building.startDate ? new Date(building.startDate).toLocaleDateString() : 'N/A'}<br/>
+                                                    Fecha de Finalización: {building.endDate ? new Date(building.endDate).toLocaleDateString() : 'N/A'}
                                                 </Card.Text>
                                             </Card.Body>
                                         </Card>
@@ -160,11 +172,12 @@ const DataList = () => {
                                     <Col md={6} lg={4} className="mb-4" key={worker.id}>
                                         <Card className="shadow-sm">
                                             <Card.Body>
-                                                <Card.Title className="text-success">{worker.firstName} {worker.lastName}</Card.Title>
-                                                <Card.Subtitle className="mb-2 text-muted">{worker.email}</Card.Subtitle>
+                                                {/* Worker entity now has 'name' and 'surname' directly */}
+                                                <Card.Title className="text-success">{worker.name} {worker.surname}</Card.Title>
+                                                <Card.Subtitle className="mb-2 text-muted">ID: {worker.id}</Card.Subtitle> {/* Displaying ID */}
                                                 <Card.Text>
-                                                    Teléfono: {worker.phone}<br/>
-                                                    Rol: {worker.role}
+                                                    Nombre Completo: {worker.name} {worker.surname}<br/>
+                                                    Contacto: {worker.contact || 'N/A'}
                                                 </Card.Text>
                                             </Card.Body>
                                         </Card>
@@ -185,11 +198,15 @@ const DataList = () => {
                                     <Col md={6} lg={4} className="mb-4" key={customer.id}>
                                         <Card className="shadow-sm">
                                             <Card.Body>
-                                                <Card.Title className="text-info">{customer.firstName} {customer.lastName}</Card.Title>
+                                                {/* Customer entity now has 'name' and 'surname' directly */}
+                                                <Card.Title className="text-info">{customer.name} {customer.surname}</Card.Title>
                                                 <Card.Subtitle className="mb-2 text-muted">{customer.email}</Card.Subtitle>
                                                 <Card.Text>
-                                                    Teléfono: {customer.phone}<br/>
-                                                    Dirección: {customer.address}
+                                                    Nombre Completo: {customer.name} {customer.surname}<br/>
+                                                    Email: {customer.email}<br/>
+                                                    Username: {customer.username || 'N/A'}<br/>
+                                                    {/* Accessing address from the nested 'building' object */}
+                                                    Obra: {customer.building ? customer.building.address : 'N/A'}<br/>
                                                 </Card.Text>
                                             </Card.Body>
                                         </Card>

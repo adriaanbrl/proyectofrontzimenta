@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="css">
+    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="admin">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/admin/DataList.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/admin/DataList.js" afterDir="false" />
     </list>
@@ -268,15 +268,7 @@
       <workItem from="1747809090808" duration="3604000" />
       <workItem from="1747813122361" duration="1743000" />
       <workItem from="1747815297299" duration="5127000" />
-      <workItem from="1747823027566" duration="4022000" />
-    </task>
-    <task id="LOCAL-00017" summary="Manual usuario, facturas y legislacion legal actualizado">
-      <option name="closed" value="true" />
-      <created>1746442190521</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1746442190521</updated>
+      <workItem from="1747823027566" duration="4725000" />
     </task>
     <task id="LOCAL-00018" summary="Manual usuario, facturas y legislacion legal actualizado">
       <option name="closed" value="true" />
@@ -662,7 +654,15 @@
       <option name="project" value="LOCAL" />
       <updated>1747825352132</updated>
     </task>
-    <option name="localTasksCounter" value="66" />
+    <task id="LOCAL-00066" summary="admin">
+      <option name="closed" value="true" />
+      <created>1747827830734</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1747827830734</updated>
+    </task>
+    <option name="localTasksCounter" value="67" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -715,8 +715,8 @@
     <MESSAGE value="Calendario diseño" />
     <MESSAGE value="Inicio diseño acabado" />
     <MESSAGE value="Calendario diseño acabado" />
-    <MESSAGE value="admin" />
     <MESSAGE value="css" />
-    <option name="LAST_COMMIT_MESSAGE" value="css" />
+    <MESSAGE value="admin" />
+    <option name="LAST_COMMIT_MESSAGE" value="admin" />
   </component>
 </project>

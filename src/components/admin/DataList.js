@@ -205,7 +205,6 @@ const DataList = () => {
                                                     Nombre Completo: {customer.name} {customer.surname}<br/>
                                                     Email: {customer.email}<br/>
                                                     Username: {customer.username || 'N/A'}<br/>
-                                                    {/* Accessing address from the nested 'building' object */}
                                                     Obra: {customer.building ? customer.building.address : 'N/A'}<br/>
                                                 </Card.Text>
                                             </Card.Body>

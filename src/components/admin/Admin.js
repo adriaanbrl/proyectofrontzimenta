@@ -8,6 +8,7 @@ import "./Admin.css";
 import WorkerRol from "./WorkerRol";
 import WorkerAssigment from "./WorkerAssigment";
 import AdminSidebar from './AdminSidebar';
+import { Outlet } from 'react-router-dom';
 
 const AdminView = () => {
   const [showCustomerForm, setShowCustomerForm] = useState(false);
@@ -567,6 +568,7 @@ const AdminView = () => {
             </Card.Body>
           </Card>
         </Container>
+        <Outlet />
         <AdminSidebar />
       </div>
   );

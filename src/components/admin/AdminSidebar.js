@@ -13,7 +13,7 @@ export default function AdminSidebar() {
     ];
     
     return (
-        <Navbar fixed="bottom" className="admin-sidebar-nav bg-white shadow-lg p-2 d-flex justify-content-around">
+        <Navbar fixed="bottom" className="sidebar-nav bg-white shadow-lg p-2 d-flex justify-content-around">
             {menuItems.map((item) => (
                 <Nav.Item key={item.name}>
                     <Link

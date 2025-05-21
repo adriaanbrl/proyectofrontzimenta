@@ -1,4 +1,4 @@
-/* Universal Box-Sizing for better layout control */
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -6,12 +6,11 @@
 .calendario-eventos {
   background-color: #f8f9fa;
   border-radius: 8px;
-  max-width: 900px; /* Keep max-width to constrain on large screens */
+  max-width: 900px;
   margin: 20px auto;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   padding: 20px;
-  /* Add min-width to prevent squishing on very small screens if max-width is too restrictive */
-  min-width: 320px; /* A common minimum width for mobile */
+  min-width: 320px;
 }
 
 .header-section {
@@ -57,22 +56,22 @@
 
 .current-month-year {
   color: #343a40;
-  font-size: 1.5rem; /* Use rem */
+  font-size: 1.5rem;
   font-weight: 500;
-  white-space: nowrap; /* Prevent month/year from wrapping */
+  white-space: nowrap;
 }
 
 .days-of-week {
-  display: flex; /* Make it a flex container */
-  justify-content: space-around; /* Distribute day headers evenly */
+  display: flex;
+  justify-content: space-around;
 }
 
 .days-of-week .day-header {
   color: #6c757d;
-  font-size: 0.9rem; /* Use rem */
+  font-size: 0.9rem;
   padding: 8px 0;
-  flex: 1; /* Allow headers to grow and shrink */
-  text-align: center; /* Center text */
+  flex: 1;
+  text-align: center;
 }
 
 .calendar-grid {
@@ -80,21 +79,19 @@
   flex-wrap: wrap;
   margin-left: 0;
   margin-right: 0;
-  /* Use gap for consistent spacing between cells */
-  gap: 2px; /* Or adjust as needed for spacing between day buttons */
+  gap: 2px;
 }
 
 .day-cell {
-  /* Calculate width considering gap to maintain 7 columns */
-  flex: 0 0 calc((100% / 7) - 2.5px); /* Adjusted calc to account for gap, might need fine-tuning */
-  max-width: calc((100% / 7) - 2.5px); /* Adjusted calc */
-  padding: 0 !important; /* Remove individual cell padding as gap handles it */
+  flex: 0 0 calc((100% / 7) - 2.5px);
+  max-width: calc((100% / 7) - 2.5px);
+  padding: 0 !important;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-/* Ensure no gap on the very edges */
+
 .calendar-grid:not(.g-0) > .day-cell:nth-child(7n+1) {
   padding-left: 0 !important;
 }

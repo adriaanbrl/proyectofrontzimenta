@@ -23,6 +23,8 @@ import ContactList from "./components/client/ContactList.js";
 import Admin from "./components/admin/Admin.js";
 import Worker from "./components/worker/Worker.js";
 import DataList from "./components/admin/DataList.js";
+import AdminLayout from "./components/admin/AdminLayout.js";
+
 
 function App() {
   return (
@@ -57,9 +59,9 @@ function App() {
 
 
           {/* Rutas de Vista Admin */}
-          <Route element={<Admin />}>
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/dataList" element={<DataList/>} />
+           <Route element={<AdminLayout />}>
+            <Route path="/admin" element={<Admin/>} />
+            <Route path="/dataList" element={<DataList />} />
           </Route>
 
 

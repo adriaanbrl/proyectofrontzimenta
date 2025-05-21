@@ -568,8 +568,6 @@ const AdminView = () => {
             </Card.Body>
           </Card>
         </Container>
-        <Outlet />
-        <AdminSidebar />
       </div>
   );
 };

@@ -4,7 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Inicio diseño acabado" />
+    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Calendario diseño acabado">
+      <change afterPath="$PROJECT_DIR$/src/components/admin/AdminSidebar.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/admin/AdminSidebar.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/admin/DataList.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/admin/Admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/admin/Admin.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/shared/Sidebar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/shared/Sidebar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -264,23 +273,8 @@
       <workItem from="1747740778223" duration="6537000" />
       <workItem from="1747809090808" duration="3604000" />
       <workItem from="1747813122361" duration="1743000" />
-      <workItem from="1747815297299" duration="3180000" />
-    </task>
-    <task id="LOCAL-00013" summary="Facturas">
-      <option name="closed" value="true" />
-      <created>1745927839762</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1745927839762</updated>
-    </task>
-    <task id="LOCAL-00014" summary="Manual usuario, facturas y legislacion legal actualizado">
-      <option name="closed" value="true" />
-      <created>1745935912742</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1745935912742</updated>
+      <workItem from="1747815297299" duration="5127000" />
+      <workItem from="1747823027566" duration="801000" />
     </task>
     <task id="LOCAL-00015" summary="Manual usuario, facturas y legislacion legal actualizado">
       <option name="closed" value="true" />
@@ -658,7 +652,23 @@
       <option name="project" value="LOCAL" />
       <updated>1747820872830</updated>
     </task>
-    <option name="localTasksCounter" value="62" />
+    <task id="LOCAL-00062" summary="Inicio diseño acabado">
+      <option name="closed" value="true" />
+      <created>1747821047208</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1747821047208</updated>
+    </task>
+    <task id="LOCAL-00063" summary="Calendario diseño acabado">
+      <option name="closed" value="true" />
+      <created>1747821196033</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1747821196033</updated>
+    </task>
+    <option name="localTasksCounter" value="64" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -711,8 +721,8 @@
     <MESSAGE value="Vista admin" />
     <MESSAGE value="Separacion inicio en archivos" />
     <MESSAGE value="Calendario diseño" />
-    <MESSAGE value="Calendario diseño acabado" />
     <MESSAGE value="Inicio diseño acabado" />
-    <option name="LAST_COMMIT_MESSAGE" value="Inicio diseño acabado" />
+    <MESSAGE value="Calendario diseño acabado" />
+    <option name="LAST_COMMIT_MESSAGE" value="Calendario diseño acabado" />
   </component>
 </project>

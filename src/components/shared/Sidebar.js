@@ -24,7 +24,7 @@ export default function Sidebar() {
             className={`nav-link text-center ${active === item.name ? "active" : "text-secondary"}`}
             onClick={() => setActive(item.name)}
           >
-            <div>{item.icon}</div> {/* Renderiza el componente del icono directamente */}
+            <div>{item.icon}</div>
             <small>{item.name}</small>
           </Link>
         </Nav.Item>

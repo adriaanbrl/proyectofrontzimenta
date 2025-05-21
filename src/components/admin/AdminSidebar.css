@@ -1,0 +1,40 @@
+/* src/components/admin/AdminSidebar.css */
+
+.admin-sidebar-nav {
+    height: 60px; /* Altura de la barra de navegación inferior */
+    width: 100%;
+    z-index: 1030; /* Z-index para asegurar que esté por encima de otros elementos */
+    border-top: 1px solid #e0e0e0; /* Un borde superior sutil */
+}
+
+.admin-sidebar-nav .nav-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 10px;
+    border-radius: 8px; /* Bordes redondeados para los ítems */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    flex-grow: 1; /* Para que los ítems ocupen el espacio disponible */
+}
+
+.admin-sidebar-nav .nav-link:hover {
+    background-color: #f0f0f0; /* Fondo más oscuro al pasar el ratón */
+    color: #f5922c !important; /* Color naranja en hover */
+}
+
+.admin-sidebar-nav .nav-link.active {
+    color: #f5922c !important; /* Color naranja para el elemento activo */
+    background-color: #ffe8d2; /* Fondo más claro para el elemento activo */
+    font-weight: bold;
+}
+
+.admin-sidebar-nav .nav-link.active small {
+    font-weight: bold; /* Asegura que el texto también sea bold */
+}
+
+/* Ajustes para los iconos */
+.admin-sidebar-nav .nav-link svg {
+    color: inherit; /* Hereda el color del enlace (activo o secundario) */
+    margin-bottom: 3px; /* Espacio entre el icono y el texto */
+}

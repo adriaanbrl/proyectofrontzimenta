@@ -3,6 +3,7 @@ import { Container, Row, Col, Card, Spinner, Alert, Tabs, Tab, Button } from 're
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
+import EditFormModal from './EditFormModal'; // Importar el nuevo componente del modal
 
 const DataList = () => {
     const [buildings, setBuildings] = useState([]);
@@ -10,6 +11,13 @@ const DataList = () => {
     const [customers, setCustomers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [deleteMessage, setDeleteMessage] = useState(null);
+    const [editMessage, setEditMessage] = useState(null); // Para mensajes de éxito/error de edición
+
+    // Estados para el modal de edición
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editingItem, setEditingItem] = useState(null);
+    const [editingItemType, setEditingItemType] = useState('');
 
     const [searchParams, setSearchParams] = useSearchParams();
     const initialTabFromUrl = searchParams.get('tab') || 'buildings';
@@ -48,6 +56,8 @@ const DataList = () => {
     const fetchData = async (token) => {
         setLoading(true);
         setError(null);
+        setDeleteMessage(null);
+        setEditMessage(null); // Limpiar mensajes de edición al recargar datos
 
         const headers = {
             'Content-Type': 'application/json',
@@ -101,6 +111,131 @@ const DataList = () => {
         setSearchParams({ tab: key });
     };
 
+    const handleDelete = async (id, type) => {
+        const confirmDelete = window.confirm(`¿Estás seguro de que quieres eliminar este ${type} (ID: ${id})?`);
+        if (!confirmDelete) {
+            return;
+        }
+
+        setLoading(true);
+        setError(null);
+        setDeleteMessage(null);
+        setEditMessage(null);
+
+        const token = localStorage.getItem("authToken");
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        };
+
+        let endpoint = '';
+        switch (type) {
+            case 'building':
+                endpoint = `http://localhost:8080/auth/admin/buildings/${id}`;
+                break;
+            case 'worker':
+                endpoint = `http://localhost:8080/auth/admin/workers/${id}`;
+                break;
+            case 'customer':
+                endpoint = `http://localhost:8080/auth/admin/customers/${id}`;
+                break;
+            default:
+                setError("Tipo de entidad desconocido para borrar.");
+                setLoading(false);
+                return;
+        }
+
+        try {
+            const response = await fetch(endpoint, {
+                method: 'DELETE',
+                headers: headers
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Error al eliminar ${type}: ${response.statusText} - ${errorText}`);
+            }
+
+            setDeleteMessage(`¡${type.charAt(0).toUpperCase() + type.slice(1)} eliminado(a) con éxito!`);
+            fetchData(token);
+
+        } catch (err) {
+            console.error(`Error al eliminar ${type}:`, err);
+            setError(`Error al eliminar ${type}: ${err.message}`);
+            setLoading(false);
+        }
+    };
+
+    // Función para abrir el modal de edición
+    const handleEdit = (item, type) => {
+        setEditingItem(item);
+        setEditingItemType(type);
+        setShowEditModal(true);
+    };
+
+    // Función para cerrar el modal de edición
+    const handleCloseEditModal = () => {
+        setShowEditModal(false);
+        setEditingItem(null); // Limpiar el elemento en edición
+        setEditingItemType('');
+    };
+
+    // Función para guardar los cambios (aquí irá la lógica de PUT al backend)
+    const handleSaveEdit = async (updatedItem, type) => {
+        console.log(`Guardando cambios para ${type}:`, updatedItem);
+        // Aquí iría la llamada a la API PUT/PATCH para actualizar el elemento en el backend
+        // Por ahora, solo es un placeholder
+        setLoading(true);
+        setError(null);
+        setEditMessage(null);
+
+        const token = localStorage.getItem("authToken");
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        };
+
+        let endpoint = '';
+        switch (type) {
+            case 'building':
+                endpoint = `http://localhost:8080/auth/admin/buildings/${updatedItem.id}`;
+                break;
+            case 'worker':
+                endpoint = `http://localhost:8080/auth/admin/workers/${updatedItem.id}`;
+                break;
+            case 'customer':
+                endpoint = `http://localhost:8080/auth/admin/customers/${updatedItem.id}`;
+                break;
+            default:
+                setError("Tipo de entidad desconocido para editar.");
+                setLoading(false);
+                return;
+        }
+
+        try {
+            const response = await fetch(endpoint, {
+                method: 'PUT', // O 'PATCH' si solo actualizas campos parciales
+                headers: headers,
+                body: JSON.stringify(updatedItem) // Envía el objeto actualizado
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Error al actualizar ${type}: ${response.statusText} - ${errorText}`);
+            }
+
+            setEditMessage(`¡${type.charAt(0).toUpperCase() + type.slice(1)} actualizado(a) con éxito!`);
+            fetchData(token); // Vuelve a cargar los datos para reflejar los cambios
+
+        } catch (err) {
+            console.error(`Error al actualizar ${type}:`, err);
+            setError(`Error al actualizar ${type}: ${err.message}`);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
     if (loading) {
         return (
             <div style={{ paddingBottom: '60px', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
@@ -132,6 +267,10 @@ const DataList = () => {
             <Container className="my-5 flex-grow-1">
                 <h1 className="mb-4 text-center text-custom">Listas de Administración</h1>
 
+                {deleteMessage && <Alert variant="success" className="my-3">{deleteMessage}</Alert>}
+                {editMessage && <Alert variant="success" className="my-3">{editMessage}</Alert>}
+                {error && <Alert variant="danger" className="my-3">{error}</Alert>}
+
                 <Tabs
                     id="admin-dashboard-tabs"
                     activeKey={activeTab}
@@ -145,15 +284,31 @@ const DataList = () => {
                                     <Col md={6} lg={4} className="mb-4" key={building.id}>
                                         <Card className="shadow-sm">
                                             <Card.Body>
-                                                {/* Building entity now only has address, startDate, endDate */}
                                                 <Card.Title className="text-primary">{building.address}</Card.Title>
-                                                <Card.Subtitle className="mb-2 text-muted">ID: {building.id}</Card.Subtitle> {/* Displaying ID as it's a primary key and useful */}
+                                                <Card.Subtitle className="mb-2 text-muted">ID: {building.id}</Card.Subtitle>
                                                 <Card.Text>
                                                     Dirección: {building.address}<br/>
                                                     Fecha de Inicio: {building.startDate ? new Date(building.startDate).toLocaleDateString() : 'N/A'}<br/>
                                                     Fecha de Finalización: {building.endDate ? new Date(building.endDate).toLocaleDateString() : 'N/A'}
                                                 </Card.Text>
                                             </Card.Body>
+                                            <Card.Footer className="text-end">
+                                                <Button
+                                                    variant="outline-danger"
+                                                    size="sm"
+                                                    className="me-2"
+                                                    onClick={() => handleDelete(building.id, 'building')}
+                                                >
+                                                    🗑️ Borrar
+                                                </Button>
+                                                <Button
+                                                    variant="outline-primary"
+                                                    size="sm"
+                                                    onClick={() => handleEdit(building, 'building')}
+                                                >
+                                                    ✏️ Editar
+                                                </Button>
+                                            </Card.Footer>
                                         </Card>
                                     </Col>
                                 ))
@@ -172,14 +327,30 @@ const DataList = () => {
                                     <Col md={6} lg={4} className="mb-4" key={worker.id}>
                                         <Card className="shadow-sm">
                                             <Card.Body>
-                                                {/* Worker entity now has 'name' and 'surname' directly */}
                                                 <Card.Title className="text-success">{worker.name} {worker.surname}</Card.Title>
-                                                <Card.Subtitle className="mb-2 text-muted">ID: {worker.id}</Card.Subtitle> {/* Displaying ID */}
+                                                <Card.Subtitle className="mb-2 text-muted">ID: {worker.id}</Card.Subtitle>
                                                 <Card.Text>
                                                     Nombre Completo: {worker.name} {worker.surname}<br/>
                                                     Contacto: {worker.contact || 'N/A'}
                                                 </Card.Text>
                                             </Card.Body>
+                                            <Card.Footer className="text-end">
+                                                <Button
+                                                    variant="outline-danger"
+                                                    size="sm"
+                                                    className="me-2"
+                                                    onClick={() => handleDelete(worker.id, 'worker')}
+                                                >
+                                                    🗑️ Borrar
+                                                </Button>
+                                                <Button
+                                                    variant="outline-primary"
+                                                    size="sm"
+                                                    onClick={() => handleEdit(worker, 'worker')}
+                                                >
+                                                    ✏️ Editar
+                                                </Button>
+                                            </Card.Footer>
                                         </Card>
                                     </Col>
                                 ))
@@ -198,16 +369,32 @@ const DataList = () => {
                                     <Col md={6} lg={4} className="mb-4" key={customer.id}>
                                         <Card className="shadow-sm">
                                             <Card.Body>
-                                                {/* Customer entity now has 'name' and 'surname' directly */}
                                                 <Card.Title className="text-info">{customer.name} {customer.surname}</Card.Title>
                                                 <Card.Subtitle className="mb-2 text-muted">{customer.email}</Card.Subtitle>
                                                 <Card.Text>
                                                     Nombre Completo: {customer.name} {customer.surname}<br/>
                                                     Email: {customer.email}<br/>
                                                     Username: {customer.username || 'N/A'}<br/>
-                                                    Obra: {customer.building ? customer.building.address : 'N/A'}<br/>
+                                                    Obra: {customer.building?.address || 'N/A'}<br/>
                                                 </Card.Text>
                                             </Card.Body>
+                                            <Card.Footer className="text-end">
+                                                <Button
+                                                    variant="outline-danger"
+                                                    size="sm"
+                                                    className="me-2"
+                                                    onClick={() => handleDelete(customer.id, 'customer')}
+                                                >
+                                                    🗑️ Borrar
+                                                </Button>
+                                                <Button
+                                                    variant="outline-primary"
+                                                    size="sm"
+                                                    onClick={() => handleEdit(customer, 'customer')}
+                                                >
+                                                    ✏️ Editar
+                                                </Button>
+                                            </Card.Footer>
                                         </Card>
                                     </Col>
                                 ))
@@ -219,6 +406,15 @@ const DataList = () => {
                         </Row>
                     </Tab>
                 </Tabs>
+
+                {/* Modal de Edición */}
+                <EditFormModal
+                    show={showEditModal}
+                    onHide={handleCloseEditModal}
+                    item={editingItem}
+                    itemType={editingItemType}
+                    onSave={handleSaveEdit}
+                />
             </Container>
             <AdminSidebar />
         </div>

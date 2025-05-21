@@ -5,8 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="admin">
+      <change afterPath="$PROJECT_DIR$/src/components/admin/EditFormModal.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/admin/AdminSidebar.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/admin/AdminSidebar.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/admin/AdminSidebar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/admin/AdminSidebar.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/admin/DataList.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/admin/DataList.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/client/EventCalendar.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/EventCalendar.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/client/EventCalendar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/EventCalendar.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,8 +21,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="JavaScript File" />
         <option value="CSS File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -268,15 +273,7 @@
       <workItem from="1747809090808" duration="3604000" />
       <workItem from="1747813122361" duration="1743000" />
       <workItem from="1747815297299" duration="5127000" />
-      <workItem from="1747823027566" duration="4725000" />
-    </task>
-    <task id="LOCAL-00018" summary="Manual usuario, facturas y legislacion legal actualizado">
-      <option name="closed" value="true" />
-      <created>1746455353205</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1746455353205</updated>
+      <workItem from="1747823027566" duration="9097000" />
     </task>
     <task id="LOCAL-00019" summary="Calendario">
       <option name="closed" value="true" />
@@ -662,7 +659,15 @@
       <option name="project" value="LOCAL" />
       <updated>1747827830734</updated>
     </task>
-    <option name="localTasksCounter" value="67" />
+    <task id="LOCAL-00067" summary="admin">
+      <option name="closed" value="true" />
+      <created>1747829472701</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1747829472701</updated>
+    </task>
+    <option name="localTasksCounter" value="68" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

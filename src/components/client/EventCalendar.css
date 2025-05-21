@@ -1,28 +1,182 @@
+.calendario-eventos {
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  font-family: 'Inter', sans-serif;
+  max-width: 700px;
+}
+
+.header-section {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+}
+
 .text-title {
-    color: #f5922c !important;
+  color: #f5922c !important;
+  font-size: 1.8rem;
+}
+
+.month-navigation .nav-button {
+  color: #f5922c;
+  font-size: 1.5rem;
+  text-decoration: none;
+}
+
+.current-month-year {
+  color: #333;
+  font-size: 1.6rem;
+  font-weight: bold;
+}
+
+.days-of-week .col {
+  color: #f5922c;
+  font-size: 1rem;
+  padding: 8px 0;
+}
+
+.calendar-grid {
+  flex-wrap: wrap;
+  border-top: 1px solid #eee;
+}
+
+.day-cell {
+  border: 1px solid #eee;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 !important;
+}
+
+.day-button {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent !important;
+  border: none !important;
+  color: #333 !important;
+  font-weight: normal !important;
+  position: relative;
+  padding: 5px;
+}
+
+.day-button:hover {
+  background-color: #f0f0f0 !important;
+}
+
+.day-number {
+  font-size: 1.1em;
+  margin-bottom: 5px;
+}
+
+.day-empty {
+  background-color: #f8f8f8;
 }
 
 .day-button.day-today {
-  background-color: #ffdd99 !important; /* Un amarillo suave para el día actual */
   color: #333 !important;
   font-weight: bold !important;
+  border: 2px solid #f5922c !important;
+  border-radius: 8px;
 }
 
 .day-button.day-selected {
-  background-color: #f5922c !important; /* Un azul claro para el día seleccionado */
+  background-color: #f5922c !important;
   color: white !important;
+  font-weight: bold !important;
+  border-radius: 8px;
+}
+
+.day-button.day-has-event {
+  border: 2px solid #f5922c !important;
+  border-radius: 8px;
 }
 
 .event-indicator {
-  background-color: #f5922c !important; /* Un naranja brillante para el indicador de evento */
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  background-color: #f5922c !important;
+  border-radius: 50%;
+  margin-top: 2px;
 }
 
-/* Opcional: Si deseas un estilo diferente para los días pasados con eventos */
 .day-button.day-past-event {
-  color: #777 !important; /* Un gris más claro para los días pasados */
+  color: #777 !important;
+  background-color: #f0f0f0 !important;
 }
 
 .day-button.day-past-event .event-indicator {
-  background-color: #ccc !important; /* Un gris más claro para el indicador de eventos pasados */
+  background-color: #ccc !important;
+}
+
+.proximos-eventos .evento-card {
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease-in-out;
+}
+
+.proximos-eventos .evento-card:hover {
+  transform: translateY(-3px);
+}
+
+.fecha-evento {
+  background-color: #fef3e0;
+  padding: 5px 10px;
+  border-radius: 8px;
+  min-width: 60px;
+}
+
+.modal-content {
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+  border-bottom: none;
+}
+
+.modal-title {
+  color: #f5922c;
+}
+
+.modal-event-date {
+  color: #f5922c !important;
+  font-weight: bold;
+}
+
+.modal-footer {
+  border-top: none;
+}
+
+@media (min-width: 768px) {
+  .calendario-eventos {
+    max-width: 350px;
+  }
+
+  .day-button .day-number {
+    font-size: 1.5em;
+  }
+
+  .day-cell {
+    width: 80px;
+    height: 80px;
+  }
+
+  .day-button {
+    padding: 1px;
+  }
+
+  .event-indicator {
+    bottom: 10px;
+    width: 7px;
+    height: 7px;
+  }
 }
 

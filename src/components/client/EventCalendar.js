@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Button, Card, Alert, Spinner, Modal } from "react-bootstrap";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import "./EventCalendar.css";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import { ChevronLeft } from 'lucide-react'; // Import ChevronLeft from lucide-react
+import { ChevronLeft } from 'lucide-react';
 
 const EventCalendar = () => {
   const navigate = useNavigate();
@@ -45,7 +45,7 @@ const EventCalendar = () => {
     nuevoMes.setMonth(mesActual.getMonth() + direccion);
     setMesActual(nuevoMes);
     // When changing month, clear selected date to avoid highlighting a day not in new month
-    setFechaSeleccionada(new Date());
+    setFechaSeleccionada(new Date()); // Reset selected date
   };
 
   const seleccionarFecha = (dia) => {
@@ -57,18 +57,15 @@ const EventCalendar = () => {
       );
       setFechaSeleccionada(fechaSeleccionadaCalendario);
 
-      const eventosParaFecha = eventosProximos.filter(
+      const eventosParaFecha = eventosProximos.filter( // Use filter to get all events for the day
           (evento) =>
               evento.fecha.toDateString() === fechaSeleccionadaCalendario.toDateString()
       );
 
-      // If there are multiple events for the day, you might want a list in the modal
-      // For now, let's just pick the first one or show a general message
       if (eventosParaFecha.length > 0) {
-        setEventoModal(eventosParaFecha[0]); // Show details of the first event
+        setEventoModal(eventosParaFecha[0]); // For simplicity, showing the first one. Can be extended to show a list.
         setModalVisible(true);
       } else {
-        // No event for this specific day, close modal if open
         setModalVisible(false);
         setEventoModal(null);
       }
@@ -80,18 +77,9 @@ const EventCalendar = () => {
     setMesActual(new Date(evento.fecha));
     // Select the day of the clicked event
     setFechaSeleccionada(new Date(evento.fecha));
-    // Potentially open modal for this event
+    // Potentially open modal for this event (if you want clicking list item to open modal)
     setEventoModal(evento);
     setModalVisible(true);
-  };
-
-  const formatearFecha = (fecha) => {
-    const diaSemana = new Intl.DateTimeFormat("es-ES", {
-      weekday: "short",
-    }).format(fecha);
-    const dia = fecha.getDate();
-    const mes = meses[fecha.getMonth()];
-    return `${diaSemana}, ${mes} ${dia}`;
   };
 
   const handleGoBack = () => {
@@ -111,10 +99,7 @@ const EventCalendar = () => {
       try {
         const decodedToken = jwtDecode(token);
         setBuildingId(decodedToken.building_id || "");
-        console.log(
-            "building_id recibido del customer (JWT):",
-            decodedToken.building_id
-        );
+        console.log("building_id recibido del customer (JWT):", decodedToken.building_id);
 
         if (decodedToken.building_id) {
           fetchBuildingEvents(
@@ -130,7 +115,7 @@ const EventCalendar = () => {
     } else {
       setError("No se encontró el token de autenticación.");
     }
-  }, [mesActual]);
+  }, [mesActual]); // Dependency array: re-run when mesActual changes
 
   const fetchBuildingEvents = async (id, year, month) => {
     setLoading(true);
@@ -158,9 +143,7 @@ const EventCalendar = () => {
       );
 
       if (!response.ok) {
-        throw new Error(
-            `Error al obtener los eventos del edificio: ${response.status}`
-        );
+        throw new Error(`Error al obtener los eventos del edificio: ${response.status}`);
       }
 
       const data = await response.json();
@@ -202,6 +185,7 @@ const EventCalendar = () => {
         diasPasados.add(evento.fecha.getDate());
       });
       setDiasPasadosConEventos(diasPasados);
+
     } catch (err) {
       setError(err.message);
     } finally {
@@ -242,21 +226,20 @@ const EventCalendar = () => {
   }
 
   return (
-      <Container className="calendario-eventos p-3 p-md-5"> {/* Added p-md-5 for more padding on larger screens */}
+      <Container className="calendario-eventos p-3 p-md-5">
         <div className="header-section d-flex align-items-center justify-content-center mb-4">
           <Button
               variant="link"
               onClick={handleGoBack}
               className="back-button me-3"
               aria-label="Volver atrás"
-              style={{ padding: 0 }}
           >
-            <ChevronLeft size={24} color="orange" /> {/* Increased size */}
+            <ChevronLeft size={24} color="orange" />
           </Button>
           <h1 className="calendario-eventos-title text-center flex-grow-1">
             Calendario de Eventos
           </h1>
-          <div style={{ width: "24px" }}></div> {/* Placeholder for alignment */}
+          <div style={{ width: "24px" }}></div>
         </div>
 
         {/* Month Navigation */}
@@ -298,31 +281,25 @@ const EventCalendar = () => {
         </Row>
 
         {/* Calendar Grid */}
-        <Row className="calendar-grid gx-1 gy-1"> {/* Increased gutter for better spacing */}
+        <Row className="calendar-grid"> {/* Removed gx-1 gy-1 */}
           {diasDelMes.map((dia, index) => (
-              <Col key={index} xs={12 / 7} className="day-cell p-0"> {/* Use xs={12/7} for even column distribution */}
+              <Col key={index} className="day-cell p-0">
                 {dia ? (
                     <Button
-                        variant="light" // Default variant, will be overridden by custom classes
-                        className={`day-button d-flex flex-column align-items-center justify-content-center text-center w-100 h-100 ${
+                        variant="light"
+                        className={`day-button ${
                             isToday(dia) ? "day-today" : ""
                         } ${
                             diasConEventos.has(dia) ? "day-has-event" : ""
                         } ${
                             diasPasadosConEventos.has(dia) ? "day-past-event" : ""
-                        } ${
-                            fechaSeleccionada.getDate() === dia &&
-                            fechaSeleccionada.getMonth() === mesActual.getMonth() &&
-                            fechaSeleccionada.getFullYear() === mesActual.getFullYear()
-                                ? "day-selected"
-                                : ""
                         }`}
                         onClick={() => seleccionarFecha(dia)}
                         aria-label={`Día ${dia}`}
                     >
                       <span className="day-number">{dia}</span>
                       {diasConEventos.has(dia) && (
-                          <div className="event-indicator"></div> // Small dot indicator
+                          <div className="event-indicator"></div>
                       )}
                     </Button>
                 ) : (
@@ -332,7 +309,7 @@ const EventCalendar = () => {
           ))}
         </Row>
 
-        <hr className="my-5" /> 
+        <hr className="my-5" />
 
         <div className="proximos-eventos" style={{ marginBottom: "60px" }}>
           <h2 className="h6 mb-3" style={{ color: "orange" }}>
@@ -345,8 +322,9 @@ const EventCalendar = () => {
                   onClick={() => navegarAlMesEvento(evento)}
                   style={{ cursor: "pointer" }}
               >
-                <Card.Body className="p-2 d-flex align-items-center">
-                  <div className="fecha-evento me-3 text-center">
+                {/* MODIFIED Card.Body CLASSES */}
+                <Card.Body className="p-2 d-flex align-items-center"> {/* Use align-items-center for vertical alignment of children */}
+                  <div className="fecha-evento me-3 text-center"> {/* Kept text-center for the date content itself, added me-3 for spacing */}
                     <p
                         className="dia-semana fw-bold mb-0"
                         style={{ color: "orange" }}
@@ -389,14 +367,15 @@ const EventCalendar = () => {
           )}
         </div>
 
-        <Modal show={modalVisible} onHide={handleCloseModal} centered> {/* Added centered for better modal positioning */}
+        {/* Event Details Modal */}
+        <Modal show={modalVisible} onHide={handleCloseModal} centered>
           {eventoModal && (
               <>
                 <Modal.Header closeButton className="border-0 pb-0">
-                  <Modal.Title className="fw-bold">{eventoModal.title}</Modal.Title>
+                  <Modal.Title className="fw-bold modal-event-title">{eventoModal.title}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body className="pt-0">
-                  <p className="text-muted mb-3">
+                <Modal.Body className="pt-0 text-center">
+                  <p className="text-muted mb-3 modal-event-date">
                     {new Intl.DateTimeFormat("es-ES", { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(new Date(eventoModal.fecha))}
                   </p>
                   <p>{eventoModal.description || "Sin descripción"}</p>

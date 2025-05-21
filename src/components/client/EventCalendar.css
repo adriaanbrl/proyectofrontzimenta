@@ -1,16 +1,15 @@
-
 .calendario-eventos {
   background-color: #f8f9fa;
   border-radius: 8px;
   max-width: 900px;
-  margin: 20px auto; /* Center the container */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Soft shadow */
-  padding: 20px; /* Base padding */
+  margin: 20px auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 20px;
 }
 
 .header-section {
   padding-bottom: 15px;
-  border-bottom: 1px solid #eee; /* Subtle separator */
+  border-bottom: 1px solid #eee;
 }
 
 .calendario-eventos-title {
@@ -20,7 +19,6 @@
   margin-left: 10px;
 }
 
-/* Back Button */
 .back-button {
   color: #f5922c !important;
   font-size: 1.5rem;
@@ -31,7 +29,6 @@
   background-color: transparent !important;
 }
 
-/* Month Navigation */
 .month-navigation {
   background-color: #fff;
   border-radius: 8px;
@@ -53,60 +50,64 @@
   font-weight: 500;
 }
 
-/* Days of Week Headers */
 .days-of-week .day-header {
   color: #6c757d;
   font-size: 0.9em;
   padding: 8px 0;
 }
 
-/* Calendar Grid */
 .calendar-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 0; /* Bootstrap gx-1 gy-1 handles spacing */
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .day-cell {
+  flex: 0 0 calc(100% / 7);
+  max-width: calc(100% / 7);
+  padding: 2px !important;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2px !important;
 }
 .day-button {
   background-color: #f0f2f5;
   border: 1px solid #e9ecef;
   color: #495057;
   font-weight: 500;
-  border-radius: 50% !important; /* Ensure they are perfectly circular */
+  border-radius: 50% !important;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
-  font-size: 0.9rem; /* Adjusted font size for smaller buttons */
+  font-size: 0.9rem;
   transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
   position: relative;
-  line-height: 1; /* Helps with vertical centering of number */
-  width: 45px; /* Or whatever size you prefer, e.g., 50px */
+  line-height: 1;
+  width: 45px;
   height: 45px;
 }
 
-.day-button:hover:not(.day-selected):not(.day-has-event):not(.day-past-event) {
+.day-button:hover:not(.day-has-event):not(.day-past-event):not(.day-today) { /* Adjusted hover to exclude today and event days */
   background-color: #e2e6ea;
   color: #343a40;
 }
 
-/* Day states */
+
+/* MODIFIED: Day states */
 .day-today {
-  background-color: #007bff !important;
-  border-color: #007bff !important;
+  background-color: #E67300 !important; /* Darker orange */
+  border-color: #E67300 !important;   /* Matching border */
   color: white !important;
   font-weight: bold;
 }
 .day-today:hover {
-  background-color: #0056b3 !important;
-  border-color: #0056b3 !important;
+  background-color: #CC6600 !important; /* Even darker orange on hover */
+  border-color: #CC6600 !important;     /* Matching border on hover */
 }
+
 
 .day-has-event {
   background-color: #f5922c !important;
@@ -131,33 +132,23 @@
   border-color: #dee2e6 !important;
 }
 
-.day-selected {
-  background-color: #28a745 !important;
-  border-color: #28a745 !important;
-  color: white !important;
-  font-weight: bold;
-  box-shadow: 0 3px 8px rgba(40, 167, 69, 0.4);
-}
-.day-selected:hover {
-  background-color: #218838 !important;
-  border-color: #218838 !important;
-}
+/* REMOVED: .day-selected class and its hover */
+
 
 .day-number {
-  font-size: 1em; /* Ensure day number fits well */
+  font-size: 1em;
 }
 
 .event-indicator {
   position: absolute;
-  bottom: 3px; /* Adjusted position for smaller buttons */
-  width: 5px; /* Adjusted size */
-  height: 5px; /* Adjusted size */
+  bottom: 3px;
+  width: 5px;
+  height: 5px;
   background-color: white;
   border-radius: 50%;
 }
 .day-has-event .event-indicator,
-.day-today .event-indicator,
-.day-selected .event-indicator {
+.day-today .event-indicator { /* Removed .day-selected */
   background-color: white;
 }
 
@@ -228,37 +219,49 @@
   font-size: 0.8em;
 }
 
-/* Modal styling */
+/* MODIFIED: Modal styling */
 .modal-content {
   border-radius: 10px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
+/* MODIFIED: Header for the modal */
+.modal-header {
+  border-bottom: 2px solid #e07b00; /* Orange underline for header */
+  padding-bottom: 15px; /* Adjust padding if needed */
+  margin-bottom: 15px; /* Space below the line */
+  justify-content: center; /* Center header content (title and close button) */
+  position: relative; /* For absolute positioning of close button */
+}
+
 .modal-header .btn-close {
   font-size: 0.9em;
   padding: 0.5rem;
+  position: absolute; /* Position close button */
+  right: 15px;
+  top: 15px;
 }
 
-.modal-title {
-  color: #343a40;
-  font-size: 1.5rem;
+/* NEW: Style for the event title in the modal */
+.modal-event-title {
+  color: #e07b00; /* Darker orange for the title */
+  font-size: 1.8rem; /* Slightly larger title */
+  text-align: center; /* Center the title */
+  width: 100%; /* Ensure it takes full width for centering */
 }
 
 .modal-body {
+  padding-top: 0;
   text-align: center;
 }
 
-.modal-body .fecha-evento .dia-semana {
+.modal-event-date {
+  color: #e07b00 !important;
+  font-weight: 600;
   font-size: 1.1em;
-}
-.modal-body .fecha-evento .dia-mes {
-  font-size: 2.5em !important;
-}
-.modal-body .fecha-evento .mes {
-  font-size: 1em !important;
+  margin-top: 10px;
 }
 
-/* Custom Utility Classes Provided by You (Integrated) */
 .card-custom {
   border: 2px solid #f5922c !important;
 }
@@ -282,7 +285,16 @@
   color: #fff !important;
 }
 
-/* Bootstrap Primary Button Override (as you provided) */
+.modal-footer .btn-outline-secondary {
+  border-color: #e07b00;
+  color: #e07b00;
+}
+
+.modal-footer .btn-outline-secondary:hover {
+  background-color: #e07b00;
+  color: white;
+}
+
 .btn-primary {
   background-color: #f5922c !important;
   border-color: #f5922c !important;
@@ -345,13 +357,11 @@
   margin-bottom: 0;
 }
 
-
-/* Responsive adjustments for smaller screens (mobile and tablet) */
 @media (max-width: 768px) {
   .calendario-eventos {
     margin: 10px auto;
     padding: 15px;
-    max-width: 100%; /* Take full width on small screens */
+    max-width: 100%;
   }
 
   .calendario-eventos-title {
@@ -363,7 +373,7 @@
   }
 
   .day-button {
-    width: 40px; /* Even smaller buttons on mobile */
+    width: 40px;
     height: 40px;
     font-size: 0.8rem;
   }
@@ -379,7 +389,7 @@
   }
 
   .event-list-card .event-date-col {
-    width: 55px; /* Smaller width for mobile event date */
+    width: 55px;
     padding: 5px 0;
   }
 
@@ -403,11 +413,11 @@
     font-size: 0.7em;
   }
 
-  .modal-title {
+  .modal-event-title {
     font-size: 1.2rem;
   }
 
-  .modal-body .fecha-evento .dia-mes {
-    font-size: 1.8em !important;
+  .modal-event-date {
+    font-size: 0.9em !important;
   }
 }

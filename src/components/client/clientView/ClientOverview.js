@@ -3,6 +3,7 @@ import { Card, ListGroup, Button, Col } from "react-bootstrap";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
+import EstimatedPrice from "./EstimatedPrice"; // Importa EstimatedPrice aquí
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -145,9 +146,10 @@ const ClientOverview = ({
     <>
       <Col md={6}>
         <Card className="shadow-sm">
-          <Card.Body>
-            <Card.Title className="fs-4 fw-bold text-start mb-3">
-            </Card.Title>
+          <Card.Body className="d-flex flex-column align-items-start"> {/* Añade estas clases */}
+            <div className="mb-3"> {/* Contenedor para el precio estimado */}
+              <EstimatedPrice precio={estimatedPrice} />
+            </div>
             <div className="d-flex align-items-center mt-3">
               <div
                 className="position-relative"

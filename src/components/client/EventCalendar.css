@@ -1,76 +1,319 @@
-/* EventCalendar.css */
-.calendario-eventos .row {
-    display: flex;
-    flex-wrap: wrap; /* Permite que los días pasen a la siguiente fila */
-  }
-  
-  .calendario-eventos .row > div {
-    flex-basis: calc(100% / 7); /* 7 columnas para los días de la semana */
-    max-width: calc(100% / 7);
-    text-align: center;
-    padding: 2px; /* Ajusta el espaciado si es necesario */
-    display: flex; /* Añadimos flex para centrar el botón */
-    justify-content: center; /* Centra horizontalmente */
-    align-items: center; /* Centra verticalmente (opcional, pero puede ayudar) */
-  }
-  
-  .calendario-eventos .row > div button {
-    width: 50px; /* Ajusta el tamaño de los botones de los días */
-    height: 50px;
-    border-radius: 100%; /* Para que sean circulares */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    font-size: 0.8rem; /* Ajusta el tamaño de la fuente */
-    border: 1px solid transparent; /* Para evitar cambios de tamaño al enfocar */
-    line-height: 50px;
-  }
-  
-  .calendario-eventos .row > div button.fw-bold {
-    font-weight: bold; /* Resalta el día actual */
-  }
-  
-  
-  
-  /* Cambiar el color de fondo y borde de los botones primarios */
-  .btn-primary {
-    background-color: #f5922c !important;
-    border-color: #f5922c !important;
-  }
-  
-  /* Cambiar el color de fondo de los botones primarios cuando están activos o enfocados */
-  .btn-primary:hover,
-  .btn-primary:focus,
-  .btn-primary:active,
-  .btn-primary.active,
-  .show > .btn-primary.dropdown-toggle {
-    background-color: #d67e24 !important; /* Un tono más oscuro para el hover/active */
-    border-color: #d67e24 !important;
-  }
-  
-  /* Cambiar el color de fondo de los botones primarios cuando están deshabilitados */
-  .btn-primary:disabled,
-  .btn-primary.disabled {
-    background-color: #f5922c !important;
-    border-color: #f5922c !important;
-    opacity: 0.65; /* Puedes ajustar la opacidad */
-  }
-  
-  /* Opcional: Si el día seleccionado usa la variante 'primary', también se aplicará */
-  .btn.primary { /* Asegúrate de que este selector sea específico si es necesario */
-    background-color: #f5922c !important;
-    border-color: #f5922c !important;
-  }
+
+.calendario-eventos {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  max-width: 900px;
+  margin: 20px auto; /* Center the container */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Soft shadow */
+  padding: 20px; /* Base padding */
+}
+
+.header-section {
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee; /* Subtle separator */
+}
+
+.calendario-eventos-title {
+  color: #f5922c !important;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-left: 10px;
+}
+
+/* Back Button */
+.back-button {
+  color: #f5922c !important;
+  font-size: 1.5rem;
+  padding: 0;
+}
+.back-button:hover {
+  color: #e07b00 !important;
+  background-color: transparent !important;
+}
+
+/* Month Navigation */
+.month-navigation {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 10px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.nav-button {
+  color: #343a40 !important;
+}
+.nav-button:hover {
+  color: #f5922c !important;
+  background-color: transparent !important;
+}
+
+.current-month-year {
+  color: #343a40;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+/* Days of Week Headers */
+.days-of-week .day-header {
+  color: #6c757d;
+  font-size: 0.9em;
+  padding: 8px 0;
+}
+
+/* Calendar Grid */
+.calendar-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0; /* Bootstrap gx-1 gy-1 handles spacing */
+}
+
+.day-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px !important;
+}
+.day-button {
+  background-color: #f0f2f5;
+  border: 1px solid #e9ecef;
+  color: #495057;
+  font-weight: 500;
+  border-radius: 50% !important; /* Ensure they are perfectly circular */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 0.9rem; /* Adjusted font size for smaller buttons */
+  transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+  position: relative;
+  line-height: 1; /* Helps with vertical centering of number */
+  width: 45px; /* Or whatever size you prefer, e.g., 50px */
+  height: 45px;
+}
+
+.day-button:hover:not(.day-selected):not(.day-has-event):not(.day-past-event) {
+  background-color: #e2e6ea;
+  color: #343a40;
+}
+
+/* Day states */
+.day-today {
+  background-color: #007bff !important;
+  border-color: #007bff !important;
+  color: white !important;
+  font-weight: bold;
+}
+.day-today:hover {
+  background-color: #0056b3 !important;
+  border-color: #0056b3 !important;
+}
+
+.day-has-event {
+  background-color: #f5922c !important;
+  border-color: #f5922c !important;
+  color: white !important;
+  font-weight: bold;
+  box-shadow: 0 2px 5px rgba(245, 146, 44, 0.4);
+}
+.day-has-event:hover {
+  background-color: #e07b00 !important;
+  border-color: #e07b00 !important;
+}
+
+.day-past-event {
+  background-color: #e9ecef !important;
+  border-color: #dee2e6 !important;
+  color: #6c757d !important;
+  opacity: 0.8;
+}
+.day-past-event:hover {
+  background-color: #e9ecef !important;
+  border-color: #dee2e6 !important;
+}
+
+.day-selected {
+  background-color: #28a745 !important;
+  border-color: #28a745 !important;
+  color: white !important;
+  font-weight: bold;
+  box-shadow: 0 3px 8px rgba(40, 167, 69, 0.4);
+}
+.day-selected:hover {
+  background-color: #218838 !important;
+  border-color: #218838 !important;
+}
+
+.day-number {
+  font-size: 1em; /* Ensure day number fits well */
+}
+
+.event-indicator {
+  position: absolute;
+  bottom: 3px; /* Adjusted position for smaller buttons */
+  width: 5px; /* Adjusted size */
+  height: 5px; /* Adjusted size */
+  background-color: white;
+  border-radius: 50%;
+}
+.day-has-event .event-indicator,
+.day-today .event-indicator,
+.day-selected .event-indicator {
+  background-color: white;
+}
+
+
+/* Upcoming Events Section */
+.section-title {
+  color: #f5922c !important;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 25px;
+}
+
+.event-list-card {
+  border: none;
+  border-radius: 10px;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  background-color: #ffffff;
+}
+
+.event-list-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12) !important;
+}
+
+.event-date-col {
+  flex-shrink: 0;
+  width: 70px; /* Adjusted fixed width for date column to be more compact */
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 8px 0; /* Adjusted padding */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.event-date-col .day-name {
+  color: #f5922c;
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+.event-date-col .day-num {
+  color: #f5922c;
+  font-size: 1.6em;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.event-date-col .month-year {
+  color: #6c757d;
+  font-size: 0.65em;
+}
+
+.event-content-col {
+  padding-left: 15px;
+}
+
+.event-title {
+  color: #343a40;
+  font-size: 1em;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.event-description {
+  color: #6c757d;
+  font-size: 0.8em;
+}
+
+/* Modal styling */
+.modal-content {
+  border-radius: 10px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header .btn-close {
+  font-size: 0.9em;
+  padding: 0.5rem;
+}
+
+.modal-title {
+  color: #343a40;
+  font-size: 1.5rem;
+}
+
+.modal-body {
+  text-align: center;
+}
+
+.modal-body .fecha-evento .dia-semana {
+  font-size: 1.1em;
+}
+.modal-body .fecha-evento .dia-mes {
+  font-size: 2.5em !important;
+}
+.modal-body .fecha-evento .mes {
+  font-size: 1em !important;
+}
+
+/* Custom Utility Classes Provided by You (Integrated) */
+.card-custom {
+  border: 2px solid #f5922c !important;
+}
+
+.text-custom {
+  color: #f5922c !important;
+}
+
+.btn-custom:hover {
+  background-color: #f5922c;
+  color: #fff;
+}
+
+.btn-outline-custom {
+  border-color: #f5922c !important;
+  color: #f5922c !important;
+}
+
+.btn-outline-custom:hover {
+  background-color: #f5922c !important;
+  color: #fff !important;
+}
+
+/* Bootstrap Primary Button Override (as you provided) */
+.btn-primary {
+  background-color: #f5922c !important;
+  border-color: #f5922c !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active,
+.show > .btn-primary.dropdown-toggle {
+  background-color: #d67e24 !important;
+  border-color: #d67e24 !important;
+}
+
+.btn-primary:disabled,
+.btn-primary.disabled {
+  background-color: #f5922c !important;
+  border-color: #f5922c !important;
+  opacity: 0.65;
+}
+
+/* Styles for the event list cards (kept from your original paste) */
 .proximos-eventos {
-  margin-bottom: 60px; /* Ajusta este valor según la altura de tu side bar */
+  margin-bottom: 60px;
 }
 
 .evento-card {
-  border: 1px solid #f8f9fa; /* Un borde sutil */
-  border-left: 3px solid orange; /* Barra naranja a la izquierda para destacar */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Sombra suave */
-  margin-bottom: 10px; /* Añade un pequeño margen entre tarjetas si lo deseas */
+  border: 1px solid #f8f9fa;
+  border-left: 3px solid orange; /* Orange bar on the left */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  margin-bottom: 10px;
 }
 
 .fecha-evento {
@@ -83,7 +326,6 @@
   margin-right: 15px;
 }
 
-
 .dia-semana {
   font-size: 0.8em;
 }
@@ -95,17 +337,77 @@
 
 .mes {
   font-size: 0.7em;
-  margin-bottom: 0; /* Ajuste para alinear con el año */
+  margin-bottom: 0;
 }
 
 .year {
   font-size: 0.7em;
-  margin-bottom: 0; /* Asegura alineación */
+  margin-bottom: 0;
 }
 
 
-.dia-con-evento {
-  background-color: #f5922c !important;
-  border-color: #f5922c !important;
-  color: white !important;
+/* Responsive adjustments for smaller screens (mobile and tablet) */
+@media (max-width: 768px) {
+  .calendario-eventos {
+    margin: 10px auto;
+    padding: 15px;
+    max-width: 100%; /* Take full width on small screens */
+  }
+
+  .calendario-eventos-title {
+    font-size: 1.4rem;
+  }
+
+  .current-month-year {
+    font-size: 1.1rem;
+  }
+
+  .day-button {
+    width: 40px; /* Even smaller buttons on mobile */
+    height: 40px;
+    font-size: 0.8rem;
+  }
+
+  .event-indicator {
+    bottom: 2px;
+    width: 4px;
+    height: 4px;
+  }
+
+  .day-header {
+    font-size: 0.75em;
+  }
+
+  .event-list-card .event-date-col {
+    width: 55px; /* Smaller width for mobile event date */
+    padding: 5px 0;
+  }
+
+  .event-list-card .event-date-col .day-num {
+    font-size: 1.3em;
+  }
+
+  .event-list-card .event-content-col {
+    padding-left: 10px;
+  }
+
+  .section-title {
+    font-size: 1.1em;
+  }
+
+  .event-title {
+    font-size: 0.9em;
+  }
+
+  .event-description {
+    font-size: 0.7em;
+  }
+
+  .modal-title {
+    font-size: 1.2rem;
+  }
+
+  .modal-body .fecha-evento .dia-mes {
+    font-size: 1.8em !important;
+  }
 }

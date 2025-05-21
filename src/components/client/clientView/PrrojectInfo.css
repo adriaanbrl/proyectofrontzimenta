@@ -1,0 +1,59 @@
+.project-info-card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.project-info-item {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    background-color: #ffffff;
+    transition: background-color 0.2s ease;
+}
+
+.project-info-item:last-child {
+    border-bottom: none;
+}
+
+.project-info-item:hover {
+    background-color: #fcfcfc;
+}
+
+.project-info-icon {
+    color: #e07b00 !important;
+    min-width: 20px;
+    text-align: center;
+}
+
+.project-info-label {
+    color: #343a40;
+    font-size: 0.95rem;
+}
+
+.project-info-value {
+    color: #6c757d;
+    font-size: 0.85rem;
+    margin-top: 3px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .section-title-project-info {
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+    }
+    .project-info-item {
+        padding: 12px 15px;
+    }
+    .project-info-icon {
+        font-size: 18px !important;
+        margin-right: 10px !important;
+    }
+    .project-info-label {
+        font-size: 0.85rem;
+    }
+    .project-info-value {
+        font-size: 0.75rem;
+    }
+}

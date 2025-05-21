@@ -1,11 +1,10 @@
-    // src/components/client/ClientView.js
-    import React from "react";
+ import React from "react";
     import { Container, Row, Col } from "react-bootstrap";
     import ClientData from "./ClientData";
     import ClientOverview from "./ClientOverview";
     import ProjectTimeline from "./ProjectTimeline";
     import ProjectInfo from "./ProjectInfo";
-    import EstimatedPrice from "./EstimatedPrice"; // Importa el componente
+    import EstimatedPrice from "./EstimatedPrice";
     import "./ClientView.css";
 
     const ClientView = () => {
@@ -16,7 +15,7 @@
         buildingAddress,
         formattedBuildingStartDate,
         formattedBuildingEndDate,
-        budgetAmount, // Usa budgetAmount en lugar de estimatedPrice
+        budgetAmount,
         invoiceAmount,
         pendingAmountValue,
         lastInvoice,
@@ -48,7 +47,7 @@
         </Row>
         <Row>
             <ClientOverview
-            estimatedPrice={budgetAmount} // Usa budgetAmount aquí también
+            estimatedPrice={budgetAmount}
             paidAmount={invoiceAmount}
             pendingAmountValue={pendingAmountValue}
             lastInvoice={lastInvoice}
@@ -59,7 +58,6 @@
         <Row className="mt-4">
             <ProjectTimeline timelineItems={timelineItems} />
         </Row>
-        {/* ADD THIS CLASS: 'info-section-spacing' */}
         <Row className="mt-4 info-section-spacing">
             <ProjectInfo
             buildingAddress={buildingAddress}

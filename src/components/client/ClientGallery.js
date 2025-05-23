@@ -206,8 +206,8 @@ function ClientGallery() {
   return (
     <Container className="client-gallery-container">
       <h1
-        className="fw-bold"
-        style={{ color: "#f5922c", marginBottom: "20px" }}
+        className="text-center mb-5 mt-5 fw-bold fs-2"
+        style={{ color: "#f5922c" }}
       >
         Galería de Imágenes
       </h1>
@@ -274,39 +274,31 @@ function ClientGallery() {
                 )}
               </Card>
               {roomId === lastRoomId && (
-                <div className="gallery-footer mt-4">
-                  <hr className="footer-line text-align-center" />
-                  <h3 className="footer-title text-center">Planos</h3>
-                  <Card
-                    className="mt-3"
-                    style={{ cursor: "pointer" }}
-                    onClick={handlePlanClick}
-                  >
-                    <Card.Img
-                      variant="top"
-                      src={planPlaceholderImage}
-                      style={{ height: "150px", objectFit: "cover" }}
-                    />
-                    <Card.Body className="text-center">
-                      <Card.Title>Ver Plano del Edificio</Card.Title>
-                      {loadingPlan && (
-                        <Card.Text className="text-muted">
-                          Cargando...
-                        </Card.Text>
-                      )}
-                      {errorPlan && (
-                        <Card.Text className="text-danger">
-                          {errorPlan}
-                        </Card.Text>
-                      )}
-                      {!loadingPlan && !errorPlan && !buildingPlanUrl && (
-                        <Card.Text className="text-muted">
-                          No disponible
-                        </Card.Text>
-                      )}
-                    </Card.Body>
-                  </Card>
-                </div>
+                <Card
+                  className="mt-3"
+                  style={{ cursor: "pointer" }}
+                  onClick={handlePlanClick}
+                >
+                  <Card.Img
+                    variant="top"
+                    src={planPlaceholderImage}
+                    style={{ height: "150px", objectFit: "cover" }}
+                  />
+                  <Card.Body className="text-center">
+                    <Card.Title>Ver Plano del Edificio</Card.Title>
+                    {loadingPlan && (
+                      <Card.Text className="text-muted">Cargando...</Card.Text>
+                    )}
+                    {errorPlan && (
+                      <Card.Text className="text-danger">{errorPlan}</Card.Text>
+                    )}
+                    {!loadingPlan && !errorPlan && !buildingPlanUrl && (
+                      <Card.Text className="text-muted">
+                        No disponible
+                      </Card.Text>
+                    )}
+                  </Card.Body>
+                </Card>
               )}
             </Col>
           ))}

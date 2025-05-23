@@ -11,7 +11,6 @@
     color: #fff;
 }
 
-
 .btn-outline-custom {
     border-color: #f5922c !important;
     color: #f5922c !important;
@@ -20,4 +19,14 @@
 .btn-outline-custom:hover {
     background-color: #f5922c !important;
     color: #fff !important;
+}
+
+
+.list-group a {
+    text-decoration: none !important; /* Quita el subrayado */
+    color: inherit; /* Asegura que el color del texto sea heredado del ListGroup.Item */
+}
+
+.list-group a:hover {
+    text-decoration: none !important; /* Mantiene el subrayado quitado al pasar el ratón */
 }

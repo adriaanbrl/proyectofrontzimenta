@@ -1,12 +1,14 @@
-import React, { useState } from "react"; // Removed useEffect as it's not used in this version
-import { Card, Form, Button, Row, Col, Alert, Container } from "react-bootstrap"; // <-- ADDED Container HERE
+import React, { useState } from "react";
+import { Card, Form, Button, Row, Col, Alert, Container } from "react-bootstrap";
 import axios from "axios";
 
 function WorkerRol() {
     const [formData, setFormData] = useState({
         nombre: "",
         apellidos: "",
-        contacto: "", // Keep this as a string for input handling
+        contacto: "",
+        username: "",
+        password: "",
     });
     const [loading, setLoading] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
@@ -15,9 +17,8 @@ function WorkerRol() {
     const handleChange = (e) => {
         let value = e.target.value;
         if (e.target.name === "contacto") {
-            // Only allow digits for contact, but keep it as a string in formData
-            value = value.replace(/[^0-9]/g, '');
-            // You can also add a length limit here if needed, e.g., .slice(0, 9);
+            // Only allow digits for contact and limit to 9 characters
+            value = value.replace(/[^0-9]/g, '').slice(0, 9);
         }
         setFormData({ ...formData, [e.target.name]: value });
     };
@@ -28,16 +29,16 @@ function WorkerRol() {
         setSuccessMessage("");
         setErrorMessage("");
 
-        // Basic validation for all fields
-        if (!formData.nombre || !formData.apellidos || !formData.contacto) {
+        // Basic validation for all fields, including new ones
+        if (!formData.nombre || !formData.apellidos || !formData.contacto || !formData.username || !formData.password) {
             setErrorMessage("Todos los campos son obligatorios.");
             setLoading(false);
             return;
         }
 
-        // Validate contact before parsing
-        if (!/^\d+$/.test(formData.contacto)) {
-            setErrorMessage("El campo 'Contacto' debe ser un número válido.");
+        // Validate contact: must be a number and exactly 9 digits long
+        if (!/^\d{9}$/.test(formData.contacto)) {
+            setErrorMessage("El campo 'Contacto' debe ser un número de 9 dígitos válido.");
             setLoading(false);
             return;
         }
@@ -46,6 +47,8 @@ function WorkerRol() {
             contact: parseInt(formData.contacto, 10), // Now it's explicitly an integer
             name: formData.nombre,
             surname: formData.apellidos,
+            username: formData.username, // Include username
+            password: formData.password, // Include password
         };
 
         try {
@@ -66,7 +69,8 @@ function WorkerRol() {
             );
             if (response.status === 201 || response.status === 200) {
                 setSuccessMessage("Trabajador creado con éxito!");
-                setFormData({ nombre: "", apellidos: "", contacto: "" }); // Reset form
+                // Reset form fields after successful submission
+                setFormData({ nombre: "", apellidos: "", contacto: "", username: "", password: "" });
             } else {
                 setErrorMessage(`Error al crear trabajador: ${response.statusText || 'Error desconocido'}`);
             }
@@ -87,7 +91,7 @@ function WorkerRol() {
     };
 
     return (
-        <Container> {/* This is the Container that needed to be imported */}
+        <Container>
             <Card className="mt-4 p-3 shadow-sm card-custom">
                 <Card.Title className="mb-3 text-custom">
                     Crear Nuevo Trabajador
@@ -129,12 +133,48 @@ function WorkerRol() {
                     <Row className="mb-3">
                         <Col md={12}>
                             <Form.Group controlId="formContacto">
-                                <Form.Label className="fw-bold">Contacto</Form.Label>
+                                <Form.Label className="fw-bold">Contacto (9 dígitos)</Form.Label>
+                                <Form.Control
+                                    type="text" // Keep as text to allow partial input, but validate digits
+                                    name="contacto"
+                                    placeholder="Ingrese su número de contacto (ej: 123456789)"
+                                    value={formData.contacto}
+                                    onChange={handleChange}
+                                    disabled={loading}
+                                    maxLength={9} // HTML max length for visual guidance
+                                    required
+                                />
+                            </Form.Group>
+                        </Col>
+                    </Row>
+
+                    {/* New fields: Username and Password */}
+                    <Row className="mb-3">
+                        <Col md={12}>
+                            <Form.Group controlId="formUsername">
+                                <Form.Label className="fw-bold">Nombre de Usuario</Form.Label>
                                 <Form.Control
                                     type="text"
-                                    name="contacto"
-                                    placeholder="Ingrese su número de contacto"
-                                    value={formData.contacto}
+                                    name="username"
+                                    placeholder="Ingrese un nombre de usuario"
+                                    value={formData.username}
+                                    onChange={handleChange}
+                                    disabled={loading}
+                                    required
+                                />
+                            </Form.Group>
+                        </Col>
+                    </Row>
+
+                    <Row className="mb-3">
+                        <Col md={12}>
+                            <Form.Group controlId="formPassword">
+                                <Form.Label className="fw-bold">Contraseña</Form.Label>
+                                <Form.Control
+                                    type="password" // Use type="password" for security
+                                    name="password"
+                                    placeholder="Ingrese una contraseña"
+                                    value={formData.password}
                                     onChange={handleChange}
                                     disabled={loading}
                                     required

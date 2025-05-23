@@ -4,33 +4,68 @@ import { PersonCircle } from 'react-bootstrap-icons';
 function ProfileImage({ username }) {
     const [profileImageUrl, setProfileImageUrl] = useState('');
     const backendURL = 'http://localhost:8080';
-
+    const [loading, setLoading] = useState(true); // Add loading state
+    const [error, setError] = useState(null);   // Add error state
 
     useEffect(() => {
         const fetchProfileImage = async () => {
+            setLoading(true); // Start loading
+            setError(null);   // Clear previous errors
+            setProfileImageUrl(''); // Clear previous image URL
+
+            const token = localStorage.getItem('authToken'); // Get the JWT token
+
+            if (!token) {
+                console.warn('No authentication token found. Cannot fetch profile image.');
+                setError('No autenticación. Inicia sesión.'); // Set user-friendly error
+                setLoading(false);
+                return;
+            }
+
+            if (!username) {
+                console.warn('Username no proporcionado para la imagen de perfil.');
+                setError('Usuario no especificado.');
+                setLoading(false);
+                return;
+            }
+
             try {
-                const response = await fetch(`${backendURL}/auth/customers/${username}/image`);
+                const response = await fetch(`${backendURL}/auth/customers/${username}/image`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`, // <--- CRUCIAL: Add the JWT token here
+                    },
+                });
+
                 if (response.ok) {
                     const imageBlob = await response.blob();
                     const imageUrl = URL.createObjectURL(imageBlob);
                     setProfileImageUrl(imageUrl);
                 } else if (response.status === 404) {
-                    console.log('Imagen de perfil no encontrada para este usuario.');
-                    setProfileImageUrl(''); 
-                } else {
+                    console.log('Imagen de perfil no encontrada para este usuario (404).');
+                    setProfileImageUrl(''); // Keep it empty to show default icon
+                    setError('Imagen no encontrada.');
+                } else if (response.status === 401 || response.status === 403) {
+                    console.error('Acceso denegado a la imagen de perfil:', response.status);
+                    setError('Acceso denegado. Vuelve a iniciar sesión.');
+                    // Optionally, redirect to login or clear token if 401/403
+                    localStorage.removeItem('authToken');
+                }
+                else {
                     console.error('Error al cargar la imagen de perfil:', response.status);
+                    setError(`Error al cargar la imagen: ${response.status}`);
                 }
             } catch (error) {
                 console.error('Error de red al cargar la imagen de perfil:', error);
+                setError('Error de red. Inténtalo de nuevo.');
+            } finally {
+                setLoading(false); // End loading
             }
         };
 
+        fetchProfileImage(); // Call the fetch function when component mounts or username changes
 
-        if (username) {
-            fetchProfileImage();
-        }
-    }, [username, backendURL]);
-
+    }, [username, backendURL]); // Dependencies: re-run effect if username or backendURL changes
 
     return (
         <div
@@ -39,20 +74,24 @@ function ProfileImage({ username }) {
                 height: '100px',
                 borderRadius: '50%',
                 overflow: 'hidden',
-                border: '2px solid #ccc', // Opcional: borde circular
+                border: '2px solid #ccc', // Optional: circular border
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
             }}
         >
-            {profileImageUrl ? (
+            {loading ? (
+                <div className="text-center">Cargando...</div> // Show loading indicator
+            ) : error ? (
+                <div className="text-center text-danger" style={{ fontSize: '0.8em' }}>{error}</div> // Show error message
+            ) : profileImageUrl ? (
                 <img
                     src={profileImageUrl}
                     alt="Imagen de perfil"
                     style={{
                         width: '100%',
                         height: '100%',
-                        objectFit: 'cover', // Para que la imagen cubra el círculo sin deformarse
+                        objectFit: 'cover', // To make the image cover the circle without distortion
                     }}
                 />
             ) : (
@@ -63,16 +102,15 @@ function ProfileImage({ username }) {
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        backgroundColor: '#f0f0f0', // Opcional: color de fondo si no hay imagen
+                        backgroundColor: '#f0f0f0', // Optional: background color if no image
                     }}
                 >
-                    {/* Mostrar el icono de usuario */}
+                    {/* Show user icon */}
                     <PersonCircle size={100} color="orange" />
                 </div>
             )}
         </div>
     );
 }
-
 
 export default ProfileImage;

@@ -45,23 +45,39 @@ function LoginForm() {
 
         try {
           const decodedToken = jwtDecode(token);
-          const rolId = decodedToken.roleId; // <---- Clave correcta: roleId
+          // Assuming the backend adds a 'userType' claim to the token
+          // This claim will differentiate between 'customer' and 'worker'
+          const userType = decodedToken.userType;
+          const rolId = decodedToken.roleId; // This is typically for workers
 
+          console.log("userType recibido del token (JWT):", userType);
           console.log("rolId recibido del token (JWT):", rolId);
 
-          switch (rolId) {
-            case 1:
-              navigate("/inicio");
-              break;
-            case 2:
-              navigate("/admin");
-              break;
-            case 3:
-              navigate("/trabajador");
-              break;
-            default:
-              navigate("/inicio");
-              break;
+          if (userType === "customer") {
+            // If it's a customer, navigate directly to /inicio
+            navigate("/inicio");
+          } else if (userType === "worker") {
+            // If it's a worker, check their specific rolId
+            switch (rolId) {
+              case 4: // Admin role for workers
+                navigate("/admin");
+                break;
+              case 5: // Regular worker role
+                navigate("/trabajador");
+                break;
+              default:
+                // Fallback for unexpected worker roles, or if rolId is missing for a worker
+                console.warn("Worker con rolId desconocido o no especificado:", rolId);
+                navigate("/trabajador"); // Default navigation for workers
+                break;
+            }
+          } else {
+            // Handle cases where userType is neither 'customer' nor 'worker'
+            console.error("Tipo de usuario desconocido en el token:", userType);
+            setError("Tipo de usuario no reconocido. Contacta al soporte.");
+            // Optionally clear token or force logout if userType is invalid
+            localStorage.removeItem("authToken");
+            navigate("/"); // Redirect to login or a generic error page
           }
         } catch (decodeError) {
           console.error("Error al decodificar el token:", decodeError);

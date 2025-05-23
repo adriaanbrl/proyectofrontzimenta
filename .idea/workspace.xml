@@ -5,13 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="admin">
-      <change afterPath="$PROJECT_DIR$/src/components/admin/EditFormModal.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/admin/AdminSidebar.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/admin/AdminSidebar.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/admin/AdminSidebar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/admin/AdminSidebar.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/admin/DataList.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/admin/DataList.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/client/EventCalendar.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/EventCalendar.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/client/EventCalendar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/EventCalendar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ProfileImage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/ProfileImage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/admin/WorkerRol.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/admin/WorkerRol.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/shared/LoginForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/shared/LoginForm.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

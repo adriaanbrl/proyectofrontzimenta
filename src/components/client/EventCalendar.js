@@ -226,7 +226,7 @@ const EventCalendar = () => {
   return (
       <Container className="calendario-eventos p-3 p-md-5">
         <div className="header-section d-flex align-items-center justify-content-center mb-4">
-          <h1 className="  flex-grow-1 text-title fw-bold">
+          <h1 className="  flex-grow-1 text-title text-center mb-5 fw-bold fs-2 mt-5">
             Calendario de Eventos
           </h1>
         </div>

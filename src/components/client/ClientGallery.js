@@ -206,8 +206,8 @@ function ClientGallery() {
   return (
     <Container className="client-gallery-container">
       <h1
-        className="fw-bold"
-        style={{ color: "#f5922c", marginBottom: "20px" }}
+        className="text-center mb-5 mt-5 fw-bold fs-2"
+        style={{ color: "#f5922c" }}
       >
         Galería de Imágenes
       </h1>

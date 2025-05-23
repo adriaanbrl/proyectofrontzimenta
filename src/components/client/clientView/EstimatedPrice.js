@@ -1,6 +1,7 @@
 // src/components/client/EstimatedPrice.js
 import React, { useState } from "react";
 import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
+import { Col, Row } from "react-bootstrap";
 import "./ClientView.css";
 
 const EstimatedPrice = ({ precio }) => {
@@ -16,27 +17,17 @@ const EstimatedPrice = ({ precio }) => {
 
   return (
     <div>
+      <Row className="align-items-center mb-2">
+        <Col xs="auto">
+          <div onClick={toggleVerPrecio} style={{ cursor: "pointer" }}>
+            {verPrecio ? <EyeFill size={20} /> : <EyeSlashFill size={20} />}
+          </div>
+        </Col>
+        <Col className="fs-5 fw-bold text-start">PRECIO ESTIMADO</Col>
+      </Row>
       <div
-        style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}
-        className="price-container"
-      >
-        <div
-          onClick={toggleVerPrecio}
-          style={{ cursor: "pointer", marginRight: "5px" }}
-          className="price-toggle"
-        >
-          {verPrecio ? <EyeFill size={20} /> : <EyeSlashFill size={20} />}
-        </div>
-        <span style={{ fontWeight: "bold" }}>PRECIO ESTIMADO</span>
-      </div>
-      <div
-        style={{
-          fontSize: "1.5em",
-          fontWeight: "bold",
-          color: "#ff8c00",
-          opacity: verPrecio ? 1 : 0.3,
-        }}
-        className="price-display"
+        className={`fs-4 fw-bold ${!verPrecio ? "opacity-50" : ""}`}
+        style={{ color: "#ff8c00" }}
       >
         {verPrecio && precio !== null ? formatearPrecio(precio) : "********"}
       </div>

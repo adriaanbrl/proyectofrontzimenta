@@ -1,8 +1,12 @@
 import React, { useState } from "react";
-import { Card, ListGroup, Button, Col } from "react-bootstrap";
+import { Card, ListGroup, Button, Col, Row } from "react-bootstrap";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
+import {
+  EyeFill,
+  EyeSlashFill,
+  FileEarmarkTextFill,
+} from "react-bootstrap-icons";
 import EstimatedPrice from "./EstimatedPrice"; // Importa EstimatedPrice aquí
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -12,7 +16,8 @@ const centerTextPlugin = {
   beforeDraw: (chart) => {
     if (chart.config.options.plugins.centerText.display) {
       const ctx = chart.ctx;
-      const { paidAmount, estimatedPrice } = chart.config.options.plugins.centerText.data;
+      const { paidAmount, estimatedPrice } =
+        chart.config.options.plugins.centerText.data;
 
       const paidAmountFormatted = new Intl.NumberFormat("es-ES", {
         style: "currency",
@@ -125,7 +130,7 @@ const ClientOverview = ({
         callbacks: {
           label: function (context) {
             let label = context.label || "";
-            if (typeof context.parsed === 'number') {
+            if (typeof context.parsed === "number") {
               label += `: ${new Intl.NumberFormat("es-ES", {
                 style: "currency",
                 currency: "EUR",
@@ -143,14 +148,16 @@ const ClientOverview = ({
   };
 
   return (
-    <>
-      <Col md={6}>
-        <Card className="shadow-sm">
-          <Card.Body className="d-flex flex-column align-items-start"> {/* Añade estas clases */}
-            <div className="mb-3"> {/* Contenedor para el precio estimado */}
+    <Row className="h-100 align-items-stretch">
+      <Col md={6} className="h-100">
+        <Card className="shadow-sm h-100 d-flex flex-column">
+          <Card.Body className="d-flex flex-column align-items-start flex-grow-1">
+            <div className="mb-3">
               <EstimatedPrice precio={estimatedPrice} />
             </div>
-            <div className="d-flex align-items-center mt-3">
+            <div className="d-flex align-items-center mt-3 flex-grow-1">
+              {" "}
+              {/* Añade flex-grow-1 aquí */}
               <div
                 className="position-relative"
                 style={{ width: "240px", height: "240px" }}
@@ -199,68 +206,78 @@ const ClientOverview = ({
                 </div>
               </div>
             </div>
+            {/* El flex-grow-1 en Card.Body debería hacer que ocupe el espacio */}
           </Card.Body>
         </Card>
       </Col>
-      <Col md={6}>
-        <Card className="shadow-sm">
-          <Card.Body>
+      <Col md={6} className="h-100">
+        <Card className="shadow-sm h-100 d-flex flex-column">
+          <Card.Body className="d-flex flex-column flex-grow-1">
             <Card.Title className="fs-5 fw-bold text-start mb-3">
               ULTIMA FACTURA
             </Card.Title>
-            <div style={{ display: "flex", alignItems: "flex-start" }}>
-              <img
-                src="/img/facturanaranja.png"
-                alt="Factura Naranja"
-                className="w-50"
-              />
-              <ListGroup variant="flush" style={{ flex: 1 }}>
-                {lastInvoice ? (
-                  <>
-                    <ListGroup.Item>
-                      <div className="fw-bold" style={{ fontSize: "0.9rem" }}>
-                        Mes de la Factura:
+
+            <Row className="align-items-center flex-grow-1">
+              <Col
+                md="auto"
+                xs="auto"
+                className="me-4 d-flex justify-content-center align-items-center"
+              >
+                <FileEarmarkTextFill
+                  size={150}
+                  width={150}
+                  color="#ff8c00"
+                  className="ms-3"
+                />
+              </Col>
+
+              <Col
+                md={true}
+                xs="auto"
+                className="d-flex flex-column flex-grow-1"
+              >
+                <div className="d-flex flex-column justify-content-center flex-grow-1">
+                  {" "}
+                  {/* Contenedor adicional */}
+                  {lastInvoice ? (
+                    <>
+                      <div>
+                        <div className="fw-bold small">Mes de la Factura:</div>
+                        <div className="text-muted small">
+                          {lastInvoice.title}
+                        </div>
+                        <div className="fw-bold small mt-2">Monto:</div>
+                        <div className="text-muted small">
+                          {new Intl.NumberFormat("es-ES", {
+                            style: "currency",
+                            currency: "EUR",
+                          }).format(lastInvoice.amount)}
+                        </div>
                       </div>
-                      <div
-                        className="text-muted"
-                        style={{ fontSize: "0.8rem" }}
-                      >
-                        {lastInvoice.title}
-                      </div>
-                      <div className="fw-bold" style={{ fontSize: "0.9rem" }}>
-                        Monto:
-                      </div>
-                      <div
-                        className="text-muted"
-                        style={{ fontSize: "0.8rem" }}
-                      >
-                        {new Intl.NumberFormat("es-ES", {
-                          style: "currency",
-                          currency: "EUR",
-                        }).format(lastInvoice.amount)}
-                      </div>
-                    </ListGroup.Item>
-                    {lastInvoice.id && (
-                      <ListGroup.Item>
-                        <Button
-                          variant="primary"
-                          onClick={handleOpenPdf}
-                          style={{ fontSize: "0.8rem" }}
-                        >
-                          Ver Factura
-                        </Button>
-                      </ListGroup.Item>
-                    )}
-                  </>
-                ) : (
-                  <ListGroup.Item>No hay facturas disponibles</ListGroup.Item>
-                )}
-              </ListGroup>
-            </div>
+                      {lastInvoice.id && (
+                        <div className="mt-3">
+                          {" "}
+                          {/* Añade un margen superior */}
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={handleOpenPdf}
+                          >
+                            Ver Factura
+                          </Button>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div>No hay facturas disponibles</div>
+                  )}
+                </div>
+              </Col>
+            </Row>
           </Card.Body>
         </Card>
       </Col>
-    </>
+    </Row>
   );
 };
 

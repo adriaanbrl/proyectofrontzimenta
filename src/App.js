@@ -24,6 +24,7 @@ import Admin from "./components/admin/Admin.js";
 import Worker from "./components/worker/Worker.js";
 import DataList from "./components/admin/DataList.js";
 import AdminLayout from "./components/admin/AdminLayout.js";
+import WorkerLayout from "./components/worker/WorkerLayout.js";
 
 
 function App() {
@@ -66,8 +67,9 @@ function App() {
 
 
           {/* Rutas de Vista Trabajador */}
-          <Route element={<Worker />}>
+          <Route element={<WorkerLayout />}>
             <Route path="/trabajador" element={<Worker />} />
+            <Route path="/chat" element={<Chat />} />
           </Route>
 
         </Routes>

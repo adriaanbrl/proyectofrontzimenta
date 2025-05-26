@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { Navbar, Nav } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
-import { Wrench, ListUl } from "react-bootstrap-icons";
-import "./AdminSidebar.css";
+import { House, ChatDots } from "react-bootstrap-icons";
+import "./WorkerSidebar.css";
 
-export default function AdminSidebar() {
+export default function WorkerSidebar() {
   const [active, setActive] = useState("");
   const location = useLocation();
   const menuItems = [
-    { name: "Gestor", icon: <Wrench size={24} />, path: "/admin" },
-    { name: "Listas", icon: <ListUl size={24} />, path: "/dataList" },
+    { name: "Inicio", icon: <House size={24} />, path: "/trabajador" },
+    { name: "Chat", icon: <ChatDots size={24} />, path: "/chat" },
   ];
   useEffect(() => {
     const currentPath = location.pathname;

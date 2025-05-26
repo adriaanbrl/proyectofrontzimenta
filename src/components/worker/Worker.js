@@ -1,10 +1,10 @@
 import React from 'react';
-import { Container, Row, Col, Button, Card } from 'react-bootstrap';
+import { Card, Button, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom'; // Si quieres que los botones naveguen
 
-const EmployeeView = () => {
+const WorkerView = () => {
     return (
-        <Container className="d-flex justify-content-center align-items-center vh-100">
+        <div className="d-flex justify-content-center align-items-center vh-100">
             <Card style={{ maxWidth: '400px', padding: '20px', borderRadius: '10px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
                 <Card.Body className="text-center">
                     <Card.Title className="mb-4">Panel de Empleado</Card.Title>
@@ -31,8 +31,8 @@ const EmployeeView = () => {
                     </Row>
                 </Card.Body>
             </Card>
-        </Container>
+        </div>
     );
 };
 
-export default EmployeeView;
+export default WorkerView;

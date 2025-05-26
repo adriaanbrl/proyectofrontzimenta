@@ -72,15 +72,17 @@ const AdminView = () => {
     },
   });
 
-  // Construction Formik (unchanged)
+  // Construction Formik (updated to include 'title')
   const constructionFormik = useFormik({
     initialValues: {
       address: "",
       endDate: "",
+      title: "", // ADDED: New field for title
     },
     validationSchema: Yup.object({
       address: Yup.string().required("La dirección es obligatoria."),
       endDate: Yup.date().required("La fecha de fin estimada es obligatoria.").nullable(),
+      title: Yup.string().required("El título es obligatorio."), // ADDED: Validation for title
     }),
     onSubmit: async (values) => {
       setLoading(true);
@@ -598,6 +600,29 @@ const AdminView = () => {
                             </Form.Control.Feedback>
                           </Form.Group>
                         </Col>
+                        <Col md={6}>
+                          <Form.Group controlId="title"> {/* ADDED: Form Group for Title */}
+                            <Form.Label className="fw-bold">Título</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="title"
+                                onChange={constructionFormik.handleChange}
+                                onBlur={constructionFormik.handleBlur}
+                                value={constructionFormik.values.title}
+                                isInvalid={
+                                    constructionFormik.touched.title &&
+                                    constructionFormik.errors.title
+                                }
+                                disabled={loading}
+                                placeholder="ej. Proyecto Edificio Azul"
+                            />
+                            <Form.Control.Feedback type="invalid">
+                              {constructionFormik.errors.title}
+                            </Form.Control.Feedback>
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                      <Row className="mb-3"> {/* New Row for endDate for better layout */}
                         <Col md={6}>
                           <Form.Group controlId="endDate">
                             <Form.Label className="fw-bold">

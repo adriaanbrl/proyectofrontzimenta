@@ -18,13 +18,18 @@ const EditFormModal = ({ show, onHide, item, itemType, onSave }) => {
                     ? String(newItem.contact)
                     : '';
 
-                delete newItem.rol;
+                // If 'rol' is the old direct role, it might be removed or handled differently
+                // Based on recent changes, worker.rol is now permissionRol, and worker.workertypes handles positions.
+                // For editing, we generally only send back primitive fields unless specific relations are editable here.
+                // Assuming 'rol' here refers to the old direct field that's no longer part of the update.
+                delete newItem.rol; // Remove old 'rol' if it's not part of the editable fields
             }
 
-            // Manejo específico para fechas en 'building'
+            // Manejo específico para fechas y AÑADIDO 'title' en 'building'
             if (itemType === 'building') {
                 newItem.startDate = newItem.startDate ? new Date(newItem.startDate).toISOString().split('T')[0] : '';
                 newItem.endDate = newItem.endDate ? new Date(newItem.endDate).toISOString().split('T')[0] : '';
+                newItem.title = newItem.title || ''; // Initialize title field
             }
 
             setFormData(newItem);
@@ -39,12 +44,13 @@ const EditFormModal = ({ show, onHide, item, itemType, onSave }) => {
             [name]: value
         }));
     };
-    
+
     const handleSubmit = (e) => {
         e.preventDefault();
         const dataToSave = { ...formData };
 
         if (itemType === 'worker') {
+            // Convert contact back to integer if it's a number string
             dataToSave.contact = dataToSave.contact ? parseInt(dataToSave.contact, 10) : null;
         }
 
@@ -69,6 +75,18 @@ const EditFormModal = ({ show, onHide, item, itemType, onSave }) => {
                                     type="text"
                                     name="address"
                                     value={formData.address || ''}
+                                    onChange={handleChange}
+                                />
+                            </Col>
+                        </Form.Group>
+                        {/* ADDED: Form Group for Title */}
+                        <Form.Group as={Row} className="mb-3">
+                            <Form.Label column sm="3">Título</Form.Label>
+                            <Col sm="9">
+                                <Form.Control
+                                    type="text"
+                                    name="title"
+                                    value={formData.title || ''}
                                     onChange={handleChange}
                                 />
                             </Col>

@@ -341,10 +341,14 @@ const DataList = () => {
                                     <Col md={6} lg={4} className="mb-4" key={building.id}>
                                         <Card className="shadow-sm">
                                             <Card.Body>
-                                                <Card.Title className="text-primary">{building.address}</Card.Title>
+                                                {/* Display building title if available, otherwise address */}
+                                                <Card.Title className="text-primary">
+                                                    {building.title || building.address}
+                                                </Card.Title>
                                                 <Card.Subtitle className="mb-2 text-muted">ID: {building.id}</Card.Subtitle>
                                                 <Card.Text>
                                                     Dirección: {building.address}<br/>
+                                                    Título: {building.title || 'N/A'}<br/> {/* Added title display */}
                                                     Fecha de Inicio: {building.startDate ? new Date(building.startDate).toLocaleDateString() : 'N/A'}<br/>
                                                     Fecha de Finalización: {building.endDate ? new Date(building.endDate).toLocaleDateString() : 'N/A'}
                                                 </Card.Text>
@@ -391,8 +395,8 @@ const DataList = () => {
                                                     Apellido: {worker.surname}<br/>
                                                     Nombre de Usuario: {worker.username || 'N/A'}<br/>
                                                     Contacto: {worker.contact || 'N/A'}<br/>
-                                                    Puesto: {worker.workerTypes && worker.workerTypes.length > 0
-                                                    ? worker.workerTypes.map(wt => wt.role?.nombre).filter(Boolean).join(', ')
+                                                    Puesto: {worker.workertypes && worker.workertypes.length > 0
+                                                    ? worker.workertypes.map(wt => wt.role?.name).filter(Boolean).join(', ') // Changed .nombre to .name for Role entity
                                                     : 'N/A'}
                                                 </Card.Text>
                                             </Card.Body>

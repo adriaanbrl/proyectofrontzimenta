@@ -260,9 +260,9 @@ const AdminView = () => {
         const workerId = parseInt(values.workerId, 10);
         const roleId = parseInt(values.roleId, 10);
 
-        // --- NEW BACKEND ENDPOINT FOR ROLE ASSIGNMENT ---
+        // --- CORRECTED BACKEND ENDPOINT FOR ROLE ASSIGNMENT ---
         const response = await axios.post(
-            `http://localhost:8080/api/workers/${workerId}/assign-role/${roleId}`,
+            `http://localhost:8080/api/assignments/worker/${workerId}/role/${roleId}`, // <--- THIS LINE WAS CHANGED
             {}, // No body needed for this type of assignment
             {
               headers: {

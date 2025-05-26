@@ -202,6 +202,8 @@ const DataList = () => {
                 break;
             case 'worker':
                 endpoint = `http://localhost:8080/auth/admin/workers/${updatedItem.id}`;
+                // For worker, ensure all expected fields from the updated schema are sent
+                // This assumes updatedItem already contains these fields from the EditFormModal
                 break;
             case 'customer':
                 endpoint = `http://localhost:8080/auth/admin/customers/${updatedItem.id}`;
@@ -330,8 +332,13 @@ const DataList = () => {
                                                 <Card.Title className="text-success">{worker.name} {worker.surname}</Card.Title>
                                                 <Card.Subtitle className="mb-2 text-muted">ID: {worker.id}</Card.Subtitle>
                                                 <Card.Text>
-                                                    Nombre Completo: {worker.name} {worker.surname}<br/>
-                                                    Contacto: {worker.contact || 'N/A'}
+                                                    Nombre: {worker.name}<br/>
+                                                    Apellido: {worker.surname}<br/>
+                                                    Nombre de Usuario: {worker.username || 'N/A'}<br/>
+                                                    Contacto: {worker.contact || 'N/A'}<br/>
+                                                    Rol ID: {worker.rol_id || 'N/A'}<br/>
+                                                    {/* Consider carefully if you want to display password directly, even for admin */}
+                                                    {/* Contraseña: {worker.password ? '******' : 'No Establecida'} */}
                                                 </Card.Text>
                                             </Card.Body>
                                             <Card.Footer className="text-end">

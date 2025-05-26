@@ -25,35 +25,45 @@ const DataList = () => {
 
     const navigate = useNavigate();
 
+    // Effect hook for initial data fetch and tab changes
     useEffect(() => {
+        console.log('useEffect: Component mounted or activeTab changed.');
         document.title = `Panel de Administración - ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`;
 
         const token = localStorage.getItem("authToken");
+        console.log('useEffect: Auth token found:', !!token); // Log true if token exists, false otherwise
 
         if (!token) {
             setError("No se encontró el token de autenticación. Por favor, inicie sesión.");
             setLoading(false);
+            console.log('useEffect: No token found, setting error and loading to false.');
             return;
         }
 
         try {
             const decodedToken = jwtDecode(token);
+            console.log('useEffect: Token decoded successfully:', decodedToken);
             fetchData(token);
         } catch (err) {
-            console.error("Error al decodificar el token:", err);
+            console.error("useEffect: Error al decodificar el token:", err);
             setError("Error al autenticar. El token es inválido o ha expirado.");
             setLoading(false);
         }
-    }, [activeTab]);
+    }, [activeTab]); // Dependency array: re-run when activeTab changes
 
+    // Effect hook for URL search params changes
     useEffect(() => {
+        console.log('useEffect: searchParams or activeTab changed.');
         const tabFromUrl = searchParams.get('tab');
         if (tabFromUrl && tabFromUrl !== activeTab) {
+            console.log(`useEffect: URL tab changed from ${activeTab} to ${tabFromUrl}. Updating activeTab.`);
             setActiveTab(tabFromUrl);
         }
-    }, [searchParams, activeTab]);
+    }, [searchParams, activeTab]); // Dependency array: re-run when searchParams or activeTab changes
 
+    // Function to fetch data from the backend
     const fetchData = async (token) => {
+        console.log('fetchData: Starting data fetch...');
         setLoading(true);
         setError(null);
         setDeleteMessage(null);
@@ -63,8 +73,10 @@ const DataList = () => {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
         };
+        console.log('fetchData: Request headers:', headers);
 
         try {
+            console.log('fetchData: Fetching buildings...');
             const buildingsResponse = await fetch(`http://localhost:8080/auth/admin/buildings`, { headers });
             if (!buildingsResponse.ok) {
                 if (buildingsResponse.status === 403) {
@@ -74,7 +86,9 @@ const DataList = () => {
             }
             const buildingsData = await buildingsResponse.json();
             setBuildings(buildingsData);
+            console.log('fetchData: Buildings fetched successfully:', buildingsData);
 
+            console.log('fetchData: Fetching workers...');
             const workersResponse = await fetch(`http://localhost:8080/auth/admin/workers`, { headers });
             if (!workersResponse.ok) {
                 if (workersResponse.status === 403) {
@@ -84,7 +98,10 @@ const DataList = () => {
             }
             const workersData = await workersResponse.json();
             setWorkers(workersData);
+            console.log('fetchData: Workers fetched successfully:', workersData);
 
+
+            console.log('fetchData: Fetching customers...');
             const customersResponse = await fetch(`http://localhost:8080/auth/admin/customers`, { headers });
             if (!customersResponse.ok) {
                 if (customersResponse.status === 403) {
@@ -94,25 +111,33 @@ const DataList = () => {
             }
             const customersData = await customersResponse.json();
             setCustomers(customersData);
+            console.log('fetchData: Customers fetched successfully:', customersData);
 
         } catch (err) {
-            console.error("Error al cargar datos:", err);
+            console.error("fetchData: Error al cargar datos:", err);
             setError(`Error al cargar datos: ${err.message}`);
             if (err.message.includes("Acceso denegado") || err.message.includes("token es inválido o ha expirado")) {
+                console.log('fetchData: Redirecting to login due to access denied/expired token.');
                 setTimeout(() => navigate('/login'), 3000);
             }
         } finally {
             setLoading(false);
+            console.log('fetchData: Data fetch process finished. Loading set to false.');
         }
     };
 
+    // Handler for tab selection
     const handleTabSelect = (key) => {
+        console.log('handleTabSelect: Tab selected:', key);
         setActiveTab(key);
         setSearchParams({ tab: key });
     };
 
+    // Handler for deleting an item
     const handleDelete = async (id, type) => {
+        console.log(`handleDelete: Attempting to delete ${type} with ID: ${id}`);
         const confirmDelete = window.confirm(`¿Estás seguro de que quieres eliminar este ${type} (ID: ${id})?`);
+        console.log(`handleDelete: Delete confirmed: ${confirmDelete}`);
         if (!confirmDelete) {
             return;
         }
@@ -142,8 +167,10 @@ const DataList = () => {
             default:
                 setError("Tipo de entidad desconocido para borrar.");
                 setLoading(false);
+                console.error('handleDelete: Unknown entity type for deletion:', type);
                 return;
         }
+        console.log(`handleDelete: Deletion endpoint: ${endpoint}`);
 
         try {
             const response = await fetch(endpoint, {
@@ -152,39 +179,48 @@ const DataList = () => {
             });
 
             if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Error al eliminar ${type}: ${response.statusText} - ${errorText}`);
+                // Mejorar el manejo de errores para obtener más detalles del backend
+                let errorMessage = `Error al eliminar ${type}: ${response.statusText}`;
+                try {
+                    const errorJson = await response.json();
+                    errorMessage += ` - Detalles: ${JSON.stringify(errorJson)}`;
+                } catch (jsonError) {
+                    const errorText = await response.text();
+                    errorMessage += ` - Respuesta del servidor: ${errorText}`;
+                }
+                throw new Error(errorMessage);
             }
 
             setDeleteMessage(`¡${type.charAt(0).toUpperCase() + type.slice(1)} eliminado(a) con éxito!`);
-            fetchData(token);
+            console.log(`handleDelete: ${type} deleted successfully. Refetching data.`);
+            fetchData(token); // Refetch data after successful deletion
 
         } catch (err) {
-            console.error(`Error al eliminar ${type}:`, err);
+            console.error(`handleDelete: Error al eliminar ${type}:`, err);
             setError(`Error al eliminar ${type}: ${err.message}`);
             setLoading(false);
         }
     };
 
-    // Función para abrir el modal de edición
+    // Function to open the edit modal
     const handleEdit = (item, type) => {
+        console.log(`handleEdit: Opening edit modal for ${type} with ID: ${item.id}`, item);
         setEditingItem(item);
         setEditingItemType(type);
         setShowEditModal(true);
     };
 
-    // Función para cerrar el modal de edición
+    // Function to close the edit modal
     const handleCloseEditModal = () => {
+        console.log('handleCloseEditModal: Closing edit modal.');
         setShowEditModal(false);
         setEditingItem(null); // Limpiar el elemento en edición
         setEditingItemType('');
     };
 
-    // Función para guardar los cambios (aquí irá la lógica de PUT al backend)
+    // Function to save edited changes
     const handleSaveEdit = async (updatedItem, type) => {
-        console.log(`Guardando cambios para ${type}:`, updatedItem);
-        // Aquí iría la llamada a la API PUT/PATCH para actualizar el elemento en el backend
-        // Por ahora, solo es un placeholder
+        console.log(`handleSaveEdit: Saving changes for ${type}:`, updatedItem);
         setLoading(true);
         setError(null);
         setEditMessage(null);
@@ -202,8 +238,6 @@ const DataList = () => {
                 break;
             case 'worker':
                 endpoint = `http://localhost:8080/auth/admin/workers/${updatedItem.id}`;
-                // For worker, ensure all expected fields from the updated schema are sent
-                // This assumes updatedItem already contains these fields from the EditFormModal
                 break;
             case 'customer':
                 endpoint = `http://localhost:8080/auth/admin/customers/${updatedItem.id}`;
@@ -211,34 +245,48 @@ const DataList = () => {
             default:
                 setError("Tipo de entidad desconocido para editar.");
                 setLoading(false);
+                console.error('handleSaveEdit: Unknown entity type for editing:', type);
                 return;
         }
+        console.log(`handleSaveEdit: Update endpoint: ${endpoint}`);
+        console.log(`handleSaveEdit: Sending payload:`, updatedItem);
 
         try {
             const response = await fetch(endpoint, {
-                method: 'PUT', // O 'PATCH' si solo actualizas campos parciales
+                method: 'PUT', // Or 'PATCH' if only updating partial fields
                 headers: headers,
-                body: JSON.stringify(updatedItem) // Envía el objeto actualizado
+                body: JSON.stringify(updatedItem) // Send the updated object
             });
 
             if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Error al actualizar ${type}: ${response.statusText} - ${errorText}`);
+                // Mejorar el manejo de errores para obtener más detalles del backend
+                let errorMessage = `Error al actualizar ${type}: ${response.statusText}`;
+                try {
+                    const errorJson = await response.json();
+                    errorMessage += ` - Detalles: ${JSON.stringify(errorJson)}`;
+                } catch (jsonError) {
+                    const errorText = await response.text();
+                    errorMessage += ` - Respuesta del servidor: ${errorText}`;
+                }
+                throw new Error(errorMessage);
             }
 
             setEditMessage(`¡${type.charAt(0).toUpperCase() + type.slice(1)} actualizado(a) con éxito!`);
-            fetchData(token); // Vuelve a cargar los datos para reflejar los cambios
+            console.log(`handleSaveEdit: ${type} updated successfully. Refetching data.`);
+            fetchData(token); // Refetch data to reflect changes
 
         } catch (err) {
-            console.error(`Error al actualizar ${type}:`, err);
+            console.error(`handleSaveEdit: Error al actualizar ${type}:`, err);
             setError(`Error al actualizar ${type}: ${err.message}`);
         } finally {
             setLoading(false);
+            console.log('handleSaveEdit: Save process finished. Loading set to false.');
         }
     };
 
-
+    // Conditional rendering for loading state
     if (loading) {
+        console.log('Render: Loading state active.');
         return (
             <div style={{ paddingBottom: '60px', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 <Container className="my-5 text-center">
@@ -252,7 +300,9 @@ const DataList = () => {
         );
     }
 
+    // Conditional rendering for error state
     if (error) {
+        console.log('Render: Error state active.');
         return (
             <div style={{ paddingBottom: '60px', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 <Container className="my-5 text-center">
@@ -264,6 +314,8 @@ const DataList = () => {
         );
     }
 
+    // Main render function
+    console.log('Render: Displaying DataList content.');
     return (
         <div style={{ paddingBottom: '60px', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
             <Container className="my-5 flex-grow-1">
@@ -336,9 +388,6 @@ const DataList = () => {
                                                     Apellido: {worker.surname}<br/>
                                                     Nombre de Usuario: {worker.username || 'N/A'}<br/>
                                                     Contacto: {worker.contact || 'N/A'}<br/>
-                                                    Rol ID: {worker.rol_id || 'N/A'}<br/>
-                                                    {/* Consider carefully if you want to display password directly, even for admin */}
-                                                    {/* Contraseña: {worker.password ? '******' : 'No Establecida'} */}
                                                 </Card.Text>
                                             </Card.Body>
                                             <Card.Footer className="text-end">

@@ -6,9 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="admin">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ProfileImage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/ProfileImage.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/admin/WorkerRol.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/admin/WorkerRol.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/shared/LoginForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/shared/LoginForm.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/admin/DataList.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/admin/DataList.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -271,22 +269,7 @@
       <workItem from="1747813122361" duration="1743000" />
       <workItem from="1747815297299" duration="5127000" />
       <workItem from="1747823027566" duration="9097000" />
-    </task>
-    <task id="LOCAL-00019" summary="Calendario">
-      <option name="closed" value="true" />
-      <created>1746514903952</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1746514903953</updated>
-    </task>
-    <task id="LOCAL-00020" summary="Calendario">
-      <option name="closed" value="true" />
-      <created>1746515058250</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1746515058250</updated>
+      <workItem from="1748240435278" duration="3010000" />
     </task>
     <task id="LOCAL-00021" summary="Calendario">
       <option name="closed" value="true" />
@@ -664,7 +647,23 @@
       <option name="project" value="LOCAL" />
       <updated>1747829472701</updated>
     </task>
-    <option name="localTasksCounter" value="68" />
+    <task id="LOCAL-00068" summary="admin">
+      <option name="closed" value="true" />
+      <created>1747998370349</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1747998370349</updated>
+    </task>
+    <task id="LOCAL-00069" summary="admin">
+      <option name="closed" value="true" />
+      <created>1748241467517</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1748241467517</updated>
+    </task>
+    <option name="localTasksCounter" value="70" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

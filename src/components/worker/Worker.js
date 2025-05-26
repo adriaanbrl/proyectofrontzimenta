@@ -1,20 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Button, Accordion, Row, Col, Form, Image } from 'react-bootstrap';
-import { Link } from 'react-router-dom'; // Si quieres que los botones naveguen
-import { PencilSquare } from 'react-bootstrap-icons'; // O cualquier otro icono que desees
+import { Link } from 'react-router-dom';
+import { PencilSquare } from 'react-bootstrap-icons';
+import { jwtDecode } from 'jwt-decode'; // Make sure you have 'jwt-decode' installed
 
 const constructionData = [
     {
         id: 1,
         nombre: 'Edificio Residencial A',
         direccion: 'Calle Falsa 123, Valdemoro',
-        // Aquí podrías tener más información o un estado para la construcción
     },
     {
         id: 2,
         nombre: 'Centro Comercial Nuevo',
         direccion: 'Avenida Principal s/n, Valdemoro',
-        // Más información o un estado para la construcción
     },
     // Añade más construcciones según sea necesario
 ];
@@ -44,8 +43,43 @@ const ProfileImage = ({ imageUrl, onImageChange }) => (
 
 const WorkerView = () => {
     const [workerImage, setWorkerImage] = useState(null);
-    const workerName = "Nombre del Trabajador";
-    const workerRole = "Trabajador";
+    const [workerName, setWorkerName] = useState("Cargando...");
+    const [workerRole, setWorkerRole] = useState("Cargando...");
+
+    useEffect(() => {
+        const token = localStorage.getItem("authToken");
+
+        if (token) {
+            try {
+                // Decode the JWT token to access its content.
+                const decodedToken = jwtDecode(token);
+
+                // Update states with user information extracted from the token.
+                setWorkerName(`${decodedToken.name || "Trabajador"} ${decodedToken.lastName || ""}`);
+                setWorkerRole(decodedToken.role || "Desconocido");
+
+                console.log("Decoded Token Data for Worker:", decodedToken); // Log the entire decoded token
+                console.log("Worker Name from Token:", `${decodedToken.name} ${decodedToken.lastName}`);
+                console.log("Worker Role from Token:", decodedToken.role);
+
+                // If you had worker-specific data to fetch based on an ID in the token,
+                // you would call a function here, similar to your `WorkspaceBuildingData`.
+                // For example:
+                // if (decodedToken.worker_id) {
+                //   fetchWorkerDetails(decodedToken.worker_id);
+                // }
+
+            } catch (error) {
+                console.error("Error al decodificar el token:", error);
+                setWorkerName("Error de Carga");
+                setWorkerRole("Error de Carga");
+            }
+        } else {
+            console.warn("No se encontró ningún token de autenticación en localStorage.");
+            setWorkerName("No Disponible");
+            setWorkerRole("No Disponible");
+        }
+    }, []); // Empty dependency array ensures this runs once on component mount
 
     const handleImageChange = (event) => {
         const file = event.target.files[0];
@@ -64,7 +98,7 @@ const WorkerView = () => {
             <div className="bg-light p-4 rounded shadow-sm mb-4 d-flex align-items-center justify-content-between">
                 <div className="text-start">
                     <h2 className="mb-0 text fw-bold">{workerName}</h2>
-                    <p className="mb-0 text fw-bold">ROL:{workerRole}</p>
+                    <p className="mb-0 text fw-bold">ROL: {workerRole}</p>
                 </div>
                 <ProfileImage imageUrl={workerImage} onImageChange={handleImageChange} />
             </div>
@@ -132,7 +166,6 @@ const WorkerView = () => {
                                         <Button variant="btn btn-outline-custom" className="w-100">Cambiar</Button>
                                     </Col>
                                 </Row>
-                                {/* Aquí podrías añadir más opciones o información específica de la construcción */}
                             </Accordion.Body>
                         </Accordion.Item>
                     </Card>

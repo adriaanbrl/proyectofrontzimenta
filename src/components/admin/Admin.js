@@ -7,18 +7,21 @@ import { Link } from "react-router-dom";
 import "./Admin.css";
 import WorkerRol from "./WorkerRol";
 import WorkerAssigment from "./WorkerAssigment";
+import WorkerRoleAssignment from "./WorkerRoleAssignment"; 
 import AdminSidebar from './AdminSidebar';
 import { Outlet } from 'react-router-dom';
 
 const AdminView = () => {
   const [showCustomerForm, setShowCustomerForm] = useState(false);
   const [showConstructionForm, setShowConstructionForm] = useState(false);
-  const [showWorkerForm, setShowWorkerForm] = useState(false);
-  const [showFourthForm, setShowFourthForm] = useState(false);
+  const [showWorkerForm, setShowWorkerForm] = useState(false); // This is for creating a new worker
+  const [showWorkerAssigmentForm, setShowWorkerAssigmentForm] = useState(false); // This is for assigning workers to buildings
+  const [showWorkerRoleAssignmentForm, setShowWorkerRoleAssignmentForm] = useState(false); // <--- NEW STATE
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  // Customer Formik (unchanged)
   const customerFormik = useFormik({
     initialValues: {
       email: "",
@@ -70,7 +73,7 @@ const AdminView = () => {
     },
   });
 
-
+  // Construction Formik (unchanged)
   const constructionFormik = useFormik({
     initialValues: {
       address: "",
@@ -92,13 +95,11 @@ const AdminView = () => {
           return;
         }
 
-        // --- MODIFICACIÓN AQUÍ: Cambiado de /api/buildings a /auth/building ---
         const response = await axios.post("http://localhost:8080/auth/building", values, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        // --- FIN DE LA MODIFICACIÓN ---
 
         if (response.status === 201) {
           setSuccessMessage("Construcción creada con éxito.");
@@ -117,7 +118,7 @@ const AdminView = () => {
     },
   });
 
-
+  // Worker Assignment (to building) Formik (renamed and unchanged logic)
   const workerAssigmentFormik = useFormik({
     initialValues: {
       buildingId: "",
@@ -183,7 +184,7 @@ const AdminView = () => {
     },
   });
 
-
+  // Worker Creation Formik (unchanged logic)
   const workerFormik = useFormik({
     initialValues: {
       name: "",
@@ -234,18 +235,83 @@ const AdminView = () => {
     },
   });
 
+  // <--- NEW FORMIK FOR WORKER ROLE ASSIGNMENT
+  const workerRoleAssignmentFormik = useFormik({
+    initialValues: {
+      workerId: "",
+      roleId: "",
+    },
+    validationSchema: Yup.object({
+      workerId: Yup.string().required("Por favor, seleccione un trabajador."),
+      roleId: Yup.string().required("Por favor, seleccione un rol."),
+    }),
+    onSubmit: async (values) => {
+      setLoading(true);
+      setSuccessMessage("");
+      setErrorMessage("");
+
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          setErrorMessage("Error: Token de autenticación no encontrado.");
+          setLoading(false);
+          return;
+        }
+
+        const workerId = parseInt(values.workerId, 10);
+        const roleId = parseInt(values.roleId, 10);
+
+        // --- NEW BACKEND ENDPOINT FOR ROLE ASSIGNMENT ---
+        const response = await axios.post(
+            `http://localhost:8080/api/workers/${workerId}/assign-role/${roleId}`, // Example endpoint
+            {}, // No body needed for this type of assignment
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+        );
+
+        if (response.status === 200) {
+          setSuccessMessage("Rol asignado al trabajador con éxito.");
+          workerRoleAssignmentFormik.resetForm();
+        } else {
+          setErrorMessage(
+              `Error al asignar rol: ${response.statusText || "Respuesta inesperada."}`
+          );
+        }
+      } catch (error) {
+        console.error("Error al asignar rol:", error);
+        if (error.response) {
+          setErrorMessage(
+              `Error: ${error.response.data.message || error.response.status || "Error desconocido del servidor"}`
+          );
+        } else if (error.request) {
+          setErrorMessage("No se pudo conectar con el servidor. Por favor, verifica tu conexión o el estado del backend.");
+        } else {
+          setErrorMessage("Error al procesar la solicitud de asignación de rol.");
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+  });
+  // NEW FORMIK FOR WORKER ROLE ASSIGNMENT --->
+
 
   const hideAllForms = () => {
     setShowCustomerForm(false);
     setShowConstructionForm(false);
     setShowWorkerForm(false);
-    setShowFourthForm(false);
+    setShowWorkerAssigmentForm(false); // Renamed from showFourthForm
+    setShowWorkerRoleAssignmentForm(false); // <--- NEW
     setSuccessMessage("");
     setErrorMessage("");
     customerFormik.resetForm();
     constructionFormik.resetForm();
     workerFormik.resetForm();
     workerAssigmentFormik.resetForm();
+    workerRoleAssignmentFormik.resetForm(); // <--- NEW
   };
 
   return (
@@ -306,16 +372,30 @@ const AdminView = () => {
                 </Col>
                 <Col xs={6} className="mb-2">
                   <Button
-                      variant={showFourthForm ? "btn-custom" : "btn-outline-custom"}
+                      variant={showWorkerAssigmentForm ? "btn-custom" : "btn-outline-custom"}
                       onClick={() => {
                         hideAllForms();
-                        setShowFourthForm(!showFourthForm);
+                        setShowWorkerAssigmentForm(!showWorkerAssigmentForm); // Renamed from showFourthForm
                       }}
                       className="w-100 btn-outline-custom"
                   >
                     Asignar Trabajador
                   </Button>
                 </Col>
+                {/* <--- NEW BUTTON */}
+                <Col xs={6} className="mb-2">
+                  <Button
+                      variant={showWorkerRoleAssignmentForm ? "btn-custom" : "btn-outline-custom"}
+                      onClick={() => {
+                        hideAllForms();
+                        setShowWorkerRoleAssignmentForm(!showWorkerRoleAssignmentForm);
+                      }}
+                      className="w-100 btn-outline-custom"
+                  >
+                    Asignar Rol a Trabajador
+                  </Button>
+                </Col>
+                {/* NEW BUTTON ---> */}
               </Row>
 
               {successMessage && <p className="text-success">{successMessage}</p>}
@@ -483,9 +563,10 @@ const AdminView = () => {
                   <WorkerRol
                       formik={workerFormik}
                       loading={loading}
+                      setLoading={setLoading} // Pass setLoading
                       successMessage={successMessage}
-                      errorMessage={errorMessage}
                       setSuccessMessage={setSuccessMessage}
+                      errorMessage={errorMessage}
                       setErrorMessage={setErrorMessage}
                   />
               )}
@@ -554,14 +635,31 @@ const AdminView = () => {
                   </Card>
               )}
 
-              {showFourthForm && (
+              {showWorkerAssigmentForm && ( // Renamed from showFourthForm
                   <WorkerAssigment
                       formik={workerAssigmentFormik}
                       loading={loading}
                       successMessage={successMessage}
                       errorMessage={errorMessage}
+                      setLoading={setLoading}
+                      setSuccessMessage={setSuccessMessage}
+                      setErrorMessage={setErrorMessage}
                   />
               )}
+
+              {/* <--- NEW COMPONENT RENDERING */}
+              {showWorkerRoleAssignmentForm && (
+                  <WorkerRoleAssignment
+                      formik={workerRoleAssignmentFormik}
+                      loading={loading}
+                      setLoading={setLoading}
+                      successMessage={successMessage}
+                      setSuccessMessage={setSuccessMessage}
+                      errorMessage={errorMessage}
+                      setErrorMessage={setErrorMessage}
+                  />
+              )}
+              {/* NEW COMPONENT RENDERING ---> */}
 
               <div className="mt-4">
                 <Link to="/login" className={`btn  btn-outline-custom`}>

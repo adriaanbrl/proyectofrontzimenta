@@ -1,15 +1,18 @@
+
+
 import { useState, useEffect } from "react";
 import { Navbar, Nav } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import { House, ChatDots } from "react-bootstrap-icons";
 import "./WorkerSidebar.css";
 
+
 export default function WorkerSidebar() {
   const [active, setActive] = useState("");
   const location = useLocation();
   const menuItems = [
     { name: "Inicio", icon: <House size={24} />, path: "/trabajador" },
-    { name: "Chat", icon: <ChatDots size={24} />, path: "/chat" },
+    { name: "Chat", icon: <ChatDots size={24} />, path: "/ListaChat" },
   ];
   useEffect(() => {
     const currentPath = location.pathname;
@@ -20,6 +23,7 @@ export default function WorkerSidebar() {
       setActive("");
     }
   }, [location.pathname, menuItems]);
+
 
   return (
     <Navbar
@@ -43,3 +47,5 @@ export default function WorkerSidebar() {
     </Navbar>
   );
 }
+
+

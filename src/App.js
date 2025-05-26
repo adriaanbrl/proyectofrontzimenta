@@ -25,7 +25,7 @@ import Worker from "./components/worker/Worker.js";
 import DataList from "./components/admin/DataList.js";
 import AdminLayout from "./components/admin/AdminLayout.js";
 import WorkerLayout from "./components/worker/WorkerLayout.js";
-
+import WorkerContactList from "./components/worker/WorkerContactList.js";
 
 function App() {
   return (
@@ -58,20 +58,17 @@ function App() {
             <Route path="/historial" element={<Historic />} />
           </Route>
 
-
           {/* Rutas de Vista Admin */}
-           <Route element={<AdminLayout />}>
-            <Route path="/admin" element={<Admin/>} />
+          <Route element={<AdminLayout />}>
+            <Route path="/admin" element={<Admin />} />
             <Route path="/dataList" element={<DataList />} />
           </Route>
-
 
           {/* Rutas de Vista Trabajador */}
           <Route element={<WorkerLayout />}>
             <Route path="/trabajador" element={<Worker />} />
-            <Route path="/chat" element={<Chat />} />
+            <Route path="/ListaChat" element={<WorkerContactList />} />
           </Route>
-
         </Routes>
       </div>
     </Router>

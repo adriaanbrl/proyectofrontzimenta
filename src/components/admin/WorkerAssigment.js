@@ -54,7 +54,7 @@ const WorkerAssigment = ({ formik, loading, successMessage, errorMessage }) => {
 
         // Fetch workers
         fetchData(
-            "http://localhost:8080/api/workers", 
+            "http://localhost:8080/auth/worker/workers",
             setWorkers,
             setErrorWorkers,
             setLoadingWorkers

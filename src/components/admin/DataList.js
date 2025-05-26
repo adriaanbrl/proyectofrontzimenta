@@ -391,7 +391,9 @@ const DataList = () => {
                                                     Apellido: {worker.surname}<br/>
                                                     Nombre de Usuario: {worker.username || 'N/A'}<br/>
                                                     Contacto: {worker.contact || 'N/A'}<br/>
-                                                    Rol: {worker.rol?.nombre || 'N/A'}
+                                                    Puesto: {worker.workerTypes && worker.workerTypes.length > 0
+                                                    ? worker.workerTypes.map(wt => wt.role?.nombre).filter(Boolean).join(', ')
+                                                    : 'N/A'}
                                                 </Card.Text>
                                             </Card.Body>
                                             <Card.Footer className="text-end">

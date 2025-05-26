@@ -18,7 +18,7 @@ const WorkerRoleAssignment = ({ setLoading, setSuccessMessage, setErrorMessage, 
 
             // Fetch Workers
             try {
-                const workersResponse = await axios.get("http://localhost:8080/api/workers", {
+                const workersResponse = await axios.get("http://localhost:8080/auth/worker/workers", {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

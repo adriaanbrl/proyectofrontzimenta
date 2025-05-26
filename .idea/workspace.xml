@@ -5,9 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Vista worker">
+      <change afterPath="$PROJECT_DIR$/src/components/worker/UploadImageModal.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/admin/Admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/admin/Admin.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/client/clientView/EstimatedPrice.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/clientView/EstimatedPrice.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/worker/Worker.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/worker/Worker.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -270,15 +270,7 @@
       <workItem from="1747813122361" duration="1743000" />
       <workItem from="1747815297299" duration="5127000" />
       <workItem from="1747823027566" duration="9097000" />
-      <workItem from="1748240435278" duration="19104000" />
-    </task>
-    <task id="LOCAL-00028" summary="Galleria">
-      <option name="closed" value="true" />
-      <created>1746527623866</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
-      <option name="project" value="LOCAL" />
-      <updated>1746527623866</updated>
+      <workItem from="1748240435278" duration="20856000" />
     </task>
     <task id="LOCAL-00029" summary="Terminos y privacidad">
       <option name="closed" value="true" />
@@ -664,7 +656,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748268371580</updated>
     </task>
-    <option name="localTasksCounter" value="77" />
+    <task id="LOCAL-00077" summary="Vista worker">
+      <option name="closed" value="true" />
+      <created>1748269379424</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1748269379425</updated>
+    </task>
+    <option name="localTasksCounter" value="78" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

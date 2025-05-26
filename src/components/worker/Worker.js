@@ -1,13 +1,14 @@
-import React, { useState, useEffect, useCallback } from 'react'; // Import useCallback
-import { Card, Button, Accordion, Row, Col, Form, Image, Spinner, Alert } from 'react-bootstrap'; // Added Spinner, Alert
+import React, { useState, useEffect, useCallback } from 'react';
+import { Card, Button, Accordion, Row, Col, Form, Image, Spinner, Alert } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { PencilSquare } from 'react-bootstrap-icons';
-import { jwtDecode } from 'jwt-decode'; // Make sure you have 'jwt-decode' installed
+import { jwtDecode } from 'jwt-decode';
+import UploadImageModal from './UploadImageModal'; // Import the new modal component
 
 const ProfileImage = ({ imageUrl, onImageChange }) => (
     <div className="position-relative d-inline-block ms-3">
         <Image
-            src={imageUrl || 'https://placehold.co/80x80/cccccc/333333?text=Perfil'} // Imagen por defecto
+            src={imageUrl || 'https://placehold.co/80x80/cccccc/333333?text=Perfil'}
             alt="Perfil del Trabajador"
             roundedCircle
             style={{ width: '80px', height: '80px', objectFit: 'cover' }}
@@ -31,12 +32,15 @@ const WorkerView = () => {
     const [workerImage, setWorkerImage] = useState(null);
     const [workerName, setWorkerName] = useState("Cargando...");
     const [workerRole, setWorkerRole] = useState("Cargando...");
-    const [workerId, setWorkerId] = useState(null); // State to store worker ID
-    const [workerConstructions, setWorkerConstructions] = useState([]); // State for constructions
-    const [loadingConstructions, setLoadingConstructions] = useState(true); // Loading state for constructions
-    const [errorConstructions, setErrorConstructions] = useState(null); // Error state for constructions
+    const [workerId, setWorkerId] = useState(null);
+    const [workerConstructions, setWorkerConstructions] = useState([]);
+    const [loadingConstructions, setLoadingConstructions] = useState(true);
+    const [errorConstructions, setErrorConstructions] = useState(null);
 
-    // Memoize the fetch function for constructions
+    // State for the new UploadImageModal
+    const [showUploadImageModal, setShowUploadImageModal] = useState(false);
+    const [selectedBuildingForUpload, setSelectedBuildingForUpload] = useState(null);
+
     const fetchWorkerConstructions = useCallback(async (id, token) => {
         setLoadingConstructions(true);
         setErrorConstructions(null);
@@ -60,7 +64,7 @@ const WorkerView = () => {
         } finally {
             setLoadingConstructions(false);
         }
-    }, []); // Empty dependency array as it only depends on props/state that don't change frequently
+    }, []);
 
     useEffect(() => {
         const token = localStorage.getItem("authToken");
@@ -69,11 +73,10 @@ const WorkerView = () => {
             try {
                 const decodedToken = jwtDecode(token);
 
-                setWorkerName(`${decodedToken.name || "Trabajador"} ${decodedToken.lastName || ""}`);
-                setWorkerRole(decodedToken.role || "Desconocido");
+                setWorkerName(`${decodedToken.name || "Trabajador"} ${decodedToken.surname || ""}`);
+                setWorkerRole(decodedToken.roleNames ? decodedToken.roleNames.join(', ') : "Desconocido");
 
-                // Assuming the worker's ID is available in the token as 'id' or 'worker_id'
-                const currentWorkerId = decodedToken.id || decodedToken.worker_id;
+                const currentWorkerId = decodedToken.id;
                 setWorkerId(currentWorkerId);
 
                 if (currentWorkerId) {
@@ -89,8 +92,6 @@ const WorkerView = () => {
                 setWorkerRole("Error de Carga");
                 setErrorConstructions("Error de autenticación. Por favor, inicie sesión de nuevo.");
                 setLoadingConstructions(false);
-                // Optionally redirect to login if token is invalid
-                // setTimeout(() => navigate('/login'), 2000);
             }
         } else {
             console.warn("No se encontró ningún token de autenticación en localStorage.");
@@ -99,7 +100,7 @@ const WorkerView = () => {
             setErrorConstructions("No se encontró el token de autenticación.");
             setLoadingConstructions(false);
         }
-    }, [fetchWorkerConstructions]); // Add fetchWorkerConstructions to dependencies
+    }, [fetchWorkerConstructions]);
 
     const handleImageChange = (event) => {
         const file = event.target.files[0];
@@ -107,10 +108,34 @@ const WorkerView = () => {
             const reader = new FileReader();
             reader.onloadend = () => {
                 setWorkerImage(reader.result);
-                // Aquí podrías guardar la imagen en tu backend o estado global
             };
             reader.readAsDataURL(file);
         }
+    };
+
+    // Function to open the UploadImageModal
+    const handleUploadImageClick = (building) => {
+        setSelectedBuildingForUpload(building); // Store the entire building object
+        setShowUploadImageModal(true);
+    };
+
+    // Function to close the UploadImageModal
+    const handleCloseUploadImageModal = () => {
+        setShowUploadImageModal(false);
+        setSelectedBuildingForUpload(null); // Clear selected building on close
+    };
+
+    // Callback for when an image is successfully uploaded (optional, can refresh data)
+    const handleImageUploadSuccess = () => {
+        // You might want to re-fetch constructions here if image count is displayed
+        // or if there's any visual indication of new images.
+        // For now, just close the modal.
+        handleCloseUploadImageModal();
+        // Optionally, re-fetch worker constructions to update the view
+        // if (workerId) {
+        //     const token = localStorage.getItem("authToken");
+        //     fetchWorkerConstructions(workerId, token);
+        // }
     };
 
     return (
@@ -139,10 +164,14 @@ const WorkerView = () => {
                         <Card key={construction.id} className="mb-3 shadow-sm">
                             <Accordion.Item eventKey={index.toString()}>
                                 <Accordion.Header className="bg-white border-bottom">
-                                    <strong>{construction.address}</strong> {/* Assuming 'address' is the name field */}
-                                    <span className="ms-2 text-muted">({construction.id})</span> {/* Display ID for clarity */}
+                                    <strong>{construction.title || construction.address}</strong>
+                                    <span className="ms-2 text-muted">({construction.id})</span>
                                 </Accordion.Header>
                                 <Accordion.Body className="p-3">
+                                    <Row className="mb-2 align-items-center">
+                                        <Col md={4} className="text-muted">Título:</Col>
+                                        <Col md={8}>{construction.title || 'N/A'}</Col>
+                                    </Row>
                                     <Row className="mb-2 align-items-center">
                                         <Col md={4} className="text-muted">Dirección:</Col>
                                         <Col md={8}>{construction.address}</Col>
@@ -159,7 +188,13 @@ const WorkerView = () => {
                                     <Row className="mb-2 align-items-center">
                                         <Col md={4} className="text-muted">Subir Imágenes:</Col>
                                         <Col md={8}>
-                                            <Button variant="btn btn-outline-custom" className="w-100">Subir</Button>
+                                            <Button
+                                                variant="btn btn-outline-custom"
+                                                className="w-100"
+                                                onClick={() => handleUploadImageClick(construction)} // Pass the whole construction object
+                                            >
+                                                Subir
+                                            </Button>
                                         </Col>
                                     </Row>
                                     <Row className="mb-2 align-items-center">
@@ -217,6 +252,17 @@ const WorkerView = () => {
                 </Accordion>
             ) : (
                 <Alert variant="info">No hay construcciones asociadas a este trabajador.</Alert>
+            )}
+
+            {/* Render the UploadImageModal */}
+            {selectedBuildingForUpload && ( // Ensure selectedBuildingForUpload is not null before rendering
+                <UploadImageModal
+                    show={showUploadImageModal}
+                    onHide={handleCloseUploadImageModal}
+                    buildingId={selectedBuildingForUpload.id}
+                    buildingDetails={selectedBuildingForUpload} // Pass the entire building object
+                    onUploadSuccess={handleImageUploadSuccess}
+                />
             )}
         </div>
     );

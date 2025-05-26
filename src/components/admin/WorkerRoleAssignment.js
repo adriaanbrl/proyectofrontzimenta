@@ -35,7 +35,6 @@ const WorkerRoleAssignment = ({ setLoading, setSuccessMessage, setErrorMessage, 
 
             // Fetch Roles
             try {
-                // Assuming an endpoint to fetch all roles (you'll need to implement this in the backend)
                 const rolesResponse = await axios.get("http://localhost:8080/api/roles", {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -53,7 +52,7 @@ const WorkerRoleAssignment = ({ setLoading, setSuccessMessage, setErrorMessage, 
         };
 
         fetchWorkersAndRoles();
-    }, [setErrorMessage]); // Dependency array: re-run if setErrorMessage changes
+    }, [setErrorMessage]); 
 
     return (
         <Card className="mt-4 p-3 shadow-sm card-custom">

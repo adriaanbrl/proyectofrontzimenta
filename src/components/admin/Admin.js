@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import "./Admin.css";
 import WorkerRol from "./WorkerRol";
 import WorkerAssigment from "./WorkerAssigment";
-import WorkerRoleAssignment from "./WorkerRoleAssignment"; 
+import WorkerRoleAssignment from "./WorkerRoleAssignment";
 import AdminSidebar from './AdminSidebar';
 import { Outlet } from 'react-router-dom';
 
@@ -21,7 +21,6 @@ const AdminView = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Customer Formik (unchanged)
   const customerFormik = useFormik({
     initialValues: {
       email: "",
@@ -263,7 +262,7 @@ const AdminView = () => {
 
         // --- NEW BACKEND ENDPOINT FOR ROLE ASSIGNMENT ---
         const response = await axios.post(
-            `http://localhost:8080/api/workers/${workerId}/assign-role/${roleId}`, // Example endpoint
+            `http://localhost:8080/api/workers/${workerId}/assign-role/${roleId}`,
             {}, // No body needed for this type of assignment
             {
               headers: {
@@ -375,7 +374,7 @@ const AdminView = () => {
                       variant={showWorkerAssigmentForm ? "btn-custom" : "btn-outline-custom"}
                       onClick={() => {
                         hideAllForms();
-                        setShowWorkerAssigmentForm(!showWorkerAssigmentForm); // Renamed from showFourthForm
+                        setShowWorkerAssigmentForm(!showWorkerAssigmentForm);
                       }}
                       className="w-100 btn-outline-custom"
                   >
@@ -635,7 +634,7 @@ const AdminView = () => {
                   </Card>
               )}
 
-              {showWorkerAssigmentForm && ( // Renamed from showFourthForm
+              {showWorkerAssigmentForm && (
                   <WorkerAssigment
                       formik={workerAssigmentFormik}
                       loading={loading}
@@ -647,7 +646,7 @@ const AdminView = () => {
                   />
               )}
 
-              {/* <--- NEW COMPONENT RENDERING */}
+
               {showWorkerRoleAssignmentForm && (
                   <WorkerRoleAssignment
                       formik={workerRoleAssignmentFormik}
@@ -659,7 +658,6 @@ const AdminView = () => {
                       setErrorMessage={setErrorMessage}
                   />
               )}
-              {/* NEW COMPONENT RENDERING ---> */}
 
               <div className="mt-4">
                 <Link to="/login" className={`btn  btn-outline-custom`}>

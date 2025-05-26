@@ -726,8 +726,6 @@ const WorkerView = () => {
             ) : (
                 <Alert variant="info">No hay construcciones asociadas a este trabajador.</Alert>
             )}
-
-            {/* Render the UploadImageModal */}
             {selectedBuildingForUpload && (
                 <UploadImageModal
                     show={showUploadImageModal}

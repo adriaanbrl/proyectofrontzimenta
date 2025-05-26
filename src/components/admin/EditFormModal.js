@@ -9,11 +9,29 @@ const EditFormModal = ({ show, onHide, item, itemType, onSave }) => {
     useEffect(() => {
         if (item) {
             // Clonar el item para evitar mutar el estado original directamente
-            setFormData({ ...item });
-        }
-    }, [item]);
+            const newItem = { ...item };
 
-    // Manejador de cambios para los campos del formulario
+            // Manejo específico para el tipo 'worker'
+            if (itemType === 'worker') {
+                // Asegurar que 'contact' sea un string para el input
+                newItem.contact = newItem.contact !== undefined && newItem.contact !== null
+                    ? String(newItem.contact)
+                    : '';
+
+                delete newItem.rol;
+            }
+
+            // Manejo específico para fechas en 'building'
+            if (itemType === 'building') {
+                newItem.startDate = newItem.startDate ? new Date(newItem.startDate).toISOString().split('T')[0] : '';
+                newItem.endDate = newItem.endDate ? new Date(newItem.endDate).toISOString().split('T')[0] : '';
+            }
+
+            setFormData(newItem);
+        }
+    }, [item, itemType]);
+
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevData => ({
@@ -21,15 +39,19 @@ const EditFormModal = ({ show, onHide, item, itemType, onSave }) => {
             [name]: value
         }));
     };
-
-    // Manejador para el envío del formulario
+    
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSave(formData, itemType); // Llama a la función onSave pasada por props
-        onHide(); // Cierra el modal después de guardar
+        const dataToSave = { ...formData };
+
+        if (itemType === 'worker') {
+            dataToSave.contact = dataToSave.contact ? parseInt(dataToSave.contact, 10) : null;
+        }
+
+        onSave(dataToSave, itemType);
     };
 
-    // Si no hay 'item' (ej. modal abierto sin seleccionar nada), no renderizar
+
     if (!item) {
         return null;
     }
@@ -57,7 +79,7 @@ const EditFormModal = ({ show, onHide, item, itemType, onSave }) => {
                                 <Form.Control
                                     type="date"
                                     name="startDate"
-                                    value={formData.startDate ? new Date(formData.startDate).toISOString().split('T')[0] : ''}
+                                    value={formData.startDate || ''} // Ya pre-procesado en useEffect
                                     onChange={handleChange}
                                 />
                             </Col>
@@ -68,7 +90,7 @@ const EditFormModal = ({ show, onHide, item, itemType, onSave }) => {
                                 <Form.Control
                                     type="date"
                                     name="endDate"
-                                    value={formData.endDate ? new Date(formData.endDate).toISOString().split('T')[0] : ''}
+                                    value={formData.endDate || ''} // Ya pre-procesado en useEffect
                                     onChange={handleChange}
                                 />
                             </Col>
@@ -104,10 +126,12 @@ const EditFormModal = ({ show, onHide, item, itemType, onSave }) => {
                             <Form.Label column sm="3">Contacto</Form.Label>
                             <Col sm="9">
                                 <Form.Control
-                                    type="text" // Usar 'text' para contacto si puede contener no-números o símbolos
+                                    type="text"
                                     name="contact"
                                     value={formData.contact || ''}
                                     onChange={handleChange}
+                                    maxLength={9}
+                                    pattern="[0-9]*"
                                 />
                             </Col>
                         </Form.Group>
@@ -160,9 +184,6 @@ const EditFormModal = ({ show, onHide, item, itemType, onSave }) => {
                                 />
                             </Col>
                         </Form.Group>
-                        {/* La dirección de la obra se muestra, pero no se edita directamente aquí ya que es una relación */}
-                        {/* Si quieres editar la obra, necesitarías un selector de obras o una lógica más compleja */}
-                        {/* Puedes añadir más campos de Customer aquí si los necesitas */}
                     </>
                 );
             default:

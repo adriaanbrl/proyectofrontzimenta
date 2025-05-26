@@ -46,7 +46,7 @@ const WorkerAssigment = ({ formik, loading, successMessage, errorMessage }) => {
 
     useEffect(() => {
         fetchData(
-            "http://localhost:8080/api/buildings",
+            "http://localhost:8080/auth/building",
             setBuildings,
             setErrorBuildings,
             setLoadingBuildings

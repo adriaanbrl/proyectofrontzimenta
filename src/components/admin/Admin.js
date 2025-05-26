@@ -92,11 +92,14 @@ const AdminView = () => {
           return;
         }
 
-        const response = await axios.post("http://localhost:8080/api/buildings", values, {
+        // --- MODIFICACIÓN AQUÍ: Cambiado de /api/buildings a /auth/building ---
+        const response = await axios.post("http://localhost:8080/auth/building", values, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+        // --- FIN DE LA MODIFICACIÓN ---
+
         if (response.status === 201) {
           setSuccessMessage("Construcción creada con éxito.");
           constructionFormik.resetForm();

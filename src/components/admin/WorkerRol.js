@@ -9,6 +9,7 @@ function WorkerRol() {
         contacto: "",
         username: "",
         password: "",
+        rolId: "", // Nuevo campo para el ID del rol
     });
     const [loading, setLoading] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
@@ -17,7 +18,7 @@ function WorkerRol() {
     const handleChange = (e) => {
         let value = e.target.value;
         if (e.target.name === "contacto") {
-            // Only allow digits for contact and limit to 9 characters
+            // Solo permitir dígitos para contacto y limitar a 9 caracteres
             value = value.replace(/[^0-9]/g, '').slice(0, 9);
         }
         setFormData({ ...formData, [e.target.name]: value });
@@ -29,14 +30,14 @@ function WorkerRol() {
         setSuccessMessage("");
         setErrorMessage("");
 
-        // Basic validation for all fields, including new ones
-        if (!formData.nombre || !formData.apellidos || !formData.contacto || !formData.username || !formData.password) {
+        // Validación básica para todos los campos, incluyendo los nuevos
+        if (!formData.nombre || !formData.apellidos || !formData.contacto || !formData.username || !formData.password || !formData.rolId) {
             setErrorMessage("Todos los campos son obligatorios.");
             setLoading(false);
             return;
         }
 
-        // Validate contact: must be a number and exactly 9 digits long
+        // Validar contacto: debe ser un número y exactamente 9 dígitos
         if (!/^\d{9}$/.test(formData.contacto)) {
             setErrorMessage("El campo 'Contacto' debe ser un número de 9 dígitos válido.");
             setLoading(false);
@@ -44,11 +45,12 @@ function WorkerRol() {
         }
 
         const workerData = {
-            contact: parseInt(formData.contacto, 10), // Now it's explicitly an integer
+            contact: parseInt(formData.contacto, 10),
             name: formData.nombre,
             surname: formData.apellidos,
-            username: formData.username, // Include username
-            password: formData.password, // Include password
+            username: formData.username,
+            password: formData.password, // La contraseña se enviará en texto plano al backend para que allí se encripte
+            rol: { id: parseInt(formData.rolId, 10) } // Enviar el rol como un objeto con su ID
         };
 
         try {
@@ -69,8 +71,8 @@ function WorkerRol() {
             );
             if (response.status === 201 || response.status === 200) {
                 setSuccessMessage("Trabajador creado con éxito!");
-                // Reset form fields after successful submission
-                setFormData({ nombre: "", apellidos: "", contacto: "", username: "", password: "" });
+                // Resetear campos del formulario después de un envío exitoso
+                setFormData({ nombre: "", apellidos: "", contacto: "", username: "", password: "", rolId: "" });
             } else {
                 setErrorMessage(`Error al crear trabajador: ${response.statusText || 'Error desconocido'}`);
             }
@@ -135,20 +137,20 @@ function WorkerRol() {
                             <Form.Group controlId="formContacto">
                                 <Form.Label className="fw-bold">Contacto (9 dígitos)</Form.Label>
                                 <Form.Control
-                                    type="text" // Keep as text to allow partial input, but validate digits
+                                    type="text" // Mantener como texto para permitir entrada parcial, pero validar dígitos
                                     name="contacto"
                                     placeholder="Ingrese su número de contacto (ej: 123456789)"
                                     value={formData.contacto}
                                     onChange={handleChange}
                                     disabled={loading}
-                                    maxLength={9} // HTML max length for visual guidance
+                                    maxLength={9} // Longitud máxima HTML para guía visual
                                     required
                                 />
                             </Form.Group>
                         </Col>
                     </Row>
 
-                    {/* New fields: Username and Password */}
+                    {/* Nuevos campos: Nombre de Usuario y Contraseña */}
                     <Row className="mb-3">
                         <Col md={12}>
                             <Form.Group controlId="formUsername">
@@ -171,7 +173,7 @@ function WorkerRol() {
                             <Form.Group controlId="formPassword">
                                 <Form.Label className="fw-bold">Contraseña</Form.Label>
                                 <Form.Control
-                                    type="password" // Use type="password" for security
+                                    type="password" // Usar type="password" por seguridad
                                     name="password"
                                     placeholder="Ingrese una contraseña"
                                     value={formData.password}
@@ -179,6 +181,29 @@ function WorkerRol() {
                                     disabled={loading}
                                     required
                                 />
+                            </Form.Group>
+                        </Col>
+                    </Row>
+
+                    {/* Nuevo campo: Selección de Rol */}
+                    <Row className="mb-3">
+                        <Col md={12}>
+                            <Form.Group controlId="formRol">
+                                <Form.Label className="fw-bold">Rol</Form.Label>
+                                <Form.Select
+                                    name="rolId"
+                                    value={formData.rolId}
+                                    onChange={handleChange}
+                                    disabled={loading}
+                                    required
+                                >
+                                    <option value="">Seleccione un rol</option>
+                                    <option value="1">Administrador</option> {/* ID 1 para Administrador */}
+                                    <option value="2">Trabajador</option>    {/* ID 2 para Trabajador */}
+                                </Form.Select>
+                                <Form.Control.Feedback type="invalid">
+                                    {/* Aquí puedes añadir validación de Formik si lo integras */}
+                                </Form.Control.Feedback>
                             </Form.Group>
                         </Col>
                     </Row>

@@ -1,449 +1,19 @@
+// components/WorkerView.jsx
 import React, { useState, useEffect, useCallback } from 'react';
-import { Card, Button, Accordion, Row, Col, Form, Image, Spinner, Alert, Modal } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import { PencilSquare } from 'react-bootstrap-icons';
+import {
+    Card, Button, Accordion, Row, Col, Spinner, Alert, Modal, Container
+} from 'react-bootstrap';
 import { jwtDecode } from 'jwt-decode';
+
+// Componentes externos
 import UploadImageModal from './UploadImageModal';
 import BuildingIncidentsSection from './BuildingIncidentsSection';
 
-
-const ProfileImage = ({ imageUrl, onImageChange }) => (
-    <div className="position-relative d-inline-block ms-3">
-        <Image
-            src={imageUrl || 'https://placehold.co/80x80/cccccc/333333?text=Perfil'}
-            alt="Perfil del Trabajador"
-            roundedCircle
-            style={{ width: '80px', height: '80px', objectFit: 'cover' }}
-        />
-        <Form.Group className="position-absolute bottom-0 end-0 mb-1 me-1">
-            <Form.Control
-                type="file"
-                accept="image/*"
-                onChange={onImageChange}
-                className="d-none"
-                id="upload-profile-image"
-            />
-            <Form.Label htmlFor="upload-profile-image" className="bg-light border rounded-circle p-1" style={{ cursor: 'pointer' }}>
-                <PencilSquare size={16} className="text-secondary" />
-            </Form.Label>
-        </Form.Group>
-    </div>
-);
-
-// EventDayModal component (assuming it's defined or imported elsewhere)
-const EventDayModal = ({ show, onHide, buildingId, buildingTitle }) => {
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [date, setDate] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(false);
-
-    useEffect(() => {
-        if (show) {
-            setTitle('');
-            setDescription('');
-            setDate('');
-            setError(null);
-            setSuccess(false);
-        }
-    }, [show, buildingId]);
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setError(null);
-        setSuccess(false);
-
-        const eventData = {
-            title,
-            description,
-            date,
-            buildingId: parseInt(buildingId, 10)
-        };
-
-        console.log("Submitting Event/Day data:", eventData);
-
-        try {
-            const token = localStorage.getItem("authToken");
-
-            const response = await fetch('http://localhost:8080/api/events/create', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': token ? `Bearer ${token}` : ''
-                },
-                body: JSON.stringify(eventData)
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || `Error al guardar el evento/día: ${response.statusText}`);
-            }
-
-            const result = await response.json();
-            console.log("Evento/Día guardado exitosamente:", result);
-            setSuccess(true);
-        } catch (err) {
-            console.error("Error saving event/day:", err);
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return (
-        <Modal show={show} onHide={onHide} centered>
-            <Modal.Header closeButton>
-                <Modal.Title>Añadir Evento o Día para "{buildingTitle}"</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                {error && <Alert variant="danger">{error}</Alert>}
-                {success && <Alert variant="success">Evento/Día guardado exitosamente!</Alert>}
-                <Form onSubmit={handleSubmit}>
-                    <Form.Group className="mb-3" controlId="eventTitle">
-                        <Form.Label>Título</Form.Label>
-                        <Form.Control
-                            type="text"
-                            placeholder="Introduce el título del evento"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            required
-                        />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="eventDescription">
-                        <Form.Label>Descripción</Form.Label>
-                        <Form.Control
-                            as="textarea"
-                            rows={3}
-                            placeholder="Introduce la descripción del evento"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            required
-                        />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="eventDate">
-                        <Form.Label>Fecha</Form.Label>
-                        <Form.Control
-                            type="date"
-                            value={date}
-                            onChange={(e) => setDate(e.target.value)}
-                            required
-                        />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="buildingIdDisplay">
-                        <Form.Label>ID de Construcción</Form.Label>
-                        <Form.Control
-                            type="text"
-                            value={buildingId}
-                            readOnly
-                            disabled
-                        />
-                    </Form.Group>
-
-                    <Button variant="primary" type="submit" disabled={loading}>
-                        {loading ? <Spinner animation="border" size="sm" /> : 'Guardar Evento/Día'}
-                    </Button>
-                </Form>
-            </Modal.Body>
-        </Modal>
-    );
-};
-
-// LegalDocumentModal component (assuming it's defined or imported elsewhere)
-const LegalDocumentModal = ({ show, onHide, buildingId, buildingTitle }) => {
-    const [documentTitle, setDocumentTitle] = useState('');
-    const [documentFile, setDocumentFile] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(false);
-
-    useEffect(() => {
-        if (show) {
-            setDocumentTitle('');
-            setDocumentFile(null);
-            setError(null);
-            setSuccess(false);
-        }
-    }, [show, buildingId]);
-
-    const handleFileChange = (e) => {
-        setDocumentFile(e.target.files[0]);
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setError(null);
-        setSuccess(false);
-
-        if (!documentFile) {
-            setError("Por favor, selecciona un archivo.");
-            setLoading(false);
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('title', documentTitle);
-        formData.append('file', documentFile);
-        formData.append('buildingId', parseInt(buildingId, 10)); // Ensure buildingId is an integer
-
-        console.log("Submitting Legal Document data:", {
-            documentTitle,
-            documentFileName: documentFile.name,
-            buildingId
-        });
-
-        try {
-            const token = localStorage.getItem("authToken"); // Get the authentication token
-
-            const response = await fetch('http://localhost:8080/api/legal-documents/upload', {
-                method: 'POST',
-                headers: {
-                    // 'Content-Type': 'multipart/form-data' is NOT needed when using FormData,
-                    // the browser sets it automatically with the correct boundary.
-                    'Authorization': token ? `Bearer ${token}` : '' // Include token if available
-                },
-                body: formData
-            });
-
-            if (!response.ok) {
-                // Attempt to parse error message if available, otherwise use status text
-                const errorText = await response.text(); // Get raw text to avoid JSON parsing errors
-                let errorMessage = `Error al subir el documento legal: ${response.statusText}`;
-                try {
-                    const errorData = JSON.parse(errorText);
-                    errorMessage = errorData.message || errorMessage;
-                } catch (jsonError) {
-                    // If not JSON, use the raw text
-                    errorMessage = errorText || errorMessage;
-                }
-                throw new Error(errorMessage);
-            }
-
-            const result = await response.json();
-            console.log("Documento legal subido exitosamente:", result);
-            setSuccess(true);
-            // Optionally, call a callback to update parent state or refresh data
-            // onDocumentUploadSuccess();
-        } catch (err) {
-            console.error("Error uploading legal document:", err);
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return (
-        <Modal show={show} onHide={onHide} centered>
-            <Modal.Header closeButton>
-                <Modal.Title>Subir Documento Legal para "{buildingTitle}"</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                {error && <Alert variant="danger">{error}</Alert>}
-                {success && <Alert variant="success">Documento legal subido exitosamente!</Alert>}
-                <Form onSubmit={handleSubmit}>
-                    <Form.Group className="mb-3" controlId="documentTitle">
-                        <Form.Label>Título del Documento</Form.Label>
-                        <Form.Control
-                            type="text"
-                            placeholder="Introduce el título del documento"
-                            value={documentTitle}
-                            onChange={(e) => setDocumentTitle(e.target.value)}
-                            required
-                        />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="documentFile">
-                        <Form.Label>Seleccionar Archivo</Form.Label>
-                        <Form.Control
-                            type="file"
-                            onChange={handleFileChange}
-                            required
-                        />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="buildingIdDisplayLegal">
-                        <Form.Label>ID de Construcción</Form.Label>
-                        <Form.Control
-                            type="text"
-                            value={buildingId}
-                            readOnly
-                            disabled
-                        />
-                    </Form.Group>
-
-                    <Button variant="primary" type="submit" disabled={loading}>
-                        {loading ? <Spinner animation="border" size="sm" /> : 'Subir Documento Legal'}
-                    </Button>
-                </Form>
-            </Modal.Body>
-        </Modal>
-    );
-};
-
-// InvoiceUploadModal component (assuming it's defined or imported elsewhere)
-const InvoiceUploadModal = ({ show, onHide, buildingId, buildingTitle }) => {
-    const [invoiceTitle, setInvoiceTitle] = useState('');
-    const [invoiceDate, setInvoiceDate] = useState('');
-    const [invoiceAmount, setInvoiceAmount] = useState('');
-    const [invoiceFile, setInvoiceFile] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(false);
-
-    useEffect(() => {
-        if (show) {
-            setInvoiceTitle('');
-            setInvoiceDate('');
-            setInvoiceAmount('');
-            setInvoiceFile(null);
-            setError(null);
-            setSuccess(false);
-        }
-    }, [show, buildingId]);
-
-    const handleFileChange = (e) => {
-        setInvoiceFile(e.target.files[0]);
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setError(null);
-        setSuccess(false);
-
-        if (!invoiceFile) {
-            setError("Por favor, selecciona un archivo de factura.");
-            setLoading(false);
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('title', invoiceTitle);
-        formData.append('date', invoiceDate); // Assuming date format "YYYY-MM-DD"
-        formData.append('amount', parseFloat(invoiceAmount)); // Ensure amount is a number
-        formData.append('file', invoiceFile);
-        formData.append('buildingId', parseInt(buildingId, 10));
-
-        console.log("Submitting Invoice data:", {
-            invoiceTitle,
-            invoiceDate,
-            invoiceAmount,
-            invoiceFileName: invoiceFile.name,
-            buildingId
-        });
-
-        try {
-            const token = localStorage.getItem("authToken");
-
-            // Replace with your actual API endpoint for invoices
-            const response = await fetch('http://localhost:8080/api/invoices/upload', {
-                method: 'POST',
-                headers: {
-                    'Authorization': token ? `Bearer ${token}` : ''
-                },
-                body: formData
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                let errorMessage = `Error al subir la factura: ${response.statusText}`;
-                try {
-                    const errorData = JSON.parse(errorText);
-                    errorMessage = errorData.message || errorMessage;
-                } catch (jsonError) {
-                    errorMessage = errorText || errorMessage;
-                }
-                throw new Error(errorMessage);
-            }
-
-            const result = await response.json();
-            console.log("Factura subida exitosamente:", result);
-            setSuccess(true);
-            // onInvoiceUploadSuccess();
-        } catch (err) {
-            console.error("Error uploading invoice:", err);
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return (
-        <Modal show={show} onHide={onHide} centered>
-            <Modal.Header closeButton>
-                <Modal.Title>Subir Factura para "{buildingTitle}"</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                {error && <Alert variant="danger">{error}</Alert>}
-                {success && <Alert variant="success">Factura subida exitosamente!</Alert>}
-                <Form onSubmit={handleSubmit}>
-                    <Form.Group className="mb-3" controlId="invoiceTitle">
-                        <Form.Label>Título de la Factura</Form.Label>
-                        <Form.Control
-                            type="text"
-                            placeholder="Introduce el título de la factura"
-                            value={invoiceTitle}
-                            onChange={(e) => setInvoiceTitle(e.target.value)}
-                            required
-                        />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="invoiceDate">
-                        <Form.Label>Fecha de la Factura</Form.Label>
-                        <Form.Control
-                            type="date"
-                            value={invoiceDate}
-                            onChange={(e) => setInvoiceDate(e.target.value)}
-                            required
-                        />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="invoiceAmount">
-                        <Form.Label>Monto</Form.Label>
-                        <Form.Control
-                            type="number"
-                            step="0.01"
-                            placeholder="Introduce el monto de la factura"
-                            value={invoiceAmount}
-                            onChange={(e) => setInvoiceAmount(e.target.value)}
-                            required
-                        />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="invoiceFile">
-                        <Form.Label>Seleccionar Archivo PDF</Form.Label>
-                        <Form.Control
-                            type="file"
-                            accept=".pdf"
-                            onChange={handleFileChange}
-                            required
-                        />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="buildingIdDisplayInvoice">
-                        <Form.Label>ID de Construcción</Form.Label>
-                        <Form.Control
-                            type="text"
-                            value={buildingId}
-                            readOnly
-                            disabled
-                        />
-                    </Form.Group>
-
-                    <Button variant="primary" type="submit" disabled={loading}>
-                        {loading ? <Spinner animation="border" size="sm" /> : 'Subir Factura'}
-                    </Button>
-                </Form>
-            </Modal.Body>
-        </Modal>
-    );
-};
-
+// Componentes divididos
+import ProfileImage from './ProfileImage';
+import EventDayModal from './EventDayModal';
+import LegalDocumentModal from './LegalDocumentModal';
+import InvoiceUploadModal from './InvoiceUploadModal';
 
 const WorkerView = () => {
     const [workerImage, setWorkerImage] = useState(null);
@@ -454,26 +24,20 @@ const WorkerView = () => {
     const [loadingConstructions, setLoadingConstructions] = useState(true);
     const [errorConstructions, setErrorConstructions] = useState(null);
 
-    // State for the new UploadImageModal
     const [showUploadImageModal, setShowUploadImageModal] = useState(false);
     const [selectedBuildingForUpload, setSelectedBuildingForUpload] = useState(null);
 
-    // State for the new EventDayModal
     const [showEventDayModal, setShowEventDayModal] = useState(false);
     const [selectedBuildingForEventDay, setSelectedBuildingForEventDay] = useState(null);
 
-    // State for LegalDocumentModal
     const [showLegalDocumentModal, setShowLegalDocumentModal] = useState(false);
     const [selectedBuildingForLegalDocument, setSelectedBuildingForLegalDocument] = useState(null);
 
-    // State for InvoiceUploadModal
     const [showInvoiceUploadModal, setShowInvoiceUploadModal] = useState(false);
     const [selectedBuildingForInvoiceUpload, setSelectedBuildingForInvoiceUpload] = useState(null);
 
-    // NEW STATE: For Incident History Modal
     const [showIncidentsHistoryModal, setShowIncidentsHistoryModal] = useState(false);
     const [selectedBuildingForIncidents, setSelectedBuildingForIncidents] = useState(null);
-
 
     const fetchWorkerConstructions = useCallback(async (id, token) => {
         setLoadingConstructions(true);
@@ -493,7 +57,6 @@ const WorkerView = () => {
             const data = await response.json();
             setWorkerConstructions(data);
         } catch (err) {
-            console.error("Error fetching worker constructions:", err);
             setErrorConstructions(err.message);
         } finally {
             setLoadingConstructions(false);
@@ -506,10 +69,8 @@ const WorkerView = () => {
         if (token) {
             try {
                 const decodedToken = jwtDecode(token);
-
                 setWorkerName(`${decodedToken.name || "Trabajador"} ${decodedToken.surname || ""}`);
                 setWorkerRole(decodedToken.roleNames ? decodedToken.roleNames.join(', ') : "Desconocido");
-
                 const currentWorkerId = decodedToken.id;
                 setWorkerId(currentWorkerId);
 
@@ -519,19 +80,16 @@ const WorkerView = () => {
                     setErrorConstructions("ID del trabajador no encontrado en el token.");
                     setLoadingConstructions(false);
                 }
-
             } catch (error) {
-                console.error("Error al decodificar el token:", error);
                 setWorkerName("Error de Carga");
                 setWorkerRole("Error de Carga");
-                setErrorConstructions("Error de autenticación. Por favor, inicie sesión de nuevo.");
+                setErrorConstructions("Error de autenticación.");
                 setLoadingConstructions(false);
             }
         } else {
-            console.warn("No se encontró ningún token de autenticación en localStorage.");
             setWorkerName("No Disponible");
             setWorkerRole("No Disponible");
-            setErrorConstructions("No se encontró el token de autenticación.");
+            setErrorConstructions("No se encontró el token.");
             setLoadingConstructions(false);
         }
     }, [fetchWorkerConstructions]);
@@ -540,63 +98,51 @@ const WorkerView = () => {
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onloadend = () => {
-                setWorkerImage(reader.result);
-            };
+            reader.onloadend = () => setWorkerImage(reader.result);
             reader.readAsDataURL(file);
         }
     };
+
     const handleUploadImageClick = (building) => {
         setSelectedBuildingForUpload(building);
         setShowUploadImageModal(true);
     };
 
-    // Function to close the UploadImageModal
     const handleCloseUploadImageModal = () => {
         setShowUploadImageModal(false);
         setSelectedBuildingForUpload(null);
     };
-    const handleImageUploadSuccess = () => {
-        handleCloseUploadImageModal();
-    };
 
-    // Function to open the EventDayModal
     const handleEventDayClick = (building) => {
         setSelectedBuildingForEventDay(building);
         setShowEventDayModal(true);
     };
 
-    // Function to close the EventDayModal
     const handleCloseEventDayModal = () => {
         setShowEventDayModal(false);
         setSelectedBuildingForEventDay(null);
     };
 
-    // Function to open the LegalDocumentModal
     const handleLegalDocumentClick = (building) => {
         setSelectedBuildingForLegalDocument(building);
         setShowLegalDocumentModal(true);
     };
 
-    // Function to close the LegalDocumentModal
     const handleCloseLegalDocumentModal = () => {
         setShowLegalDocumentModal(false);
         setSelectedBuildingForLegalDocument(null);
     };
 
-    // Function to open the InvoiceUploadModal
     const handleInvoiceUploadClick = (building) => {
         setSelectedBuildingForInvoiceUpload(building);
         setShowInvoiceUploadModal(true);
     };
 
-    // Function to close the InvoiceUploadModal
     const handleCloseInvoiceUploadModal = () => {
         setShowInvoiceUploadModal(false);
         setSelectedBuildingForInvoiceUpload(null);
     };
 
-    // NEW: Functions to handle Incident History Modal
     const handleViewIncidentsClick = (building) => {
         setSelectedBuildingForIncidents(building);
         setShowIncidentsHistoryModal(true);
@@ -607,9 +153,8 @@ const WorkerView = () => {
         setSelectedBuildingForIncidents(null);
     };
 
-
     return (
-        <div className="container mt-4">
+        <Container className="container mt-4">
             <div className="bg-light p-4 rounded shadow-sm mb-4 d-flex align-items-center justify-content-between">
                 <div className="text-start">
                     <h2 className="mb-0 text fw-bold">{workerName}</h2>
@@ -617,13 +162,12 @@ const WorkerView = () => {
                 </div>
                 <ProfileImage imageUrl={workerImage} onImageChange={handleImageChange} />
             </div>
+
             <h4 className="mb-3 text-secondary">CONSTRUCCIONES ASOCIADAS:</h4>
 
             {loadingConstructions ? (
                 <div className="text-center my-5">
-                    <Spinner animation="border" role="status">
-                        <span className="visually-hidden">Cargando construcciones...</span>
-                    </Spinner>
+                    <Spinner animation="border" />
                     <p className="mt-2">Cargando construcciones...</p>
                 </div>
             ) : errorConstructions ? (
@@ -633,120 +177,37 @@ const WorkerView = () => {
                     {workerConstructions.map((construction, index) => (
                         <Card key={construction.id} className="mb-3 shadow-sm">
                             <Accordion.Item eventKey={index.toString()}>
-                                <Accordion.Header className="bg-white border-bottom">
+                                <Accordion.Header>
                                     <strong>{construction.title || construction.address}</strong>
                                     <span className="ms-2 text-muted">({construction.id})</span>
                                 </Accordion.Header>
-                                <Accordion.Body className="p-3">
-                                    <Row className="mb-2 align-items-center">
-                                        <Col md={4} className="text-muted">Título:</Col>
-                                        <Col md={8}>{construction.title || 'N/A'}</Col>
-                                    </Row>
-                                    <Row className="mb-2 align-items-center">
-                                        <Col md={4} className="text-muted">Dirección:</Col>
-                                        <Col md={8}>{construction.address}</Col>
-                                    </Row>
-                                    <Row className="mb-2 align-items-center">
-                                        <Col md={4} className="text-muted">Fecha de Inicio:</Col>
-                                        <Col md={8}>{construction.startDate ? new Date(construction.startDate).toLocaleDateString() : 'N/A'}</Col>
-                                    </Row>
-                                    <Row className="mb-2 align-items-center">
-                                        <Col md={4} className="text-muted">Fecha de Finalización:</Col>
-                                        <Col md={8}>{construction.endDate ? new Date(construction.endDate).toLocaleDateString() : 'N/A'}</Col>
-                                    </Row>
-                                    <hr/>
-
-                                    {/* Subir Imágenes */}
-                                    <Row className="mb-2 align-items-center">
-                                        <Col md={4} className="text-muted">Subir Imágenes:</Col>
-                                        <Col md={8}>
-                                            <Button
-                                                variant="btn btn-outline-custom"
-                                                className="w-100"
-                                                onClick={() => handleUploadImageClick(construction)}
-                                            >
-                                                Subir
-                                            </Button>
-                                        </Col>
-                                    </Row>
-                                    <Row className="mb-2 align-items-center">
-                                        <Col md={4} className="text-muted">Eventos y Día:</Col>
-                                        <Col md={8}>
-                                            <Button
-                                                variant="btn btn-outline-custom"
-                                                className="w-100"
-                                                onClick={() => handleEventDayClick(construction)}
-                                            >
-                                                Poner
-                                            </Button>
-                                        </Col>
-                                    </Row>
-                                    <Row className="mb-2 align-items-center">
-                                        <Col md={4} className="text-muted">Documentación Legal:</Col>
-                                        <Col md={8}>
-                                            <Button
-                                                variant="btn btn-outline-custom"
-                                                className="w-100"
-                                                onClick={() => handleLegalDocumentClick(construction)}
-                                            >
-                                                Subir
-                                            </Button>
-                                        </Col>
-                                    </Row>
-                                    <Row className="mb-2 align-items-center">
-                                        <Col md={4} className="text-muted">Facturas:</Col>
-                                        <Col md={8}>
-                                            <Button
-                                                variant="btn btn-outline-custom"
-                                                className="w-100"
-                                                onClick={() => handleInvoiceUploadClick(construction)}
-                                            >
-                                                Subir
-                                            </Button>
-                                        </Col>
-                                    </Row>
-                                    <Row className="mb-2 align-items-center">
-                                        <Col md={4} className="text-muted">Presupuestos:</Col>
-                                        <Col md={8}>
-                                            <Button variant="btn btn-outline-custom" className="w-100">Subir</Button>
-                                        </Col>
-                                    </Row>
-                                    <Row className="mb-2 align-items-center">
-                                        <Col md={4} className="text-muted">Manual Usuario:</Col>
-                                        <Col md={8}>
-                                            <Button variant="btn btn-outline-custom" className="w-100">Subir</Button>
-                                        </Col>
-                                    </Row>
-                                    {/* MODIFIED: "Historial Incidencias" button to open the modal */}
-                                    <Row className="mb-2 align-items-center">
-                                        <Col md={4} className="text-muted">Historial Incidencias:</Col>
-                                        <Col md={8}>
-                                            <Button
-                                                variant="btn btn-outline-custom"
-                                                className="w-100"
-                                                onClick={() => handleViewIncidentsClick(construction)}
-                                            >
-                                                Ver
-                                            </Button>
-                                        </Col>
-                                    </Row>
+                                <Accordion.Body>
+                                    <Row className="mb-2"><Col md={4}>Título:</Col><Col>{construction.title || 'N/A'}</Col></Row>
+                                    <Row className="mb-2"><Col md={4}>Dirección:</Col><Col>{construction.address}</Col></Row>
+                                    <Row className="mb-2"><Col md={4}>Inicio:</Col><Col>{construction.startDate ? new Date(construction.startDate).toLocaleDateString() : 'N/A'}</Col></Row>
+                                    <Row className="mb-2"><Col md={4}>Final:</Col><Col>{construction.endDate ? new Date(construction.endDate).toLocaleDateString() : 'N/A'}</Col></Row>
+                                    <hr />
+                                    <Row className="mb-2"><Col md={4}>Imágenes:</Col><Col><Button onClick={() => handleUploadImageClick(construction)} className="w-100">Subir</Button></Col></Row>
+                                    <Row className="mb-2"><Col md={4}>Eventos:</Col><Col><Button onClick={() => handleEventDayClick(construction)} className="w-100">Añadir</Button></Col></Row>
+                                    <Row className="mb-2"><Col md={4}>Documentos legales:</Col><Col><Button onClick={() => handleLegalDocumentClick(construction)} className="w-100">Subir</Button></Col></Row>
+                                    <Row className="mb-2"><Col md={4}>Facturas:</Col><Col><Button onClick={() => handleInvoiceUploadClick(construction)} className="w-100">Subir</Button></Col></Row>
+                                    <Row className="mb-2"><Col md={4}>Incidencias:</Col><Col><Button onClick={() => handleViewIncidentsClick(construction)} className="w-100">Ver</Button></Col></Row>
                                 </Accordion.Body>
                             </Accordion.Item>
                         </Card>
                     ))}
                 </Accordion>
             ) : (
-                <Alert variant="info">No hay construcciones asociadas a este trabajador.</Alert>
+                <Alert variant="info">No hay construcciones asociadas.</Alert>
             )}
 
-            {/* Render Modals */}
             {selectedBuildingForUpload && (
                 <UploadImageModal
                     show={showUploadImageModal}
                     onHide={handleCloseUploadImageModal}
                     buildingId={selectedBuildingForUpload.id}
                     buildingDetails={selectedBuildingForUpload}
-                    onUploadSuccess={handleImageUploadSuccess}
+                    onUploadSuccess={handleCloseUploadImageModal}
                 />
             )}
 
@@ -777,29 +238,22 @@ const WorkerView = () => {
                 />
             )}
 
-            {/* NEW: Incident History Modal */}
-            <Modal
-                show={showIncidentsHistoryModal}
-                onHide={handleCloseIncidentsHistoryModal}
-                size="lg" // Make the modal large for better viewing of incidents
-                centered
-            >
-                <Modal.Header closeButton>
-                    <Modal.Title>Historial de Incidentes para "{selectedBuildingForIncidents?.title || selectedBuildingForIncidents?.address}"</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {selectedBuildingForIncidents && (
+            {selectedBuildingForIncidents && (
+                <Modal show={showIncidentsHistoryModal} onHide={handleCloseIncidentsHistoryModal} size="lg" centered>
+                    <Modal.Header closeButton>
+                        <Modal.Title>
+                            Historial de Incidentes - {selectedBuildingForIncidents.title || selectedBuildingForIncidents.address}
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
                         <BuildingIncidentsSection buildingData={selectedBuildingForIncidents} />
-                    )}
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseIncidentsHistoryModal}>
-                        Cerrar
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-
-        </div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button onClick={handleCloseIncidentsHistoryModal}>Cerrar</Button>
+                    </Modal.Footer>
+                </Modal>
+            )}
+        </Container>
     );
 };
 

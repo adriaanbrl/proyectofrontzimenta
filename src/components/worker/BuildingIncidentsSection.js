@@ -192,143 +192,168 @@ const BuildingIncidentsSection = ({ buildingData }) => {
 
 
     return (
-        <Card className="mb-3 shadow-sm">
-            <Card.Header className="bg-light fw-bold">
-                Incidentes de "{buildingData?.title || buildingData?.address || 'N/A'}"
-            </Card.Header>
-            <Card.Body>
-                {loading ? (
-                    <div className="text-center my-3">
-                        <Spinner animation="border" size="sm" /> Cargando incidentes...
-                    </div>
-                ) : error ? (
-                    <Alert variant="danger">{error}</Alert>
-                ) : (
-                    <>
-                        {/* Section for Pending and In Review Incidents */}
-                        {pendingAndReviewIncidents.length > 0 && (
-                            <div className="mb-4">
-                                <h6 className="mb-2 text-primary">Incidentes Pendientes y En Revisión ({pendingAndReviewIncidents.length})</h6>
-                                <ListGroup variant="flush">
-                                    {pendingAndReviewIncidents.map((incident) => (
-                                        <ListGroup.Item key={incident.id} className="d-flex flex-column flex-md-row justify-content-between align-items-md-center py-3">
-                                            <div className="me-md-3 mb-2 mb-md-0 flex-grow-1">
-                                                <h6 className="mb-1 fw-bold">{incident.title}</h6>
-                                                <p className="mb-1 text-muted small">{incident.description}</p>
-                                                <div className="d-flex flex-wrap align-items-center small">
-                                                    <span className="me-2 text-dark">Creado el: {formatDate(incident.creationDate)}</span>
-                                                    <Badge bg={getStatusBadgeVariant(incident.status)} className="ms-2">
-                                                        {incident.status}
-                                                    </Badge>
+    <Card className="mb-4 shadow border-0">
+        <Card.Header className="bg-white border-bottom fw-bold text-primary">
+            Incidentes de "{buildingData?.title || buildingData?.address || 'N/A'}"
+        </Card.Header>
+        <Card.Body className="px-4 py-3">
+            {loading ? (
+                <div className="text-center my-4">
+                    <Spinner animation="border" variant="primary" />
+                    <p className="mt-2">Cargando incidentes...</p>
+                </div>
+            ) : error ? (
+                <Alert variant="danger">{error}</Alert>
+            ) : (
+                <>
+                    {/* Incidentes Pendientes / En Revisión */}
+                    {pendingAndReviewIncidents.length > 0 && (
+                        <div className="mb-5">
+                            <h5 className="mb-3 text-primary">
+                                Incidentes Pendientes y En Revisión ({pendingAndReviewIncidents.length})
+                            </h5>
+                            <ListGroup>
+                                {pendingAndReviewIncidents.map((incident) => (
+                                    <ListGroup.Item
+                                        key={incident.id}
+                                        className="py-3 px-3 d-flex flex-column flex-md-row align-items-start justify-content-between"
+                                    >
+                                        <div className="me-md-4 flex-grow-1">
+                                            <h6 className="fw-bold mb-1">{incident.title}</h6>
+                                            <p className="text-muted small mb-2">{incident.description}</p>
+                                            <div className="d-flex flex-wrap align-items-center gap-2 small">
+                                                <span className="text-dark">
+                                                    Creado el: {formatDate(incident.creationDate)}
+                                                </span>
+                                                <Badge bg={getStatusBadgeVariant(incident.status)}>
+                                                    {incident.status}
+                                                </Badge>
+                                            </div>
+                                            {incident.image && (
+                                                <div className="mt-3">
+                                                    <Image
+                                                        src={`data:image/jpeg;base64,${incident.image}`}
+                                                        thumbnail
+                                                        style={{ maxWidth: '120px', height: 'auto', cursor: 'pointer' }}
+                                                        onClick={() => handleImageClick(incident.image)}
+                                                    />
                                                 </div>
-                                                {incident.image && (
-                                                    <div className="incident-image-container mt-2">
-                                                        <Image
-                                                            src={`data:image/jpeg;base64,${incident.image}`}
-                                                            alt={`Incidente: ${incident.title}`}
-                                                            thumbnail
-                                                            style={{ maxWidth: '100px', height: 'auto', maxHeight: '80px', objectFit: 'contain', cursor: 'pointer' }}
-                                                            onClick={() => handleImageClick(incident.image)} // Pass base64 image data
-                                                        />
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <div className="mt-2 mt-md-0 d-flex align-items-center">
-                                                <Form.Select
-                                                    value={incident.status}
-                                                    onChange={(e) => handleStatusChange(incident.id, e.target.value)}
-                                                    disabled={updatingStatus}
-                                                    className="w-auto me-2"
-                                                >
-                                                    {statusOptions.map(status => (
-                                                        <option key={status} value={status}>{status}</option>
-                                                    ))}
-                                                </Form.Select>
-                                                {updatingStatus && <Spinner animation="border" size="sm" />}
-                                            </div>
-                                        </ListGroup.Item>
-                                    ))}
-                                </ListGroup>
-                            </div>
-                        )}
-
-                        {/* Section for Resolved and Closed Incidents */}
-                        {resolvedAndClosedIncidents.length > 0 && (
-                            <div>
-                                <h6 className="mb-2 text-success">Incidentes Resueltos y Cerrados ({resolvedAndClosedIncidents.length})</h6>
-                                <ListGroup variant="flush">
-                                    {resolvedAndClosedIncidents.map((incident) => (
-                                        <ListGroup.Item key={incident.id} className="d-flex flex-column flex-md-row justify-content-between align-items-md-center py-3 bg-light">
-                                            <div className="me-md-3 mb-2 mb-md-0 flex-grow-1">
-                                                <h6 className="mb-1 fw-bold text-muted">{incident.title}</h6>
-                                                <p className="mb-1 text-muted small">{incident.description}</p>
-                                                <div className="d-flex flex-wrap align-items-center small">
-                                                    <span className="me-2 text-dark">Creado el: {formatDate(incident.creationDate)}</span>
-                                                    {incident.resolutionDate && (
-                                                        <span className="me-2 text-dark">Resuelto el: {formatDate(incident.resolutionDate)}</span>
-                                                    )}
-                                                    <Badge bg={getStatusBadgeVariant(incident.status)} className="ms-2">
-                                                        {incident.status}
-                                                    </Badge>
-                                                </div>
-                                                {incident.image && (
-                                                    <div className="incident-image-container mt-2">
-                                                        <Image
-                                                            src={`data:image/jpeg;base64,${incident.image}`}
-                                                            alt={`Incidente: ${incident.title}`}
-                                                            thumbnail
-                                                            style={{ maxWidth: '100px', height: 'auto', maxHeight: '80px', objectFit: 'contain', cursor: 'pointer' }}
-                                                            onClick={() => handleImageClick(incident.image)} // Pass base64 image data
-                                                        />
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <div className="mt-2 mt-md-0 d-flex align-items-center">
-                                                <Form.Select
-                                                    value={incident.status}
-                                                    onChange={(e) => handleStatusChange(incident.id, e.target.value)}
-                                                    disabled={updatingStatus || incident.status === 'Resuelta' || incident.status === 'Cerrada'} // Disable if already resolved/closed
-                                                    className="w-auto me-2"
-                                                >
-                                                    {statusOptions.map(status => (
-                                                        <option key={status} value={status}>{status}</option>
-                                                    ))}
-                                                </Form.Select>
-                                                {updatingStatus && <Spinner animation="border" size="sm" />}
-                                            </div>
-                                        </ListGroup.Item>
-                                    ))}
-                                </ListGroup>
-                            </div>
-                        )}
-
-                        {pendingAndReviewIncidents.length === 0 && resolvedAndClosedIncidents.length === 0 && (
-                            <Alert variant="info">No hay incidentes para mostrar en esta construcción.</Alert>
-                        )}
-                    </>
-                )}
-            </Card.Body>
-
-            {/* Image Lightbox Modal (for base64 images) */}
-            <Modal show={showImageModal} onHide={handleCloseImageModal} centered size="lg">
-                <Modal.Header closeButton>
-                    <Modal.Title>Imagen del Incidente</Modal.Title>
-                </Modal.Header>
-                <Modal.Body className="text-center">
-                    {currentImageBase64 ? (
-                        <Image src={`data:image/jpeg;base64,${currentImageBase64}`} fluid style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain' }} />
-                    ) : (
-                        <p>No se pudo cargar la imagen.</p>
+                                            )}
+                                        </div>
+                                        <div className="mt-3 mt-md-0">
+                                            <Form.Select
+                                                size="sm"
+                                                value={incident.status}
+                                                onChange={(e) => handleStatusChange(incident.id, e.target.value)}
+                                                disabled={updatingStatus}
+                                                className="w-auto"
+                                            >
+                                                {statusOptions.map((status) => (
+                                                    <option key={status} value={status}>
+                                                        {status}
+                                                    </option>
+                                                ))}
+                                            </Form.Select>
+                                            {updatingStatus && <Spinner animation="border" size="sm" className="ms-2" />}
+                                        </div>
+                                    </ListGroup.Item>
+                                ))}
+                            </ListGroup>
+                        </div>
                     )}
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseImageModal}>
-                        Cerrar
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-        </Card>
-    );
-};
 
+                    {/* Incidentes Resueltos / Cerrados */}
+                    {resolvedAndClosedIncidents.length > 0 && (
+                        <div>
+                            <h5 className="mb-3 text-success">
+                                Incidentes Resueltos y Cerrados ({resolvedAndClosedIncidents.length})
+                            </h5>
+                            <ListGroup>
+                                {resolvedAndClosedIncidents.map((incident) => (
+                                    <ListGroup.Item
+                                        key={incident.id}
+                                        className="py-3 px-3 d-flex flex-column flex-md-row align-items-start justify-content-between bg-light"
+                                    >
+                                        <div className="me-md-4 flex-grow-1">
+                                            <h6 className="fw-bold text-muted mb-1">{incident.title}</h6>
+                                            <p className="text-muted small mb-2">{incident.description}</p>
+                                            <div className="d-flex flex-wrap align-items-center gap-2 small">
+                                                <span className="text-dark">
+                                                    Creado el: {formatDate(incident.creationDate)}
+                                                </span>
+                                                {incident.resolutionDate && (
+                                                    <span className="text-dark">
+                                                        Resuelto el: {formatDate(incident.resolutionDate)}
+                                                    </span>
+                                                )}
+                                                <Badge bg={getStatusBadgeVariant(incident.status)}>
+                                                    {incident.status}
+                                                </Badge>
+                                            </div>
+                                            {incident.image && (
+                                                <div className="mt-3">
+                                                    <Image
+                                                        src={`data:image/jpeg;base64,${incident.image}`}
+                                                        thumbnail
+                                                        style={{ maxWidth: '120px', height: 'auto', cursor: 'pointer' }}
+                                                        onClick={() => handleImageClick(incident.image)}
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="mt-3 mt-md-0">
+                                            <Form.Select
+                                                size="sm"
+                                                value={incident.status}
+                                                onChange={(e) => handleStatusChange(incident.id, e.target.value)}
+                                                disabled={updatingStatus || ['Resuelta', 'Cerrada'].includes(incident.status)}
+                                                className="w-auto"
+                                            >
+                                                {statusOptions.map((status) => (
+                                                    <option key={status} value={status}>
+                                                        {status}
+                                                    </option>
+                                                ))}
+                                            </Form.Select>
+                                            {updatingStatus && <Spinner animation="border" size="sm" className="ms-2" />}
+                                        </div>
+                                    </ListGroup.Item>
+                                ))}
+                            </ListGroup>
+                        </div>
+                    )}
+
+                    {pendingAndReviewIncidents.length === 0 &&
+                        resolvedAndClosedIncidents.length === 0 && (
+                            <Alert variant="info">No hay incidentes registrados en esta construcción.</Alert>
+                        )}
+                </>
+            )}
+        </Card.Body>
+
+        {/* Modal de imagen (estilo Lightbox) */}
+        <Modal show={showImageModal} onHide={handleCloseImageModal} centered size="lg">
+            <Modal.Header closeButton>
+                <Modal.Title>Imagen del Incidente</Modal.Title>
+            </Modal.Header>
+            <Modal.Body className="text-center">
+                {currentImageBase64 ? (
+                    <Image
+                        src={`data:image/jpeg;base64,${currentImageBase64}`}
+                        fluid
+                        style={{ maxHeight: '80vh', objectFit: 'contain' }}
+                    />
+                ) : (
+                    <p>No se pudo cargar la imagen.</p>
+                )}
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={handleCloseImageModal}>
+                    Cerrar
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    </Card>
+);
+}
 export default BuildingIncidentsSection;

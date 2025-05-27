@@ -614,7 +614,7 @@ const WorkerView = () => {
             ) : errorConstructions ? (
                 <Alert variant="danger">{errorConstructions}</Alert>
             ) : workerConstructions.length > 0 ? (
-                <Accordion defaultActiveKey="0">
+                <Accordion>
                     {workerConstructions.map((construction, index) => (
                         <Card key={construction.id} className="mb-3 shadow-sm">
                             <Accordion.Item eventKey={index.toString()}>

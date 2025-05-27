@@ -4,20 +4,20 @@ import { PersonCircle } from 'react-bootstrap-icons';
 function ProfileImage({ username }) {
     const [profileImageUrl, setProfileImageUrl] = useState('');
     const backendURL = 'http://localhost:8080';
-    const [loading, setLoading] = useState(true); // Add loading state
-    const [error, setError] = useState(null);   // Add error state
+    const [loading, setLoading] = useState(true); 
+    const [error, setError] = useState(null);   
 
     useEffect(() => {
         const fetchProfileImage = async () => {
-            setLoading(true); // Start loading
-            setError(null);   // Clear previous errors
-            setProfileImageUrl(''); // Clear previous image URL
+            setLoading(true); 
+            setError(null);   
+            setProfileImageUrl(''); 
 
-            const token = localStorage.getItem('authToken'); // Get the JWT token
+            const token = localStorage.getItem('authToken'); 
 
             if (!token) {
                 console.warn('No authentication token found. Cannot fetch profile image.');
-                setError('No autenticación. Inicia sesión.'); // Set user-friendly error
+                setError('No autenticación. Inicia sesión.'); 
                 setLoading(false);
                 return;
             }
@@ -33,7 +33,7 @@ function ProfileImage({ username }) {
                 const response = await fetch(`${backendURL}/auth/customers/${username}/image`, {
                     method: 'GET',
                     headers: {
-                        'Authorization': `Bearer ${token}`, // <--- CRUCIAL: Add the JWT token here
+                        'Authorization': `Bearer ${token}`, 
                     },
                 });
 
@@ -63,9 +63,9 @@ function ProfileImage({ username }) {
             }
         };
 
-        fetchProfileImage(); // Call the fetch function when component mounts or username changes
+        fetchProfileImage();
 
-    }, [username, backendURL]); // Dependencies: re-run effect if username or backendURL changes
+    }, [username, backendURL]);
 
     return (
         <div
@@ -74,16 +74,16 @@ function ProfileImage({ username }) {
                 height: '100px',
                 borderRadius: '50%',
                 overflow: 'hidden',
-                border: '2px solid #ccc', // Optional: circular border
+                border: '2px solid #ccc', 
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
             }}
         >
             {loading ? (
-                <div className="text-center">Cargando...</div> // Show loading indicator
+                <div className="text-center">Cargando...</div>
             ) : error ? (
-                <div className="text-center text-danger" style={{ fontSize: '0.8em' }}>{error}</div> // Show error message
+                <div className="text-center text-danger" style={{ fontSize: '0.8em' }}>{error}</div> 
             ) : profileImageUrl ? (
                 <img
                     src={profileImageUrl}
@@ -91,7 +91,7 @@ function ProfileImage({ username }) {
                     style={{
                         width: '100%',
                         height: '100%',
-                        objectFit: 'cover', // To make the image cover the circle without distortion
+                        objectFit: 'cover',
                     }}
                 />
             ) : (
@@ -102,10 +102,9 @@ function ProfileImage({ username }) {
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        backgroundColor: '#f0f0f0', // Optional: background color if no image
+                        backgroundColor: '#f0f0f0', 
                     }}
                 >
-                    {/* Show user icon */}
                     <PersonCircle size={100} color="orange" />
                 </div>
             )}

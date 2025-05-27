@@ -5,7 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Vista worker">
+      <change afterPath="$PROJECT_DIR$/src/components/worker/WorkerProfileImageHandler.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/worker/ProfileImage.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/worker/Worker.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/worker/Worker.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -269,63 +272,8 @@
       <workItem from="1747815297299" duration="5127000" />
       <workItem from="1747823027566" duration="9097000" />
       <workItem from="1748240435278" duration="21324000" />
-      <workItem from="1748284957855" duration="3696000" />
-    </task>
-    <task id="LOCAL-00030" summary="Gallery">
-      <option name="closed" value="true" />
-      <created>1746530636188</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1746530636188</updated>
-    </task>
-    <task id="LOCAL-00031" summary="Gallery">
-      <option name="closed" value="true" />
-      <created>1746532335769</created>
-      <option name="number" value="00031" />
-      <option name="presentableId" value="LOCAL-00031" />
-      <option name="project" value="LOCAL" />
-      <updated>1746532335769</updated>
-    </task>
-    <task id="LOCAL-00032" summary="Gallery">
-      <option name="closed" value="true" />
-      <created>1746539242573</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1746539242573</updated>
-    </task>
-    <task id="LOCAL-00033" summary="Presupuesto">
-      <option name="closed" value="true" />
-      <created>1746628767542</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1746628767542</updated>
-    </task>
-    <task id="LOCAL-00034" summary="Presupuesto">
-      <option name="closed" value="true" />
-      <created>1746629198577</created>
-      <option name="number" value="00034" />
-      <option name="presentableId" value="LOCAL-00034" />
-      <option name="project" value="LOCAL" />
-      <updated>1746629198577</updated>
-    </task>
-    <task id="LOCAL-00035" summary="Calendario">
-      <option name="closed" value="true" />
-      <created>1746686576203</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1746686576203</updated>
-    </task>
-    <task id="LOCAL-00036" summary="Calendario">
-      <option name="closed" value="true" />
-      <created>1747032548538</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1747032548538</updated>
+      <workItem from="1748284957855" duration="3938000" />
+      <workItem from="1748327991344" duration="1687000" />
     </task>
     <task id="LOCAL-00037" summary="Calendario">
       <option name="closed" value="true" />
@@ -663,7 +611,63 @@
       <option name="project" value="LOCAL" />
       <updated>1748271175666</updated>
     </task>
-    <option name="localTasksCounter" value="79" />
+    <task id="LOCAL-00079" summary="Vista worker">
+      <option name="closed" value="true" />
+      <created>1748290660134</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1748290660134</updated>
+    </task>
+    <task id="LOCAL-00080" summary="Vista worker">
+      <option name="closed" value="true" />
+      <created>1748290707873</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1748290707873</updated>
+    </task>
+    <task id="LOCAL-00081" summary="Vista worker">
+      <option name="closed" value="true" />
+      <created>1748290726326</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1748290726326</updated>
+    </task>
+    <task id="LOCAL-00082" summary="Vista worker">
+      <option name="closed" value="true" />
+      <created>1748328533517</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1748328533517</updated>
+    </task>
+    <task id="LOCAL-00083" summary="Vista worker">
+      <option name="closed" value="true" />
+      <created>1748328814528</created>
+      <option name="number" value="00083" />
+      <option name="presentableId" value="LOCAL-00083" />
+      <option name="project" value="LOCAL" />
+      <updated>1748328814528</updated>
+    </task>
+    <task id="LOCAL-00084" summary="Vista worker">
+      <option name="closed" value="true" />
+      <created>1748328827194</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1748328827194</updated>
+    </task>
+    <task id="LOCAL-00085" summary="Vista worker">
+      <option name="closed" value="true" />
+      <created>1748328872018</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1748328872018</updated>
+    </task>
+    <option name="localTasksCounter" value="86" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

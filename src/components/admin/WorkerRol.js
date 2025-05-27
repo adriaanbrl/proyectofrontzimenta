@@ -61,7 +61,7 @@ function WorkerRol() {
                 return;
             }
 
-            const response = await axios.post("http://localhost:8080/auth/worker", workerData,
+            const response = await axios.post("http://localhost:8080/auth/worker/workers", workerData,
                 {
                     headers: {
                         "Content-Type": "application/json",

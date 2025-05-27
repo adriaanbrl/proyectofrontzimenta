@@ -369,7 +369,7 @@ const WorkerDataList = () => {
 
     return (
         <Container className="my-4 p-4 rounded shadow-lg bg-light">
-            <h4 className="mb-4 text-center text-primary">GESTIÓN DE EVENTOS Y FACTURAS POR CONSTRUCCIÓN:</h4>
+            <h4 className="mb-4 text-center text-custom">GESTIÓN DE EVENTOS Y FACTURAS POR CONSTRUCCIÓN:</h4>
 
             {loadingConstructions ? (
                 <div className="text-center my-5">
@@ -416,7 +416,7 @@ const WorkerDataList = () => {
                                                                         </div>
                                                                         <div>
                                                                             <Button
-                                                                                variant="outline-primary"
+                                                                                variant="outline-custom"
                                                                                 size="sm"
                                                                                 className="me-2"
                                                                                 onClick={() => handleEditEvent(event, construction.id)}

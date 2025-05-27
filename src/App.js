@@ -26,6 +26,7 @@ import DataList from "./components/admin/DataList.js";
 import AdminLayout from "./components/admin/AdminLayout.js";
 import WorkerLayout from "./components/worker/WorkerLayout.js";
 import WorkerContactList from "./components/worker/WorkerContactList.js";
+import WorkerDataList from "./components/worker/WorkerDataList.js";
 
 
 function App() {
@@ -69,7 +70,7 @@ function App() {
           <Route element={<WorkerLayout />}>
             <Route path="/trabajador" element={<Worker />} />
             <Route path="/listaChat" element={<WorkerContactList />} />
-            <Route path="/workerDataList" element={<WorkerContactList />} />
+            <Route path="/workerDataList" element={<WorkerDataList />} />
           </Route>
         </Routes>
       </div>

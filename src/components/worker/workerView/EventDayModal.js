@@ -36,7 +36,7 @@ const EventDayModal = ({ show, onHide, buildingId, buildingTitle }) => {
         try {
             const token = localStorage.getItem("authToken");
 
-            const response = await fetch('http://localhost:8080/api/events/create', {
+            const response = await fetch('http://localhost:8080/auth/building/createEvent', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

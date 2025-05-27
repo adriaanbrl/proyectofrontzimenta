@@ -1,19 +1,17 @@
-// components/WorkerView.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import {
     Card, Button, Accordion, Row, Col, Spinner, Alert, Modal, Container
 } from 'react-bootstrap';
 import { jwtDecode } from 'jwt-decode';
 
-// Componentes externos
 import UploadImageModal from './UploadImageModal';
 import BuildingIncidentsSection from './BuildingIncidentsSection';
 
-// Componentes divididos
 import ProfileImage from './ProfileImage';
 import EventDayModal from './EventDayModal';
 import LegalDocumentModal from './LegalDocumentModal';
 import InvoiceUploadModal from './InvoiceUploadModal';
+import BudgetUploadForm from './BudgetUploadForm';
 
 const WorkerView = () => {
     const [workerImage, setWorkerImage] = useState(null);
@@ -35,6 +33,9 @@ const WorkerView = () => {
 
     const [showInvoiceUploadModal, setShowInvoiceUploadModal] = useState(false);
     const [selectedBuildingForInvoiceUpload, setSelectedBuildingForInvoiceUpload] = useState(null);
+
+    const [showBudgetUploadModal, setShowBudgetUploadModal] = useState(false);
+    const [selectedBuildingForBudgetUpload, setSelectedBuildingForBudgetUpload] = useState(null);
 
     const [showIncidentsHistoryModal, setShowIncidentsHistoryModal] = useState(false);
     const [selectedBuildingForIncidents, setSelectedBuildingForIncidents] = useState(null);
@@ -143,6 +144,16 @@ const WorkerView = () => {
         setSelectedBuildingForInvoiceUpload(null);
     };
 
+    const handleBudgetUploadClick = (building) => {
+        setSelectedBuildingForBudgetUpload(building);
+        setShowBudgetUploadModal(true);
+    };
+
+    const handleCloseBudgetUploadModal = () => {
+        setShowBudgetUploadModal(false);
+        setSelectedBuildingForBudgetUpload(null);
+    };
+
     const handleViewIncidentsClick = (building) => {
         setSelectedBuildingForIncidents(building);
         setShowIncidentsHistoryModal(true);
@@ -191,6 +202,7 @@ const WorkerView = () => {
                                     <Row className="mb-2"><Col md={4}>Eventos:</Col><Col><Button onClick={() => handleEventDayClick(construction)} className="w-100">Añadir</Button></Col></Row>
                                     <Row className="mb-2"><Col md={4}>Documentos legales:</Col><Col><Button onClick={() => handleLegalDocumentClick(construction)} className="w-100">Subir</Button></Col></Row>
                                     <Row className="mb-2"><Col md={4}>Facturas:</Col><Col><Button onClick={() => handleInvoiceUploadClick(construction)} className="w-100">Subir</Button></Col></Row>
+                                    <Row className="mb-2"><Col md={4}>Presupuesto:</Col><Col><Button onClick={() => handleBudgetUploadClick(construction)} className="w-100">Subir Excel</Button></Col></Row>
                                     <Row className="mb-2"><Col md={4}>Incidencias:</Col><Col><Button onClick={() => handleViewIncidentsClick(construction)} className="w-100">Ver</Button></Col></Row>
                                 </Accordion.Body>
                             </Accordion.Item>
@@ -236,6 +248,27 @@ const WorkerView = () => {
                     buildingId={selectedBuildingForInvoiceUpload.id}
                     buildingTitle={selectedBuildingForInvoiceUpload.title || selectedBuildingForInvoiceUpload.address}
                 />
+            )}
+
+            {selectedBuildingForBudgetUpload && (
+                <Modal show={showBudgetUploadModal} onHide={handleCloseBudgetUploadModal} size="md" centered>
+                    <Modal.Header closeButton>
+                        <Modal.Title>
+                            {/* Proteger la lectura de 'title' y 'address' */}
+                            Subir Presupuesto Excel para {selectedBuildingForBudgetUpload ? (selectedBuildingForBudgetUpload.title || selectedBuildingForBudgetUpload.address) : 'Edificio Seleccionado'}
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <BudgetUploadForm
+                            buildingId={selectedBuildingForBudgetUpload.id}
+                            buildingTitle={selectedBuildingForBudgetUpload.title || selectedBuildingForBudgetUpload.address}
+                            onUploadSuccess={handleCloseBudgetUploadModal}
+                        />
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleCloseBudgetUploadModal}>Cerrar</Button>
+                    </Modal.Footer>
+                </Modal>
             )}
 
             {selectedBuildingForIncidents && (

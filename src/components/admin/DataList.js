@@ -334,7 +334,7 @@ const DataList = () => {
                     onSelect={handleTabSelect}
                     className="mb-3"
                 >
-                    <Tab eventKey="buildings" title="Construcciones">
+                    <Tab eventKey="buildings" title="Construcciones" >
                         <Row>
                             {buildings.length > 0 ? (
                                 buildings.map(building => (
@@ -342,7 +342,7 @@ const DataList = () => {
                                         <Card className="shadow-sm">
                                             <Card.Body>
                                                 {/* Display building title if available, otherwise address */}
-                                                <Card.Title className="text-primary">
+                                                <Card.Title className="text-custom">
                                                     {building.title || building.address}
                                                 </Card.Title>
                                                 <Card.Subtitle className="mb-2 text-muted">ID: {building.id}</Card.Subtitle>
@@ -388,7 +388,7 @@ const DataList = () => {
                                     <Col md={6} lg={4} className="mb-4" key={worker.id}>
                                         <Card className="shadow-sm">
                                             <Card.Body>
-                                                <Card.Title className="text-success">{worker.name} {worker.surname}</Card.Title>
+                                                <Card.Title className="text-custom">{worker.name} {worker.surname}</Card.Title>
                                                 <Card.Subtitle className="mb-2 text-muted">ID: {worker.id}</Card.Subtitle>
                                                 <Card.Text>
                                                     Nombre: {worker.name}<br/>
@@ -435,7 +435,7 @@ const DataList = () => {
                                     <Col md={6} lg={4} className="mb-4" key={customer.id}>
                                         <Card className="shadow-sm">
                                             <Card.Body>
-                                                <Card.Title className="text-info">{customer.name} {customer.surname}</Card.Title>
+                                                <Card.Title className="text-custom">{customer.name} {customer.surname}</Card.Title>
                                                 <Card.Subtitle className="mb-2 text-muted">{customer.email}</Card.Subtitle>
                                                 <Card.Text>
                                                     Nombre Completo: {customer.name} {customer.surname}<br/>

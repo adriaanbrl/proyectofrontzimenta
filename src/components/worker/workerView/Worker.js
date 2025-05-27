@@ -12,6 +12,7 @@ import EventDayModal from './EventDayModal';
 import LegalDocumentModal from './LegalDocumentModal';
 import InvoiceUploadModal from './InvoiceUploadModal';
 import BudgetUploadForm from './BudgetUploadForm';
+import { Link } from 'react-router-dom';
 
 const WorkerView = () => {
     const [workerImage, setWorkerImage] = useState(null);
@@ -174,7 +175,7 @@ const WorkerView = () => {
                 <ProfileImage imageUrl={workerImage} onImageChange={handleImageChange} />
             </div>
 
-            <h4 className="mb-3 text-secondary">CONSTRUCCIONES ASOCIADAS:</h4>
+            <h4 className="mb-3 text-custom fw-bold">CONSTRUCCIONES ASOCIADAS:</h4>
 
             {loadingConstructions ? (
                 <div className="text-center my-5">
@@ -198,12 +199,12 @@ const WorkerView = () => {
                                     <Row className="mb-2"><Col md={4}>Inicio:</Col><Col>{construction.startDate ? new Date(construction.startDate).toLocaleDateString() : 'N/A'}</Col></Row>
                                     <Row className="mb-2"><Col md={4}>Final:</Col><Col>{construction.endDate ? new Date(construction.endDate).toLocaleDateString() : 'N/A'}</Col></Row>
                                     <hr />
-                                    <Row className="mb-2"><Col md={4}>Imágenes:</Col><Col><Button onClick={() => handleUploadImageClick(construction)} className="w-100">Subir</Button></Col></Row>
-                                    <Row className="mb-2"><Col md={4}>Eventos:</Col><Col><Button onClick={() => handleEventDayClick(construction)} className="w-100">Añadir</Button></Col></Row>
-                                    <Row className="mb-2"><Col md={4}>Documentos legales:</Col><Col><Button onClick={() => handleLegalDocumentClick(construction)} className="w-100">Subir</Button></Col></Row>
-                                    <Row className="mb-2"><Col md={4}>Facturas:</Col><Col><Button onClick={() => handleInvoiceUploadClick(construction)} className="w-100">Subir</Button></Col></Row>
-                                    <Row className="mb-2"><Col md={4}>Presupuesto:</Col><Col><Button onClick={() => handleBudgetUploadClick(construction)} className="w-100">Subir Excel</Button></Col></Row>
-                                    <Row className="mb-2"><Col md={4}>Incidencias:</Col><Col><Button onClick={() => handleViewIncidentsClick(construction)} className="w-100">Ver</Button></Col></Row>
+                                    <Row className="mb-2"><Col md={4}>Imágenes:</Col><Col><Button onClick={() => handleUploadImageClick(construction)} className="w-50">Subir</Button></Col></Row>
+                                    <Row className="mb-2"><Col md={4}>Eventos:</Col><Col><Button onClick={() => handleEventDayClick(construction)} className="w-50">Añadir</Button></Col></Row>
+                                    <Row className="mb-2"><Col md={4}>Documentos legales:</Col><Col><Button onClick={() => handleLegalDocumentClick(construction)} className="w-50">Subir</Button></Col></Row>
+                                    <Row className="mb-2"><Col md={4}>Facturas:</Col><Col><Button onClick={() => handleInvoiceUploadClick(construction)} className="w-50">Subir</Button></Col></Row>
+                                    <Row className="mb-2"><Col md={4}>Presupuesto:</Col><Col><Button onClick={() => handleBudgetUploadClick(construction)} className="w-50">Subir Excel</Button></Col></Row>
+                                    <Row className="mb-2"><Col md={4}>Incidencias:</Col><Col><Button onClick={() => handleViewIncidentsClick(construction)} className="w-50">Ver</Button></Col></Row>
                                 </Accordion.Body>
                             </Accordion.Item>
                         </Card>
@@ -286,6 +287,11 @@ const WorkerView = () => {
                     </Modal.Footer>
                 </Modal>
             )}
+            <div className="mt-4">
+                <Link to="/login" className={`btn  btn-outline-custom`}>
+                  Volver a Inicio de Sesión
+                </Link>
+              </div>
         </Container>
     );
 };

@@ -133,14 +133,13 @@ function WorkerContactList() {
             <Col key={contact.id} xs={12} md={6} lg={4}>
               <Card className="h-100 shadow rounded-3">
                 <Card.Body className="p-4">
-                  <Card.Title className="text-primary mb-3 fs-4 fw-bold">
+                  <Card.Title className="text-custom mb-3 fs-4 fw-bold">
                     {contact.name}
                   </Card.Title>
                   <Card.Subtitle className="mb-4 text-muted fs-6">
                     Email: {contact.email || "N/A"}
                   </Card.Subtitle>
                   <Button
-                    style={{ backgroundColor: "#ff8c00", borderColor: "#ff8c00" }}
                     onClick={() => handleChatClick(contact.id)}
                     className="w-100 fw-bold fs-6"
                   >

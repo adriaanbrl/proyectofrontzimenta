@@ -5,10 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Vista worker">
-      <change afterPath="$PROJECT_DIR$/src/components/worker/WorkerProfileImageHandler.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/worker/ProfileImage.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/worker/EventDayModal.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/worker/InvoiceUploadModal.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/worker/LegalDocumentModal.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/worker/UploadImageModal.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/worker/Worker.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/worker/Worker.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/worker/WorkerProfileImageHandler.js" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

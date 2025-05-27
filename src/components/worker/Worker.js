@@ -2,18 +2,17 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Card, Button, Accordion, Row, Col, Spinner, Alert } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-import ProfileImage from '../worker/ProfileImage';
-import UploadImageModal from '../worker/UploadImageModal'; 
+import WorkerProfileImageHandler from '../worker/WorkerProfileImageHandler';
+import UploadImageModal from '../worker/UploadImageModal';
 import EventDayModal from '../worker/EventDayModal';
 import LegalDocumentModal from '../worker/LegalDocumentModal';
 import InvoiceUploadModal from '../worker/InvoiceUploadModal';
 
 
 const WorkerView = () => {
-    const [workerImage, setWorkerImage] = useState(null);
     const [workerName, setWorkerName] = useState("Cargando...");
     const [workerRole, setWorkerRole] = useState("Cargando...");
-    const [workerId, setWorkerId] = useState(null);
+    const [workerId, setWorkerId] = useState(null); 
     const [workerConstructions, setWorkerConstructions] = useState([]);
     const [loadingConstructions, setLoadingConstructions] = useState(true);
     const [errorConstructions, setErrorConstructions] = useState(null);
@@ -96,16 +95,6 @@ const WorkerView = () => {
         }
     }, [fetchWorkerConstructions]);
 
-    const handleImageChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setWorkerImage(reader.result);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
     const handleUploadImageClick = (building) => {
         setSelectedBuildingForUpload(building);
         setShowUploadImageModal(true);
@@ -148,7 +137,8 @@ const WorkerView = () => {
                     <h2 className="mb-0 text fw-bold">{workerName}</h2>
                     <p className="mb-0 text fw-bold">ROL: {workerRole}</p>
                 </div>
-                <ProfileImage imageUrl={workerImage} onImageChange={handleImageChange} />
+                {/* Use the new WorkerProfileImageHandler component */}
+                <WorkerProfileImageHandler />
             </div>
             <h4 className="mb-3 text-secondary">CONSTRUCCIONES ASOCIADAS:</h4>
 

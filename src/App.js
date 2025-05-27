@@ -21,11 +21,12 @@ import Historic from "./components/client/ProfileElements/Historic.js";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ContactList from "./components/client/ContactList.js";
 import Admin from "./components/admin/Admin.js";
-import Worker from "./components/worker/Worker.js";
+import Worker from "./components/worker/workerView/Worker.js";
 import DataList from "./components/admin/DataList.js";
 import AdminLayout from "./components/admin/AdminLayout.js";
 import WorkerLayout from "./components/worker/WorkerLayout.js";
 import WorkerContactList from "./components/worker/WorkerContactList.js";
+
 
 function App() {
   return (
@@ -67,7 +68,8 @@ function App() {
           {/* Rutas de Vista Trabajador */}
           <Route element={<WorkerLayout />}>
             <Route path="/trabajador" element={<Worker />} />
-            <Route path="/ListaChat" element={<WorkerContactList />} />
+            <Route path="/listaChat" element={<WorkerContactList />} />
+            <Route path="/workerDataList" element={<WorkerContactList />} />
           </Route>
         </Routes>
       </div>

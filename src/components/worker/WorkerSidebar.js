@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Navbar, Nav } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
-import { House, ChatDots } from "react-bootstrap-icons";
+import { House, ChatDots, ListUl } from "react-bootstrap-icons";
 import "./WorkerSidebar.css";
 
 
@@ -12,7 +12,8 @@ export default function WorkerSidebar() {
   const location = useLocation();
   const menuItems = [
     { name: "Inicio", icon: <House size={24} />, path: "/trabajador" },
-    { name: "Chat", icon: <ChatDots size={24} />, path: "/ListaChat" },
+    { name: "Chat", icon: <ChatDots size={24} />, path: "/listaChat" },
+    { name: "Listas", icon: <ListUl size={24} />, path: "/workerDataList" },
   ];
   useEffect(() => {
     const currentPath = location.pathname;

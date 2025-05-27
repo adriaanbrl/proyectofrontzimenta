@@ -2,10 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Card, Button, Accordion, Row, Col, Spinner, Alert } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-
-// Import separated components
 import ProfileImage from '../worker/ProfileImage';
-import UploadImageModal from '../worker/UploadImageModal'; // Assuming this already exists
+import UploadImageModal from '../worker/UploadImageModal'; 
 import EventDayModal from '../worker/EventDayModal';
 import LegalDocumentModal from '../worker/LegalDocumentModal';
 import InvoiceUploadModal from '../worker/InvoiceUploadModal';

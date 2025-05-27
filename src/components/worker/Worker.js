@@ -546,53 +546,37 @@ const WorkerView = () => {
         setSelectedBuildingForUpload(building);
         setShowUploadImageModal(true);
     };
-
-    // Function to close the UploadImageModal
     const handleCloseUploadImageModal = () => {
         setShowUploadImageModal(false);
         setSelectedBuildingForUpload(null);
     };
     const handleImageUploadSuccess = () => {
         handleCloseUploadImageModal();
-    };
-
-    // Function to open the EventDayModal
+    }
     const handleEventDayClick = (building) => {
         setSelectedBuildingForEventDay(building);
         setShowEventDayModal(true);
     };
-
-    // Function to close the EventDayModal
     const handleCloseEventDayModal = () => {
         setShowEventDayModal(false);
         setSelectedBuildingForEventDay(null);
     };
-
-    // Function to open the LegalDocumentModal
     const handleLegalDocumentClick = (building) => {
         setSelectedBuildingForLegalDocument(building);
         setShowLegalDocumentModal(true);
     };
-
-    // Function to close the LegalDocumentModal
     const handleCloseLegalDocumentModal = () => {
         setShowLegalDocumentModal(false);
         setSelectedBuildingForLegalDocument(null);
     };
-
-    // NEW Function to open the InvoiceUploadModal
     const handleInvoiceUploadClick = (building) => {
         setSelectedBuildingForInvoiceUpload(building);
         setShowInvoiceUploadModal(true);
     };
-
-    // NEW Function to close the InvoiceUploadModal
     const handleCloseInvoiceUploadModal = () => {
         setShowInvoiceUploadModal(false);
         setSelectedBuildingForInvoiceUpload(null);
     };
-
-
     return (
         <div className="container mt-4">
             <div className="bg-light p-4 rounded shadow-sm mb-4 d-flex align-items-center justify-content-between">
@@ -735,8 +719,6 @@ const WorkerView = () => {
                     onUploadSuccess={handleImageUploadSuccess}
                 />
             )}
-
-            {/* Render the EventDayModal */}
             {selectedBuildingForEventDay && (
                 <EventDayModal
                     show={showEventDayModal}
@@ -745,8 +727,6 @@ const WorkerView = () => {
                     buildingTitle={selectedBuildingForEventDay.title || selectedBuildingForEventDay.address}
                 />
             )}
-
-            {/* Render the LegalDocumentModal */}
             {selectedBuildingForLegalDocument && (
                 <LegalDocumentModal
                     show={showLegalDocumentModal}
@@ -755,8 +735,6 @@ const WorkerView = () => {
                     buildingTitle={selectedBuildingForLegalDocument.title || selectedBuildingForLegalDocument.address}
                 />
             )}
-
-            {/* NEW: Render the InvoiceUploadModal */}
             {selectedBuildingForInvoiceUpload && (
                 <InvoiceUploadModal
                     show={showInvoiceUploadModal}

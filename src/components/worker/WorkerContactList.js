@@ -12,7 +12,7 @@ import { MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
-function ContactList() {
+function WorkerContactList() {
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,7 +27,7 @@ function ContactList() {
         try {
           const decodedToken = jwtDecode(token);
           console.log("Decoded Token:", decodedToken);
-          setWorkerId(decodedToken.id); // Assuming 'id' is the worker's ID in the token
+          setWorkerId(decodedToken.id);
           setAuthToken(token);
         } catch (decodeError) {
           console.error("Error decoding token:", decodeError);
@@ -62,7 +62,7 @@ function ContactList() {
       try {
         console.log(`Fetching contacts for worker ID: ${workerId}`);
         const response = await fetch(
-          `http://localhost:8080/auth/worker/${workerId}/contacts`, // Adjusted API endpoint
+          `http://localhost:8080/auth/worker/${workerId}/assigned-customers`,
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
@@ -119,12 +119,12 @@ function ContactList() {
   }
 
   const handleChatClick = (contactId) => {
-    navigate(`/chat?contactId=${contactId}`); // Assuming your chat route handles contactId
+    navigate(`/chat?contactId=${contactId}`);
   };
 
   return (
-    <Container className=" p-4  rounded-4 ">
-      <h1 className="text-center mb-5  fw-bold fs-2 mt-5" style={{ color: "#f5922c" }}>
+    <Container className=" p-4  rounded-4 ">
+      <h1 className="text-center mb-5  fw-bold fs-2 mt-5" style={{ color: "#f5922c" }}>
         Lista de Contactos
       </h1>
       <Row className="gy-4">
@@ -137,14 +137,14 @@ function ContactList() {
                     {contact.name}
                   </Card.Title>
                   <Card.Subtitle className="mb-4 text-muted fs-6">
-                    Contacto: {contact.contact}
+                    Email: {contact.email || "N/A"}
                   </Card.Subtitle>
                   <Button
-                    color="#ff8c00"
+                    style={{ backgroundColor: "#ff8c00", borderColor: "#ff8c00" }}
                     onClick={() => handleChatClick(contact.id)}
                     className="w-100 fw-bold fs-6"
                   >
-                    <MessageCircle className="me-2" />{" "}
+                    <MessageCircle className="me-2" />
                     Chat
                   </Button>
                 </Card.Body>
@@ -153,9 +153,7 @@ function ContactList() {
           ))
         ) : (
           <Col>
-            {" "}
-            {/* Wrap Alert in Col for consistent layout */}
-            <Alert variant="info">No tienes contactos asociados.</Alert>
+            <Alert variant="info">No tienes clientes asignados.</Alert>
           </Col>
         )}
       </Row>
@@ -163,4 +161,4 @@ function ContactList() {
   );
 }
 
-export default ContactList;
+export default WorkerContactList;

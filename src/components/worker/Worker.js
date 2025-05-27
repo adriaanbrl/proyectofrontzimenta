@@ -3,9 +3,10 @@ import { Card, Button, Accordion, Row, Col, Form, Image, Spinner, Alert, Modal }
 import { Link } from 'react-router-dom';
 import { PencilSquare } from 'react-bootstrap-icons';
 import { jwtDecode } from 'jwt-decode';
-import UploadImageModal from './UploadImageModal'; // Import the new modal component
+import UploadImageModal from './UploadImageModal';
+import BuildingIncidentsSection from './BuildingIncidentsSection';
 
-// ProfileImage component remains unchanged
+
 const ProfileImage = ({ imageUrl, onImageChange }) => (
     <div className="position-relative d-inline-block ms-3">
         <Image
@@ -29,7 +30,7 @@ const ProfileImage = ({ imageUrl, onImageChange }) => (
     </div>
 );
 
-// EventDayModal component (remains unchanged from previous version)
+// EventDayModal component (assuming it's defined or imported elsewhere)
 const EventDayModal = ({ show, onHide, buildingId, buildingTitle }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -152,8 +153,7 @@ const EventDayModal = ({ show, onHide, buildingId, buildingTitle }) => {
     );
 };
 
-
-// LegalDocumentModal component
+// LegalDocumentModal component (assuming it's defined or imported elsewhere)
 const LegalDocumentModal = ({ show, onHide, buildingId, buildingTitle }) => {
     const [documentTitle, setDocumentTitle] = useState('');
     const [documentFile, setDocumentFile] = useState(null);
@@ -285,7 +285,7 @@ const LegalDocumentModal = ({ show, onHide, buildingId, buildingTitle }) => {
     );
 };
 
-// NEW InvoiceUploadModal component
+// InvoiceUploadModal component (assuming it's defined or imported elsewhere)
 const InvoiceUploadModal = ({ show, onHide, buildingId, buildingTitle }) => {
     const [invoiceTitle, setInvoiceTitle] = useState('');
     const [invoiceDate, setInvoiceDate] = useState('');
@@ -466,9 +466,13 @@ const WorkerView = () => {
     const [showLegalDocumentModal, setShowLegalDocumentModal] = useState(false);
     const [selectedBuildingForLegalDocument, setSelectedBuildingForLegalDocument] = useState(null);
 
-    // NEW State for InvoiceUploadModal
+    // State for InvoiceUploadModal
     const [showInvoiceUploadModal, setShowInvoiceUploadModal] = useState(false);
     const [selectedBuildingForInvoiceUpload, setSelectedBuildingForInvoiceUpload] = useState(null);
+
+    // NEW STATE: For Incident History Modal
+    const [showIncidentsHistoryModal, setShowIncidentsHistoryModal] = useState(false);
+    const [selectedBuildingForIncidents, setSelectedBuildingForIncidents] = useState(null);
 
 
     const fetchWorkerConstructions = useCallback(async (id, token) => {
@@ -580,16 +584,27 @@ const WorkerView = () => {
         setSelectedBuildingForLegalDocument(null);
     };
 
-    // NEW Function to open the InvoiceUploadModal
+    // Function to open the InvoiceUploadModal
     const handleInvoiceUploadClick = (building) => {
         setSelectedBuildingForInvoiceUpload(building);
         setShowInvoiceUploadModal(true);
     };
 
-    // NEW Function to close the InvoiceUploadModal
+    // Function to close the InvoiceUploadModal
     const handleCloseInvoiceUploadModal = () => {
         setShowInvoiceUploadModal(false);
         setSelectedBuildingForInvoiceUpload(null);
+    };
+
+    // NEW: Functions to handle Incident History Modal
+    const handleViewIncidentsClick = (building) => {
+        setSelectedBuildingForIncidents(building);
+        setShowIncidentsHistoryModal(true);
+    };
+
+    const handleCloseIncidentsHistoryModal = () => {
+        setShowIncidentsHistoryModal(false);
+        setSelectedBuildingForIncidents(null);
     };
 
 
@@ -640,6 +655,8 @@ const WorkerView = () => {
                                         <Col md={8}>{construction.endDate ? new Date(construction.endDate).toLocaleDateString() : 'N/A'}</Col>
                                     </Row>
                                     <hr/>
+
+                                    {/* Subir Imágenes */}
                                     <Row className="mb-2 align-items-center">
                                         <Col md={4} className="text-muted">Subir Imágenes:</Col>
                                         <Col md={8}>
@@ -650,12 +667,6 @@ const WorkerView = () => {
                                             >
                                                 Subir
                                             </Button>
-                                        </Col>
-                                    </Row>
-                                    <Row className="mb-2 align-items-center">
-                                        <Col md={4} className="text-muted">Cambiar Estado:</Col>
-                                        <Col md={8}>
-                                            <Button variant="btn btn-outline-custom" className="w-100">Cambiar</Button>
                                         </Col>
                                     </Row>
                                     <Row className="mb-2 align-items-center">
@@ -688,7 +699,7 @@ const WorkerView = () => {
                                             <Button
                                                 variant="btn btn-outline-custom"
                                                 className="w-100"
-                                                onClick={() => handleInvoiceUploadClick(construction)} // NEW: Open InvoiceUploadModal
+                                                onClick={() => handleInvoiceUploadClick(construction)}
                                             >
                                                 Subir
                                             </Button>
@@ -706,16 +717,17 @@ const WorkerView = () => {
                                             <Button variant="btn btn-outline-custom" className="w-100">Subir</Button>
                                         </Col>
                                     </Row>
+                                    {/* MODIFIED: "Historial Incidencias" button to open the modal */}
                                     <Row className="mb-2 align-items-center">
                                         <Col md={4} className="text-muted">Historial Incidencias:</Col>
                                         <Col md={8}>
-                                            <Button variant="btn btn-outline-custom" className="w-100">Ver</Button>
-                                        </Col>
-                                    </Row>
-                                    <Row className="align-items-center">
-                                        <Col md={4} className="text-muted">Estado Incidencia:</Col>
-                                        <Col md={8}>
-                                            <Button variant="btn btn-outline-custom" className="w-100">Cambiar</Button>
+                                            <Button
+                                                variant="btn btn-outline-custom"
+                                                className="w-100"
+                                                onClick={() => handleViewIncidentsClick(construction)}
+                                            >
+                                                Ver
+                                            </Button>
                                         </Col>
                                     </Row>
                                 </Accordion.Body>
@@ -726,6 +738,8 @@ const WorkerView = () => {
             ) : (
                 <Alert variant="info">No hay construcciones asociadas a este trabajador.</Alert>
             )}
+
+            {/* Render Modals */}
             {selectedBuildingForUpload && (
                 <UploadImageModal
                     show={showUploadImageModal}
@@ -736,7 +750,6 @@ const WorkerView = () => {
                 />
             )}
 
-            {/* Render the EventDayModal */}
             {selectedBuildingForEventDay && (
                 <EventDayModal
                     show={showEventDayModal}
@@ -746,7 +759,6 @@ const WorkerView = () => {
                 />
             )}
 
-            {/* Render the LegalDocumentModal */}
             {selectedBuildingForLegalDocument && (
                 <LegalDocumentModal
                     show={showLegalDocumentModal}
@@ -756,7 +768,6 @@ const WorkerView = () => {
                 />
             )}
 
-            {/* NEW: Render the InvoiceUploadModal */}
             {selectedBuildingForInvoiceUpload && (
                 <InvoiceUploadModal
                     show={showInvoiceUploadModal}
@@ -765,6 +776,29 @@ const WorkerView = () => {
                     buildingTitle={selectedBuildingForInvoiceUpload.title || selectedBuildingForInvoiceUpload.address}
                 />
             )}
+
+            {/* NEW: Incident History Modal */}
+            <Modal
+                show={showIncidentsHistoryModal}
+                onHide={handleCloseIncidentsHistoryModal}
+                size="lg" // Make the modal large for better viewing of incidents
+                centered
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>Historial de Incidentes para "{selectedBuildingForIncidents?.title || selectedBuildingForIncidents?.address}"</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {selectedBuildingForIncidents && (
+                        <BuildingIncidentsSection buildingData={selectedBuildingForIncidents} />
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseIncidentsHistoryModal}>
+                        Cerrar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
         </div>
     );
 };

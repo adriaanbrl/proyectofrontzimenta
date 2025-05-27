@@ -1,0 +1,334 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { Card, ListGroup, Alert, Spinner, Form, Button, Modal, Image, Row, Col, Badge } from 'react-bootstrap'; // Added Modal, Image, Badge
+import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
+
+const isTokenExpired = (token) => {
+    if (!token) return true;
+    try {
+        const decodedToken = jwtDecode(token);
+        const currentTime = Date.now() / 1000;
+        return decodedToken.exp < currentTime;
+    } catch (error) {
+        console.error("Error decoding token in BuildingIncidentsSection:", error);
+        return true;
+    }
+};
+
+const BuildingIncidentsSection = ({ buildingData }) => {
+    const [incidents, setIncidents] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [updatingStatus, setUpdatingStatus] = useState(false);
+    const [showImageModal, setShowImageModal] = useState(false); // State for the image modal
+    const [currentImageBase64, setCurrentImageBase64] = useState(''); // State for base64 image data
+
+    const fetchIncidents = useCallback(async (buildingId) => {
+        setLoading(true);
+        setError(null);
+        const token = localStorage.getItem('authToken');
+
+        if (!token || isTokenExpired(token)) {
+            setError('Su sesión ha expirado o no está autenticado. Por favor, inicie sesión de nuevo.');
+            setLoading(false);
+            if (token) localStorage.removeItem("authToken");
+            return;
+        }
+
+        try {
+            // Updated API endpoint based on your provided fetchIncidents URL
+            const response = await axios.get(
+                `http://localhost:8080/api/buildings/${buildingId}/incidents`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            setIncidents(response.data);
+        } catch (err) {
+            console.error('Error al obtener los incidentes:', err);
+            if (axios.isAxiosError(err) && err.response) {
+                if (err.response.status === 401 || err.response.status === 403) {
+                    localStorage.removeItem("authToken");
+                    setError('Acceso denegado. Su sesión ha expirado.');
+                } else if (err.response.status === 404) {
+                    setError('No se encontraron incidentes para esta construcción.');
+                } else {
+                    setError(`Error al cargar los incidentes: ${err.response.data.message || err.message}`);
+                }
+            } else {
+                setError(`Error de red: ${err.message || 'Por favor, revise su conexión.'}`);
+            }
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (buildingData && buildingData.id) {
+            fetchIncidents(buildingData.id);
+        } else {
+            setError("No se proporcionó el ID del edificio para cargar los incidentes.");
+            setLoading(false);
+        }
+    }, [buildingData, fetchIncidents]);
+
+    const handleStatusChange = async (incidentId, newStatus) => {
+        setUpdatingStatus(true);
+        setError(null);
+
+        const token = localStorage.getItem('authToken');
+        if (!token || isTokenExpired(token)) {
+            setError('Su sesión ha expirado o no está autenticado. Por favor, inicie sesión de nuevo.');
+            setUpdatingStatus(false);
+            if (token) localStorage.removeItem("authToken");
+            return;
+        }
+
+        const originalIncidents = [...incidents]; // Store original state for revert
+
+        try {
+            // Optimistic update: Update the UI immediately
+            setIncidents(prevIncidents =>
+                prevIncidents.map(inc =>
+                    inc.id === incidentId ? { ...inc, status: newStatus } : inc
+                )
+            );
+
+            // Added logic to set resolutionDate if status becomes 'Resuelta'
+            const body = { status: newStatus };
+            if (newStatus === 'Resuelta' && !originalIncidents.find(inc => inc.id === incidentId)?.resolutionDate) {
+                body.resolutionDate = new Date().toISOString().split('T')[0]; // Format to YYYY-MM-DD
+            } else if (newStatus !== 'Resuelta' && originalIncidents.find(inc => inc.id === incidentId)?.resolutionDate) {
+                body.resolutionDate = null; // Clear resolution date if status changes from 'Resuelta'
+            }
+
+
+            const response = await axios.put(
+                `http://localhost:8080/api/incidents/${incidentId}/status`,
+                body, // Send the updated body
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            console.log(`Estado del incidente ${incidentId} actualizado a ${newStatus}`, response.data);
+            // After successful update, re-fetch to ensure data (like resolutionDate) is current
+            fetchIncidents(buildingData.id);
+
+        } catch (err) {
+            console.error('Error al actualizar el estado del incidente:', err);
+            // Revert optimistic update if API call fails
+            setIncidents(originalIncidents);
+            if (axios.isAxiosError(err) && err.response) {
+                if (err.response.status === 401 || err.response.status === 403) {
+                    localStorage.removeItem("authToken");
+                    setError('Acceso denegado. Su sesión ha expirado.');
+                } else {
+                    setError(`Error al actualizar el estado: ${err.response.data.message || err.message}`);
+                }
+            } else {
+                setError(`Error de red: ${err.message || 'Por favor, revise su conexión.'}`);
+            }
+        } finally {
+            setUpdatingStatus(false);
+        }
+    };
+
+    const formatDate = (dateString) => {
+        if (!dateString) return 'N/A';
+        const date = new Date(dateString);
+        // Check if date is valid
+        if (isNaN(date.getTime())) {
+            return 'Fecha inválida';
+        }
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+    };
+
+    // Corrected status options based on your backend values if they are 'Pendiente', 'En Revisión', 'Resuelta', 'Cerrada'
+    const statusOptions = ['Pendiente', 'En Revisión', 'Resuelta', 'Cerrada'];
+
+    // Function to get Bootstrap Badge variant based on status
+    const getStatusBadgeVariant = (status) => {
+        switch (status) {
+            case 'Pendiente':
+                return 'warning'; // Yellow
+            case 'En Revisión':
+                return 'primary'; // Blue
+            case 'Resuelta':
+                return 'success'; // Green
+            case 'Cerrada':
+                return 'secondary'; // Grey (or danger if you consider it an unresolvable closure)
+            default:
+                return 'info'; // Light blue for unknown
+        }
+    };
+
+    // Handlers for image modal
+    const handleImageClick = (imageBase64) => {
+        setCurrentImageBase64(imageBase64);
+        setShowImageModal(true);
+    };
+
+    const handleCloseImageModal = () => {
+        setShowImageModal(false);
+        setCurrentImageBase64('');
+    };
+
+    // Filter incidents for display
+    const pendingAndReviewIncidents = incidents.filter(
+        inc => inc.status === 'Pendiente' || inc.status === 'En Revisión'
+    );
+    const resolvedAndClosedIncidents = incidents.filter(
+        inc => inc.status === 'Resuelta' || inc.status === 'Cerrada'
+    );
+
+
+    return (
+        <Card className="mb-3 shadow-sm">
+            <Card.Header className="bg-light fw-bold">
+                Incidentes de "{buildingData?.title || buildingData?.address || 'N/A'}"
+            </Card.Header>
+            <Card.Body>
+                {loading ? (
+                    <div className="text-center my-3">
+                        <Spinner animation="border" size="sm" /> Cargando incidentes...
+                    </div>
+                ) : error ? (
+                    <Alert variant="danger">{error}</Alert>
+                ) : (
+                    <>
+                        {/* Section for Pending and In Review Incidents */}
+                        {pendingAndReviewIncidents.length > 0 && (
+                            <div className="mb-4">
+                                <h6 className="mb-2 text-primary">Incidentes Pendientes y En Revisión ({pendingAndReviewIncidents.length})</h6>
+                                <ListGroup variant="flush">
+                                    {pendingAndReviewIncidents.map((incident) => (
+                                        <ListGroup.Item key={incident.id} className="d-flex flex-column flex-md-row justify-content-between align-items-md-center py-3">
+                                            <div className="me-md-3 mb-2 mb-md-0 flex-grow-1">
+                                                <h6 className="mb-1 fw-bold">{incident.title}</h6>
+                                                <p className="mb-1 text-muted small">{incident.description}</p>
+                                                <div className="d-flex flex-wrap align-items-center small">
+                                                    <span className="me-2 text-dark">Creado el: {formatDate(incident.creationDate)}</span>
+                                                    <Badge bg={getStatusBadgeVariant(incident.status)} className="ms-2">
+                                                        {incident.status}
+                                                    </Badge>
+                                                </div>
+                                                {incident.image && (
+                                                    <div className="incident-image-container mt-2">
+                                                        <Image
+                                                            src={`data:image/jpeg;base64,${incident.image}`}
+                                                            alt={`Incidente: ${incident.title}`}
+                                                            thumbnail
+                                                            style={{ maxWidth: '100px', height: 'auto', maxHeight: '80px', objectFit: 'contain', cursor: 'pointer' }}
+                                                            onClick={() => handleImageClick(incident.image)} // Pass base64 image data
+                                                        />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="mt-2 mt-md-0 d-flex align-items-center">
+                                                <Form.Select
+                                                    value={incident.status}
+                                                    onChange={(e) => handleStatusChange(incident.id, e.target.value)}
+                                                    disabled={updatingStatus}
+                                                    className="w-auto me-2"
+                                                >
+                                                    {statusOptions.map(status => (
+                                                        <option key={status} value={status}>{status}</option>
+                                                    ))}
+                                                </Form.Select>
+                                                {updatingStatus && <Spinner animation="border" size="sm" />}
+                                            </div>
+                                        </ListGroup.Item>
+                                    ))}
+                                </ListGroup>
+                            </div>
+                        )}
+
+                        {/* Section for Resolved and Closed Incidents */}
+                        {resolvedAndClosedIncidents.length > 0 && (
+                            <div>
+                                <h6 className="mb-2 text-success">Incidentes Resueltos y Cerrados ({resolvedAndClosedIncidents.length})</h6>
+                                <ListGroup variant="flush">
+                                    {resolvedAndClosedIncidents.map((incident) => (
+                                        <ListGroup.Item key={incident.id} className="d-flex flex-column flex-md-row justify-content-between align-items-md-center py-3 bg-light">
+                                            <div className="me-md-3 mb-2 mb-md-0 flex-grow-1">
+                                                <h6 className="mb-1 fw-bold text-muted">{incident.title}</h6>
+                                                <p className="mb-1 text-muted small">{incident.description}</p>
+                                                <div className="d-flex flex-wrap align-items-center small">
+                                                    <span className="me-2 text-dark">Creado el: {formatDate(incident.creationDate)}</span>
+                                                    {incident.resolutionDate && (
+                                                        <span className="me-2 text-dark">Resuelto el: {formatDate(incident.resolutionDate)}</span>
+                                                    )}
+                                                    <Badge bg={getStatusBadgeVariant(incident.status)} className="ms-2">
+                                                        {incident.status}
+                                                    </Badge>
+                                                </div>
+                                                {incident.image && (
+                                                    <div className="incident-image-container mt-2">
+                                                        <Image
+                                                            src={`data:image/jpeg;base64,${incident.image}`}
+                                                            alt={`Incidente: ${incident.title}`}
+                                                            thumbnail
+                                                            style={{ maxWidth: '100px', height: 'auto', maxHeight: '80px', objectFit: 'contain', cursor: 'pointer' }}
+                                                            onClick={() => handleImageClick(incident.image)} // Pass base64 image data
+                                                        />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="mt-2 mt-md-0 d-flex align-items-center">
+                                                <Form.Select
+                                                    value={incident.status}
+                                                    onChange={(e) => handleStatusChange(incident.id, e.target.value)}
+                                                    disabled={updatingStatus || incident.status === 'Resuelta' || incident.status === 'Cerrada'} // Disable if already resolved/closed
+                                                    className="w-auto me-2"
+                                                >
+                                                    {statusOptions.map(status => (
+                                                        <option key={status} value={status}>{status}</option>
+                                                    ))}
+                                                </Form.Select>
+                                                {updatingStatus && <Spinner animation="border" size="sm" />}
+                                            </div>
+                                        </ListGroup.Item>
+                                    ))}
+                                </ListGroup>
+                            </div>
+                        )}
+
+                        {pendingAndReviewIncidents.length === 0 && resolvedAndClosedIncidents.length === 0 && (
+                            <Alert variant="info">No hay incidentes para mostrar en esta construcción.</Alert>
+                        )}
+                    </>
+                )}
+            </Card.Body>
+
+            {/* Image Lightbox Modal (for base64 images) */}
+            <Modal show={showImageModal} onHide={handleCloseImageModal} centered size="lg">
+                <Modal.Header closeButton>
+                    <Modal.Title>Imagen del Incidente</Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="text-center">
+                    {currentImageBase64 ? (
+                        <Image src={`data:image/jpeg;base64,${currentImageBase64}`} fluid style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain' }} />
+                    ) : (
+                        <p>No se pudo cargar la imagen.</p>
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseImageModal}>
+                        Cerrar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </Card>
+    );
+};
+
+export default BuildingIncidentsSection;

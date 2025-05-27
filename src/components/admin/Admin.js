@@ -209,7 +209,7 @@ const AdminView = () => {
           return;
         }
 
-        const response = await axios.post("http://localhost:8080/api/workers", values, {
+        const response = await axios.post("http://localhost:8080/auth/worker/workers", values, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,

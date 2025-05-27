@@ -52,24 +52,18 @@ export default function Profile() {
   };
 
   useEffect(() => {
-    // Obtiene el token de autenticación del almacenamiento local
     const token = localStorage.getItem("authToken");
 
     if (token) {
       try {
-        // Decodifica el token JWT para acceder a su contenido.
         const decodedToken = jwtDecode(token);
-        // Actualiza los estados con la información del usuario extraída del token.
         setUsername(decodedToken.name || "Usuario");
         setSurname(decodedToken.surname || "");
-        setBuildingId(decodedToken.building_id || ""); // Assuming buildingId is in the JWT
-
+        setBuildingId(decodedToken.building_id || "");
         console.log(
             "building_id recibido del customer (JWT):",
             decodedToken.building_id
-        ); // <-------------------- AÑADIDO CONSOLE LOG
-
-        // Si el ID del edificio está presente en el token, llama a la función para obtener los datos del edificio.
+        );
         if (decodedToken.building_id) {
           fetchBuildingData(decodedToken.building_id);
         }
@@ -97,7 +91,7 @@ export default function Profile() {
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setSelectedImage(null); // Limpiar la imagen seleccionada al cerrar el modal
+    setSelectedImage(null); 
   };
 
   const handleImageChange = (event) => {
@@ -141,7 +135,6 @@ export default function Profile() {
       window.location.reload();
     } catch (error) {
       console.error("Error al subir la imagen:", error);
-      // Manejar el error (mostrar un mensaje al usuario, etc.)
     }
   };
 
@@ -151,7 +144,6 @@ export default function Profile() {
 
   return (
       <Container className="py-4">
-        {/* Sección del usuario */}
         <Card className="mb-3 text-center border-2 card-custom">
           <Card.Body>
             <div className="d-flex align-items-center justify-content-between">
@@ -160,11 +152,9 @@ export default function Profile() {
                 <h4 className="mb-0">
                   {username} {surname}
                 </h4>{" "}
-                {/* Display username and surname */}
                 {building && (
                     <p className="mb-0 text-muted">Edificio ID: {buildingId}</p>
                 )}{" "}
-                {/* Optional: Display building ID */}
               </div>
               <PencilSquare
                   size={24}

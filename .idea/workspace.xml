@@ -6,10 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Vista worker">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/admin/Admin.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/admin/Admin.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/admin/WorkerRol.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/admin/WorkerRol.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/client/Profile.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/Profile.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/worker/workerView/ProfileImage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/worker/workerView/ProfileImage.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/worker/BuildingInvoicesList.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/worker/BuildingInvoicesList.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/worker/WorkerDataList.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/worker/WorkerDataList.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -276,22 +274,9 @@
       <workItem from="1748240435278" duration="21324000" />
       <workItem from="1748284957855" duration="3938000" />
       <workItem from="1748327991344" duration="1687000" />
-    </task>
-    <task id="LOCAL-00041" summary="INICIO">
-      <option name="closed" value="true" />
-      <created>1747142496441</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1747142496441</updated>
-    </task>
-    <task id="LOCAL-00042" summary="INICIO">
-      <option name="closed" value="true" />
-      <created>1747216133853</created>
-      <option name="number" value="00042" />
-      <option name="presentableId" value="LOCAL-00042" />
-      <option name="project" value="LOCAL" />
-      <updated>1747216133853</updated>
+      <workItem from="1748365316874" duration="618000" />
+      <workItem from="1748369184412" duration="385000" />
+      <workItem from="1748413101609" duration="5244000" />
     </task>
     <task id="LOCAL-00043" summary="INICIO">
       <option name="closed" value="true" />
@@ -669,7 +654,23 @@
       <option name="project" value="LOCAL" />
       <updated>1748355776099</updated>
     </task>
-    <option name="localTasksCounter" value="90" />
+    <task id="LOCAL-00090" summary="Vista worker">
+      <option name="closed" value="true" />
+      <created>1748357518123</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1748357518123</updated>
+    </task>
+    <task id="LOCAL-00091" summary="Vista worker">
+      <option name="closed" value="true" />
+      <created>1748357535827</created>
+      <option name="number" value="00091" />
+      <option name="presentableId" value="LOCAL-00091" />
+      <option name="project" value="LOCAL" />
+      <updated>1748357535827</updated>
+    </task>
+    <option name="localTasksCounter" value="92" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

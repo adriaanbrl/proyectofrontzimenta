@@ -4,6 +4,7 @@ import {
 } from 'react-bootstrap';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap CSS is imported
 
 const EventDetailModal = ({ show, onHide, eventData, onSave, onDelete }) => {
     const [title, setTitle] = useState('');
@@ -17,6 +18,7 @@ const EventDetailModal = ({ show, onHide, eventData, onSave, onDelete }) => {
         if (eventData) {
             setTitle(eventData.title || '');
             setDescription(eventData.description || '');
+            // Ensure date is in YYYY-MM-DD format for input type="date"
             setDate(eventData.date ? new Date(eventData.date).toISOString().split('T')[0] : '');
         } else {
             setTitle('');
@@ -185,6 +187,20 @@ const WorkerDataList = () => {
     const [currentEvent, setCurrentEvent] = useState(null);
     const [activeInnerAccordionKey, setActiveInnerAccordionKey] = useState({}); // Para gestionar acordeones internos
 
+    // ESTADOS para editar y borrar facturas
+    const [showEditInvoiceModal, setShowEditInvoiceModal] = useState(false);
+    const [currentInvoiceToEdit, setCurrentInvoiceToEdit] = useState(null);
+    const [editInvoiceFormData, setEditInvoiceFormData] = useState({
+        amount: '',
+        date: '',
+        title: '',
+        documentFile: null // New state for the file
+    });
+    const [loadingInvoiceAction, setLoadingInvoiceAction] = useState(false);
+    const [invoiceActionError, setInvoiceActionError] = useState(null);
+    const [showDeleteInvoiceModal, setShowDeleteInvoiceModal] = useState(false);
+    const [invoiceToDeleteId, setInvoiceToDeleteId] = useState(null);
+
     // Función para obtener las construcciones asociadas al trabajador
     const fetchWorkerConstructions = useCallback(async (id, token) => {
         setLoadingConstructions(true);
@@ -195,6 +211,7 @@ const WorkerDataList = () => {
             });
             setWorkerConstructions(response.data);
         } catch (err) {
+            console.error("Error fetching worker constructions:", err);
             setErrorConstructions(err.response?.data?.message || "Error al cargar construcciones.");
         } finally {
             setLoadingConstructions(false);
@@ -216,6 +233,7 @@ const WorkerDataList = () => {
             const response = await axios.get(`http://localhost:8080/auth/building/${buildingId}/events`, { headers });
             setEventsByBuilding(prev => ({ ...prev, [buildingId]: response.data }));
         } catch (err) {
+            console.error(`Error fetching events for building ${buildingId}:`, err);
             setErrorEvents(prev => ({ ...prev, [buildingId]: err.response?.data?.message || "No hay eventos para esta construcción" }));
         } finally {
             setLoadingEvents(prev => ({ ...prev, [buildingId]: false }));
@@ -237,28 +255,25 @@ const WorkerDataList = () => {
             const response = await axios.get(`http://localhost:8080/api/building/${buildingId}/invoices`, { headers });
             setInvoicesByBuilding(prev => ({ ...prev, [buildingId]: response.data }));
         } catch (err) {
+            console.error(`Error fetching invoices for building ${buildingId}:`, err);
             setErrorInvoices(prev => ({ ...prev, [buildingId]: err.response?.data?.message || "No hay facturas para esta construcción" }));
         } finally {
             setLoadingInvoices(prev => ({ ...prev, [buildingId]: false }));
         }
     }, []);
-
-    // Función para obtener y mostrar el PDF de una factura
     const handleViewPdf = useCallback(async (invoiceId) => {
         setLoadingPdf(true);
         setPdfError(null);
-        setCurrentPdfUrl(null); // Limpiar URL anterior
-        setShowPdfModal(true); // Abrir modal inmediatamente para mostrar spinner
+        setCurrentPdfUrl(null);
+        setShowPdfModal(true);
 
         try {
             const token = localStorage.getItem("authToken");
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
             const response = await axios.get(`http://localhost:8080/api/invoices/pdf/${invoiceId}`, {
                 headers,
-                responseType: 'blob' // Importante para manejar archivos binarios
+                responseType: 'blob'
             });
-
-            // Crear una URL de objeto para el Blob recibido
             const blob = new Blob([response.data], { type: 'application/pdf' });
             const url = URL.createObjectURL(blob);
             setCurrentPdfUrl(url);
@@ -269,6 +284,125 @@ const WorkerDataList = () => {
             setLoadingPdf(false);
         }
     }, []);
+    const handleEditInvoice = useCallback((invoice) => {
+        setCurrentInvoiceToEdit(invoice);
+        setEditInvoiceFormData({
+            amount: invoice.amount || '',
+            date: invoice.date ? new Date(invoice.date).toISOString().split('T')[0] : '', // Formato YYYY-MM-DD para input type="date"
+            title: invoice.title || '',
+            documentBase64: null
+        });
+        setShowEditInvoiceModal(true);
+        setInvoiceActionError(null);
+    }, []);
+
+    const handleEditInvoiceFormChange = useCallback((e) => {
+        const { name, value, type, files } = e.target;
+        if (type === 'file' && files && files[0]) {
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setEditInvoiceFormData(prev => ({
+                    ...prev,
+                    documentBase64: reader.result.split(',')[1]
+                }));
+            };
+            reader.readAsDataURL(file);
+        } else {
+            setEditInvoiceFormData(prev => ({
+                ...prev,
+                [name]: value
+            }));
+        }
+    }, []);
+
+    const handleSubmitEditInvoice = useCallback(async () => {
+        if (!currentInvoiceToEdit) return;
+
+        setLoadingInvoiceAction(true);
+        setInvoiceActionError(null);
+
+        try {
+            const token = localStorage.getItem("authToken");
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+            const payload = {
+                amount: parseFloat(editInvoiceFormData.amount),
+                date: editInvoiceFormData.date,
+                title: editInvoiceFormData.title,
+                documentBase64: editInvoiceFormData.documentBase64
+            };
+
+            // <--- ¡CLAVE! El Content-Type SIEMPRE es 'application/json'
+            await axios.put(`http://localhost:8080/api/invoices/${currentInvoiceToEdit.id}`, payload, {
+                headers: {
+                    ...headers,
+                    'Content-Type': 'application/json'
+                }
+            });
+            let buildingId = null;
+            for (const key in invoicesByBuilding) {
+                if (invoicesByBuilding[key].some(inv => inv.id === currentInvoiceToEdit.id)) {
+                    buildingId = key;
+                    break;
+                }
+            }
+            if (buildingId) {
+                fetchInvoicesForBuilding(buildingId);
+            } else {
+                console.warn("Building ID not found for invoice update, attempting to refresh all invoices.");
+                workerConstructions.forEach(construction => fetchInvoicesForBuilding(construction.id));
+            }
+            setShowEditInvoiceModal(false);
+        } catch (err) {
+            console.error("Error al actualizar la factura:", err.response?.data || err.message);
+            setInvoiceActionError(err.response?.data?.message || "Error al actualizar la factura.");
+        } finally {
+            setLoadingInvoiceAction(false);
+        }
+    }, [currentInvoiceToEdit, editInvoiceFormData, invoicesByBuilding, fetchInvoicesForBuilding, workerConstructions]);
+
+    // Abre el modal de confirmación para borrar
+    const handleDeleteInvoice = useCallback((invoiceId) => {
+        setInvoiceToDeleteId(invoiceId);
+        setShowDeleteInvoiceModal(true);
+        setInvoiceActionError(null); // Limpiar errores previos
+    }, []);
+
+    // Confirma y envía la solicitud de borrado al servidor
+    const confirmDeleteInvoice = useCallback(async () => {
+        if (!invoiceToDeleteId) return;
+
+        setLoadingInvoiceAction(true);
+        setInvoiceActionError(null);
+        try {
+            const token = localStorage.getItem("authToken");
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+            await axios.delete(`http://localhost:8080/api/invoices/${invoiceToDeleteId}`, { headers });
+
+            // Refrescar las facturas de la construcción actual
+            let buildingId = null;
+            for (const key in invoicesByBuilding) {
+                if (invoicesByBuilding[key].some(inv => inv.id === invoiceToDeleteId)) {
+                    buildingId = key;
+                    break;
+                }
+            }
+            if (buildingId) {
+                fetchInvoicesForBuilding(buildingId);
+            } else {
+                console.warn("Building ID not found for invoice deletion, attempting to refresh all invoices.");
+                workerConstructions.forEach(construction => fetchInvoicesForBuilding(construction.id));
+            }
+            setShowDeleteInvoiceModal(false);
+        } catch (err) {
+            console.error("Error al borrar la factura:", err);
+            setInvoiceActionError(err.response?.data?.message || "Error al borrar la factura.");
+        } finally {
+            setLoadingInvoiceAction(false);
+        }
+    }, [invoiceToDeleteId, invoicesByBuilding, fetchInvoicesForBuilding, workerConstructions]);
+
 
     // Efecto para obtener el ID del trabajador del token y cargar las construcciones al montar el componente
     useEffect(() => {
@@ -280,6 +414,7 @@ const WorkerDataList = () => {
                 setWorkerId(currentWorkerId);
                 fetchWorkerConstructions(currentWorkerId, token);
             } catch (error) {
+                console.error("Error decoding token:", error);
                 setErrorConstructions("Error de autenticación.");
                 setLoadingConstructions(false);
             }
@@ -328,9 +463,19 @@ const WorkerDataList = () => {
     };
 
     const handleEventSaved = (updatedEvent) => {
-        fetchEventsForBuilding(updatedEvent.buildingId);
+        // Find the building ID from the updated event or current context
+        const buildingId = updatedEvent.buildingId || (currentEvent ? currentEvent.buildingId : null);
+        if (buildingId) {
+            fetchEventsForBuilding(buildingId);
+        } else {
+            // Fallback if buildingId is not directly available (should ideally not happen)
+            console.warn("Building ID not found for event update, attempting to refresh all events.");
+            // This might be inefficient, but ensures data refresh if buildingId is lost
+            workerConstructions.forEach(construction => fetchEventsForBuilding(construction.id));
+        }
         handleCloseEventModal();
     };
+
 
     const handleEventDeleted = (deletedEventId, buildingId) => {
         if (buildingId) {
@@ -357,7 +502,6 @@ const WorkerDataList = () => {
         return date.toLocaleDateString();
     };
 
-    // Función para cerrar el modal del PDF y revocar la URL del objeto
     const handleClosePdfModal = () => {
         setShowPdfModal(false);
         if (currentPdfUrl) {
@@ -369,7 +513,7 @@ const WorkerDataList = () => {
 
     return (
         <Container className="my-4 p-4 rounded shadow-lg bg-light">
-            <h4 className="mb-4 text-center text-custom">GESTIÓN DE EVENTOS Y FACTURAS POR CONSTRUCCIÓN:</h4>
+            <h4 className="mb-4 text-center text-primary">GESTIÓN DE EVENTOS Y FACTURAS POR CONSTRUCCIÓN:</h4>
 
             {loadingConstructions ? (
                 <div className="text-center my-5">
@@ -416,12 +560,12 @@ const WorkerDataList = () => {
                                                                         </div>
                                                                         <div>
                                                                             <Button
-                                                                                variant="outline-custom"
+                                                                                variant="outline-primary"
                                                                                 size="sm"
                                                                                 className="me-2"
                                                                                 onClick={() => handleEditEvent(event, construction.id)}
                                                                             >
-                                                                                Editar
+                                                                                ✏️ Editar
                                                                             </Button>
                                                                         </div>
                                                                     </Card.Body>
@@ -453,21 +597,38 @@ const WorkerDataList = () => {
                                                                     <Card.Body className="d-flex justify-content-between align-items-center py-2">
                                                                         <div>
                                                                             <h6 className="mb-1">
-                                                                                Factura {invoice.title && ` - ${invoice.title}`} 
+                                                                                Factura {invoice.title && ` - ${invoice.title}`}
                                                                             </h6>
                                                                             <p className="mb-0 text-muted small">Monto: ${invoice.amount ? invoice.amount.toFixed(2) : '0.00'}</p>
                                                                             <p className="mb-0 text-muted small">Fecha: {formatDate(invoice.date)}</p>
-                                                                            {invoice.description && <p className="mb-0 text-muted small">Descripción: {invoice.description}</p>}
-                                                                            {invoice.status && <p className="mb-0 text-muted small">Estado: {invoice.status}</p>}
+                                                                            {/* Removed description and status from display as well */}
                                                                         </div>
-                                                                        <div>
+                                                                        <div className="d-flex flex-column flex-md-row">
                                                                             <Button
                                                                                 variant="outline-info"
                                                                                 size="sm"
+                                                                                className="mb-2 mb-md-0 me-md-2"
                                                                                 onClick={() => handleViewPdf(invoice.id)}
                                                                                 disabled={loadingPdf}
                                                                             >
-                                                                                {loadingPdf ? <Spinner animation="border" size="sm" /> : 'Ver PDF'}
+                                                                                {loadingPdf ? <Spinner animation="border" size="sm" /> : '📄 Ver PDF'}
+                                                                            </Button>
+                                                                            <Button
+                                                                                variant="outline-primary"
+                                                                                size="sm"
+                                                                                className="mb-2 mb-md-0 me-md-2"
+                                                                                onClick={() => handleEditInvoice(invoice)}
+                                                                                disabled={loadingInvoiceAction}
+                                                                            >
+                                                                                {loadingInvoiceAction ? <Spinner animation="border" size="sm" /> : '✏️ Editar'}
+                                                                            </Button>
+                                                                            <Button
+                                                                                variant="outline-danger"
+                                                                                size="sm"
+                                                                                onClick={() => handleDeleteInvoice(invoice.id)}
+                                                                                disabled={loadingInvoiceAction}
+                                                                            >
+                                                                                {loadingInvoiceAction ? <Spinner animation="border" size="sm" /> : '🗑️ Borrar'}
                                                                             </Button>
                                                                         </div>
                                                                     </Card.Body>
@@ -526,6 +687,87 @@ const WorkerDataList = () => {
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClosePdfModal}>
                         Cerrar
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            {/* Modal para Editar Factura */}
+            <Modal show={showEditInvoiceModal} onHide={() => setShowEditInvoiceModal(false)} centered>
+                <Modal.Header closeButton className="bg-primary text-white py-3">
+                    <Modal.Title className="fw-bold fs-5">Editar Factura</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {invoiceActionError && <Alert variant="danger">{invoiceActionError}</Alert>}
+                    {currentInvoiceToEdit && (
+                        <Form>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Monto</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    step="0.01"
+                                    name="amount"
+                                    value={editInvoiceFormData.amount}
+                                    onChange={handleEditInvoiceFormChange}
+                                />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Fecha</Form.Label>
+                                <Form.Control
+                                    type="date"
+                                    name="date"
+                                    value={editInvoiceFormData.date}
+                                    onChange={handleEditInvoiceFormChange}
+                                />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Título</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    name="title"
+                                    value={editInvoiceFormData.title}
+                                    onChange={handleEditInvoiceFormChange}
+                                />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Documento PDF</Form.Label>
+                                <Form.Control
+                                    type="file"
+                                    name="documentFile"
+                                    onChange={handleEditInvoiceFormChange}
+                                    accept="application/pdf" // Restrict to PDF files
+                                />
+                                <Form.Text className="text-muted">
+                                    Selecciona un nuevo PDF para reemplazar el documento actual.
+                                </Form.Text>
+                            </Form.Group>
+                        </Form>
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowEditInvoiceModal(false)} disabled={loadingInvoiceAction}>
+                        Cancelar
+                    </Button>
+                    <Button variant="primary" onClick={handleSubmitEditInvoice} disabled={loadingInvoiceAction}>
+                        {loadingInvoiceAction ? <Spinner animation="border" size="sm" /> : 'Guardar Cambios'}
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            {/* Modal para Confirmar Borrado de Factura */}
+            <Modal show={showDeleteInvoiceModal} onHide={() => setShowDeleteInvoiceModal(false)} centered>
+                <Modal.Header closeButton className="bg-danger text-white py-3">
+                    <Modal.Title className="fw-bold fs-5">Confirmar Borrado de Factura</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {invoiceActionError && <Alert variant="danger">{invoiceActionError}</Alert>}
+                    <p>¿Estás seguro de que quieres borrar esta factura? Esta acción no se puede deshacer.</p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowDeleteInvoiceModal(false)} disabled={loadingInvoiceAction}>
+                        Cancelar
+                    </Button>
+                    <Button variant="danger" onClick={confirmDeleteInvoice} disabled={loadingInvoiceAction}>
+                        {loadingInvoiceAction ? <Spinner animation="border" size="sm" /> : 'Borrar'}
                     </Button>
                 </Modal.Footer>
             </Modal>

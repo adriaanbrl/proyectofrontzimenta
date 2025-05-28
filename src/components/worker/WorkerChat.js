@@ -1,6 +1,6 @@
 // WorkerChat.js
 import React, { useState, useEffect, useRef } from 'react';
-import { Card, Form, Button } from 'react-bootstrap';
+import { Card, Form, Button, ListGroup } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
@@ -15,32 +15,39 @@ function WorkerChat() {
     const [authToken, setAuthToken] = useState(null);
 
     useEffect(() => {
+        console.log('useEffect con location.search ejecutado (Worker)');
         const queryParams = new URLSearchParams(location.search);
         setContactId(queryParams.get('contactId'));
 
         const fetchWorkerIdAndHistory = async () => {
             const token = localStorage.getItem("authToken");
+            console.log('Token recuperado (Worker):', token);
             if (token) {
                 try {
                     const decodedToken = jwtDecode(token);
                     setWorkerId(decodedToken.id);
                     setAuthToken(token);
-                    if (contactId && decodedToken.id) {
-                        await loadChatHistory(decodedToken.id, 'worker', parseInt(contactId), 'customer');
-                    }
+                    console.log('contactId (Worker):', contactId, 'workerId (Worker):', workerId);
                 } catch (decodeError) {
-                    console.error("Error decoding token:", decodeError);
+                    console.error("Error decoding token (Worker):", decodeError);
                 }
             }
         };
         fetchWorkerIdAndHistory();
     }, [location.search]);
 
+    useEffect(() => {
+        if (contactId && workerId && authToken) {
+            loadChatHistory(workerId, 'worker', parseInt(contactId), 'customer');
+        }
+    }, [contactId, workerId, authToken]);
+
     const loadChatHistory = async (user1Id, user1Type, user2Id, user2Type) => {
+        console.log('authToken en loadChatHistory (Worker):', authToken);
         if (authToken) {
             try {
                 const response = await fetch(
-                    `/api/chat/history?user1Id=${user1Id}&user1Type=${user1Type}&user2Id=${user2Id}&user2Type=${user2Type}`,
+                    `http://localhost:8080/api/chat/history?user1Id=${user1Id}&user1Type=${user1Type}&user2Id=${user2Id}&user2Type=${user2Type}`,
                     {
                         headers: {
                             Authorization: `Bearer ${authToken}`,
@@ -50,12 +57,13 @@ function WorkerChat() {
                 );
                 if (response.ok) {
                     const history = await response.json();
+                    console.log('Historial cargado (Worker):', history);
                     setMessages(history);
                 } else {
-                    console.error('Error al cargar el historial del chat:', response.status);
+                    console.error('Error al cargar el historial del chat (Worker):', response.status);
                 }
             } catch (error) {
-                console.error('Error al cargar el historial del chat:', error);
+                console.error('Error al cargar el historial del chat (Worker):', error);
             }
         }
     };
@@ -117,14 +125,24 @@ function WorkerChat() {
                     className="mb-3"
                     style={{ maxHeight: '300px', overflowY: 'auto', border: '1px solid #ccc', padding: '10px' }}
                 >
-                    {messages.map((msg, index) => (
-                        <div
-                            key={index}
-                            className={`alert ${msg.senderType === 'worker' ? 'alert-info text-end' : 'alert-secondary'} m-1`}
-                        >
-                            <strong>{msg.senderType === 'worker' ? 'Trabajador' : 'Cliente'}:</strong> {msg.message}
-                        </div>
-                    ))}
+                    <ListGroup>
+                        {messages.map((msg, index) => (
+                            <ListGroup.Item
+                                key={index}
+                                className={`d-flex justify-content-${msg.senderType === 'worker' ? 'end' : 'start'} align-items-start border-0 mb-1`}
+                            >
+                                <div
+                                    className={`${msg.senderType === 'worker' ? 'bg-info text-white' : 'bg-light text-dark'} p-2 rounded`}
+                                    style={{ maxWidth: '70%' }}
+                                >
+                                    <small className="fw-bold">
+                                        {msg.senderType === 'worker' ? 'Tú' : 'Cliente'}
+                                    </small>
+                                    <p className="mb-0">{msg.message}</p>
+                                </div>
+                            </ListGroup.Item>
+                        ))}
+                    </ListGroup>
                 </div>
                 <Form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }}>
                     <Form.Group className="mb-3">

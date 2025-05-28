@@ -1,6 +1,6 @@
 // ClientChat.js
 import React, { useState, useEffect, useRef } from 'react';
-import { Card, Form, Button } from 'react-bootstrap';
+import { Card, Form, Button, ListGroup } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
@@ -15,32 +15,39 @@ function ClientChat() {
     const [authToken, setAuthToken] = useState(null);
 
     useEffect(() => {
+        console.log('useEffect con location.search ejecutado (Client)');
         const queryParams = new URLSearchParams(location.search);
         setWorkerId(queryParams.get('workerId'));
 
         const fetchCustomerIdAndHistory = async () => {
             const token = localStorage.getItem("authToken");
+            console.log('Token recuperado (Client):', token);
             if (token) {
                 try {
                     const decodedToken = jwtDecode(token);
                     setCustomerId(decodedToken.id);
                     setAuthToken(token);
-                    if (workerId && decodedToken.id) {
-                        await loadChatHistory(decodedToken.id, 'customer', parseInt(workerId), 'worker');
-                    }
+                    console.log('workerId (Client):', workerId, 'customerId (Client):', customerId);
                 } catch (decodeError) {
-                    console.error("Error decoding token:", decodeError);
+                    console.error("Error decoding token (Client):", decodeError);
                 }
             }
         };
         fetchCustomerIdAndHistory();
     }, [location.search]);
 
+    useEffect(() => {
+        if (workerId && customerId && authToken) {
+            loadChatHistory(customerId, 'customer', parseInt(workerId), 'worker');
+        }
+    }, [workerId, customerId, authToken]);
+
     const loadChatHistory = async (user1Id, user1Type, user2Id, user2Type) => {
+        console.log('authToken en loadChatHistory (Client):', authToken);
         if (authToken) {
             try {
                 const response = await fetch(
-                    `/api/chat/history?user1Id=${user1Id}&user1Type=${user1Type}&user2Id=${user2Id}&user2Type=${user2Type}`,
+                    `http://localhost:8080/api/chat/history?user1Id=${user1Id}&user1Type=${user1Type}&user2Id=${user2Id}&user2Type=${user2Type}`,
                     {
                         headers: {
                             Authorization: `Bearer ${authToken}`,
@@ -50,12 +57,13 @@ function ClientChat() {
                 );
                 if (response.ok) {
                     const history = await response.json();
+                    console.log('Historial cargado (Client):', history);
                     setMessages(history);
                 } else {
-                    console.error('Error al cargar el historial del chat:', response.status);
+                    console.error('Error al cargar el historial del chat (Client):', response.status);
                 }
             } catch (error) {
-                console.error('Error al cargar el historial del chat:', error);
+                console.error('Error al cargar el historial del chat (Client):', error);
             }
         }
     };
@@ -96,8 +104,6 @@ function ClientChat() {
     }, [messages]);
 
     const handleSendMessage = () => {
-        console.log("handleSendMessage Cliente activado");
-        console.log("Valores en handleSendMessage Cliente:", { workerId, customerId, newMessage, websocketReady: websocket.current?.readyState });
         if (newMessage.trim() && websocket.current && websocket.current.readyState === WebSocket.OPEN && workerId && customerId) {
             const messagePayload = JSON.stringify({
                 senderId: customerId,
@@ -106,7 +112,6 @@ function ClientChat() {
                 receiverType: 'worker',
                 message: newMessage,
             });
-            console.log("Payload del mensaje desde cliente:", messagePayload);
             websocket.current.send(messagePayload);
             setNewMessage('');
         }
@@ -120,14 +125,24 @@ function ClientChat() {
                     className="mb-3"
                     style={{ maxHeight: '300px', overflowY: 'auto', border: '1px solid #ccc', padding: '10px' }}
                 >
-                    {messages.map((msg, index) => (
-                        <div
-                            key={index}
-                            className={`alert ${msg.senderType === 'customer' ? 'alert-info text-end' : 'alert-secondary'} m-1`}
-                        >
-                            <strong>{msg.senderType === 'customer' ? 'Cliente' : 'Trabajador'}:</strong> {msg.message}
-                        </div>
-                    ))}
+                    <ListGroup>
+                        {messages.map((msg, index) => (
+                            <ListGroup.Item
+                                key={index}
+                                className={`d-flex justify-content-${msg.senderType === 'customer' ? 'end' : 'start'} align-items-start border-0 mb-1`}
+                            >
+                                <div
+                                    className={`${msg.senderType === 'customer' ? 'bg-info text-white' : 'bg-light text-dark'} p-2 rounded`}
+                                    style={{ maxWidth: '70%' }}
+                                >
+                                    <small className="fw-bold">
+                                        {msg.senderType === 'customer' ? 'Tú' : 'Trabajador'}
+                                    </small>
+                                    <p className="mb-0">{msg.message}</p>
+                                </div>
+                            </ListGroup.Item>
+                        ))}
+                    </ListGroup>
                 </div>
                 <Form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }}>
                     <Form.Group className="mb-3">

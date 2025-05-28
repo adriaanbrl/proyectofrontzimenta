@@ -7,7 +7,7 @@ import { jwtDecode } from 'jwt-decode';
 import UploadImageModal from './UploadImageModal';
 import BuildingIncidentsSection from './BuildingIncidentsSection';
 
-import ProfileImage from './ProfileImage';
+
 import EventDayModal from './EventDayModal';
 import LegalDocumentModal from './LegalDocumentModal';
 import InvoiceUploadModal from './InvoiceUploadModal';
@@ -172,7 +172,7 @@ const WorkerView = () => {
                     <h2 className="mb-0 text fw-bold">{workerName}</h2>
                     <p className="mb-0 text fw-bold">ROL: {workerRole}</p>
                 </div>
-                <ProfileImage imageUrl={workerImage} onImageChange={handleImageChange} />
+
             </div>
 
             <h4 className="mb-3 text-custom fw-bold">CONSTRUCCIONES ASOCIADAS:</h4>

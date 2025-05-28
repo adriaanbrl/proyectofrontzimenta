@@ -1,39 +1,39 @@
-// ClientChat.js
+// WorkerChat.js
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, Form, Button } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
-function ClientChat() {
+function WorkerChat() {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const chatContainerRef = useRef(null);
     const websocket = useRef(null);
     const location = useLocation();
+    const [contactId, setContactId] = useState(null);
     const [workerId, setWorkerId] = useState(null);
-    const [customerId, setCustomerId] = useState(null);
     const [authToken, setAuthToken] = useState(null);
 
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
-        setWorkerId(queryParams.get('workerId'));
+        setContactId(queryParams.get('contactId'));
 
-        const fetchCustomerIdAndHistory = async () => {
+        const fetchWorkerIdAndHistory = async () => {
             const token = localStorage.getItem("authToken");
             if (token) {
                 try {
                     const decodedToken = jwtDecode(token);
-                    setCustomerId(decodedToken.id);
+                    setWorkerId(decodedToken.id);
                     setAuthToken(token);
-                    if (workerId && decodedToken.id) {
-                        await loadChatHistory(decodedToken.id, 'customer', parseInt(workerId), 'worker');
+                    if (contactId && decodedToken.id) {
+                        await loadChatHistory(decodedToken.id, 'worker', parseInt(contactId), 'customer');
                     }
                 } catch (decodeError) {
                     console.error("Error decoding token:", decodeError);
                 }
             }
         };
-        fetchCustomerIdAndHistory();
+        fetchWorkerIdAndHistory();
     }, [location.search]);
 
     const loadChatHistory = async (user1Id, user1Type, user2Id, user2Type) => {
@@ -96,12 +96,12 @@ function ClientChat() {
     }, [messages]);
 
     const handleSendMessage = () => {
-        if (newMessage.trim() && websocket.current && websocket.current.readyState === WebSocket.OPEN && workerId && customerId) {
+        if (newMessage.trim() && websocket.current && websocket.current.readyState === WebSocket.OPEN && contactId && workerId) {
             const messagePayload = JSON.stringify({
-                senderId: customerId,
-                receiverId: parseInt(workerId),
-                senderType: 'customer',
-                receiverType: 'worker',
+                senderId: workerId,
+                receiverId: parseInt(contactId),
+                senderType: 'worker',
+                receiverType: 'customer',
                 message: newMessage,
             });
             websocket.current.send(messagePayload);
@@ -120,9 +120,9 @@ function ClientChat() {
                     {messages.map((msg, index) => (
                         <div
                             key={index}
-                            className={`alert ${msg.senderType === 'customer' ? 'alert-info text-end' : 'alert-secondary'} m-1`}
+                            className={`alert ${msg.senderType === 'worker' ? 'alert-info text-end' : 'alert-secondary'} m-1`}
                         >
-                            <strong>{msg.senderType === 'customer' ? 'Cliente' : 'Trabajador'}:</strong> {msg.text}
+                            <strong>{msg.senderType === 'worker' ? 'Trabajador' : 'Cliente'}:</strong> {msg.text}
                         </div>
                     ))}
                 </div>
@@ -142,4 +142,4 @@ function ClientChat() {
     );
 }
 
-export default ClientChat;
+export default WorkerChat;

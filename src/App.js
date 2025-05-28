@@ -27,6 +27,7 @@ import AdminLayout from "./components/admin/AdminLayout.js";
 import WorkerLayout from "./components/worker/WorkerLayout.js";
 import WorkerContactList from "./components/worker/WorkerContactList.js";
 import WorkerDataList from "./components/worker/WorkerDataList.js";
+import WorkerChat from "./components/worker/WorkerChat.js";
 
 
 function App() {
@@ -70,6 +71,7 @@ function App() {
           <Route element={<WorkerLayout />}>
             <Route path="/trabajador" element={<Worker />} />
             <Route path="/listaChat" element={<WorkerContactList />} />
+            <Route path="/chatTrabajador" element={<WorkerChat />} />
             <Route path="/workerDataList" element={<WorkerDataList />} />
           </Route>
         </Routes>

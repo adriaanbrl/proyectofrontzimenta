@@ -119,7 +119,7 @@ function WorkerContactList() {
   }
 
   const handleChatClick = (contactId) => {
-    navigate(`/chat?contactId=${contactId}`);
+    navigate(`/chatTrabajador?contactId=${contactId}`);
   };
 
   return (

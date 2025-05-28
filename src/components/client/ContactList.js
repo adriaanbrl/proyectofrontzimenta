@@ -62,7 +62,7 @@ function ContactList() {
       try {
         console.log(`Fetching workers for building ID: ${buildingId}`);
         const response = await fetch(
-          `http://localhost:8080/api/buildings/${buildingId}/workers`,
+            `http://localhost:8080/auth/worker/buildings/${buildingId}/workersInBuilding`,
           {
             headers: {
               Authorization: `Bearer ${authToken}`,

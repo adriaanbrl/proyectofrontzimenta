@@ -1,8 +1,10 @@
-// WorkerChat.js
 import React, { useState, useEffect, useRef } from 'react';
-import { Card, Form, Button, ListGroup } from 'react-bootstrap';
+import { Card, Form, Button, ListGroup, InputGroup } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import { BsSendFill } from 'react-icons/bs'; // Importar el icono de envío
+import moment from 'moment';
+import 'moment/locale/es';
 
 function WorkerChat() {
     const [messages, setMessages] = useState([]);
@@ -13,11 +15,16 @@ function WorkerChat() {
     const [contactId, setContactId] = useState(null);
     const [workerId, setWorkerId] = useState(null);
     const [authToken, setAuthToken] = useState(null);
+    const [contactName, setContactName] = useState(""); // Para el título
 
     useEffect(() => {
         console.log('useEffect con location.search ejecutado (Worker)');
         const queryParams = new URLSearchParams(location.search);
         setContactId(queryParams.get('contactId'));
+        const fetchedContactName = queryParams.get('contactName');
+        if (fetchedContactName) {
+            setContactName(fetchedContactName);
+        }
 
         const fetchWorkerIdAndHistory = async () => {
             const token = localStorage.getItem("authToken");
@@ -118,42 +125,72 @@ function WorkerChat() {
     };
 
     return (
-        <Card>
-            <Card.Body>
+        <Card className="shadow-sm w-100 h-100">
+            <Card.Header className="bg-light">
+                <div className="header-section d-flex align-items-center justify-content-center mb-4">
+                    <h1 className=" flex-grow-1 text-title text-center mb-5 fw-bold fs-2 mt-5">
+                        Chat con {contactName || "Cliente"}
+                    </h1>
+                </div>
+            </Card.Header>
+            <Card.Body className="d-flex flex-column">
                 <div
                     ref={chatContainerRef}
-                    className="mb-3"
-                    style={{ maxHeight: '300px', overflowY: 'auto', border: '1px solid #ccc', padding: '10px' }}
+                    className="mb-3 flex-grow-1 overflow-auto p-3"
+                    style={{
+                        border: "1px solid #e0e0e0",
+                        borderRadius: "5px",
+                        maxHeight: "400px",
+                    }}
                 >
-                    <ListGroup>
+                    <ListGroup className="list-unstyled">
                         {messages.map((msg, index) => (
-                            <ListGroup.Item
+                            <li
                                 key={index}
-                                className={`d-flex justify-content-${msg.senderType === 'worker' ? 'end' : 'start'} align-items-start border-0 mb-1`}
+                                className={`d-flex justify-content-${
+                                    msg.senderType === 'worker' ? 'end' : 'start'
+                                } mb-2 align-items-end`}
                             >
+                                {msg.senderType === 'worker' && msg.timestamp && (
+                                    <small className="text-muted mr-2">{moment(msg.timestamp).locale('es').format('LT')}</small>
+                                )}
                                 <div
-                                    className={`${msg.senderType === 'worker' ? 'bg-info text-white' : 'bg-light text-dark'} p-2 rounded`}
-                                    style={{ maxWidth: '70%' }}
+                                    className={`${
+                                        msg.senderType === 'worker'
+                                            ? 'bg-warning text-white'
+                                            : 'bg-light text-dark'
+                                    } p-2 rounded ${msg.senderType === 'worker' ? 'ml-2' : 'mr-2'}`}
+                                    style={{ maxWidth: '70%', wordBreak: 'break-word' }}
                                 >
-                                    <small className="fw-bold">
-                                        {msg.senderType === 'worker' ? 'Tú' : 'Cliente'}
+                                    <small className="text-muted">
+                                        {msg.senderType === 'worker' ? 'Tú' : contactName || 'Cliente'}
                                     </small>
                                     <p className="mb-0">{msg.message}</p>
                                 </div>
-                            </ListGroup.Item>
+                                {msg.senderType !== 'worker' && msg.timestamp && (
+                                    <small className="text-muted ml-2">{moment(msg.timestamp).locale('es').format('LT')}</small>
+                                )}
+                            </li>
                         ))}
                     </ListGroup>
                 </div>
-                <Form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }}>
-                    <Form.Group className="mb-3">
+                <Form
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        handleSendMessage();
+                    }}
+                >
+                    <InputGroup>
                         <Form.Control
                             type="text"
                             placeholder="Escribe un mensaje..."
                             value={newMessage}
                             onChange={(e) => setNewMessage(e.target.value)}
                         />
-                    </Form.Group>
-                    <Button variant="info" type="submit">Enviar</Button>
+                        <Button variant="primary" type="submit">
+                            Enviar
+                        </Button>
+                    </InputGroup>
                 </Form>
             </Card.Body>
         </Card>

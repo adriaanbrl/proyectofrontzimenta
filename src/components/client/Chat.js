@@ -65,7 +65,7 @@ function ClientChat() {
             websocket.current = new WebSocket('http://localhost:8080/chat');
 
             websocket.current.onopen = () => {
-                console.log('Conexión WebSocket establecida.');
+                console.log('Conexión WebSocket establecida (Client).');
             };
 
             websocket.current.onmessage = (event) => {
@@ -74,11 +74,11 @@ function ClientChat() {
             };
 
             websocket.current.onclose = () => {
-                console.log('Conexión WebSocket cerrada.');
+                console.log('Conexión WebSocket cerrada (Client).');
             };
 
             websocket.current.onerror = (error) => {
-                console.error('Error en la conexión WebSocket:', error);
+                console.error('Error en la conexión WebSocket (Client):', error);
             };
 
             return () => {
@@ -96,6 +96,8 @@ function ClientChat() {
     }, [messages]);
 
     const handleSendMessage = () => {
+        console.log("handleSendMessage Cliente activado");
+        console.log("Valores en handleSendMessage Cliente:", { workerId, customerId, newMessage, websocketReady: websocket.current?.readyState });
         if (newMessage.trim() && websocket.current && websocket.current.readyState === WebSocket.OPEN && workerId && customerId) {
             const messagePayload = JSON.stringify({
                 senderId: customerId,
@@ -104,6 +106,7 @@ function ClientChat() {
                 receiverType: 'worker',
                 message: newMessage,
             });
+            console.log("Payload del mensaje desde cliente:", messagePayload);
             websocket.current.send(messagePayload);
             setNewMessage('');
         }
@@ -122,7 +125,7 @@ function ClientChat() {
                             key={index}
                             className={`alert ${msg.senderType === 'customer' ? 'alert-info text-end' : 'alert-secondary'} m-1`}
                         >
-                            <strong>{msg.senderType === 'customer' ? 'Cliente' : 'Trabajador'}:</strong> {msg.text}
+                            <strong>{msg.senderType === 'customer' ? 'Cliente' : 'Trabajador'}:</strong> {msg.message}
                         </div>
                     ))}
                 </div>

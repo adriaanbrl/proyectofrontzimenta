@@ -65,7 +65,7 @@ function WorkerChat() {
             websocket.current = new WebSocket('http://localhost:8080/chat');
 
             websocket.current.onopen = () => {
-                console.log('Conexión WebSocket establecida.');
+                console.log('Conexión WebSocket establecida (Worker).');
             };
 
             websocket.current.onmessage = (event) => {
@@ -74,11 +74,11 @@ function WorkerChat() {
             };
 
             websocket.current.onclose = () => {
-                console.log('Conexión WebSocket cerrada.');
+                console.log('Conexión WebSocket cerrada (Worker).');
             };
 
             websocket.current.onerror = (error) => {
-                console.error('Error en la conexión WebSocket:', error);
+                console.error('Error en la conexión WebSocket (Worker):', error);
             };
 
             return () => {
@@ -122,7 +122,7 @@ function WorkerChat() {
                             key={index}
                             className={`alert ${msg.senderType === 'worker' ? 'alert-info text-end' : 'alert-secondary'} m-1`}
                         >
-                            <strong>{msg.senderType === 'worker' ? 'Trabajador' : 'Cliente'}:</strong> {msg.text}
+                            <strong>{msg.senderType === 'worker' ? 'Trabajador' : 'Cliente'}:</strong> {msg.message}
                         </div>
                     ))}
                 </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-    Container, Card, Button, Accordion, Spinner, Alert, Modal, Form
+    Container, Card, Button, Accordion, Spinner, Alert, Modal, Form, Row, Col
 } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -11,6 +11,8 @@ import InvoiceDeleteConfirmModal from './InvoiceDeleteConfirmModal';
 import PdfViewerModal from './PdfViewerModal';
 import LegalDocumentEditModal from './LegalDocumentEditModal';
 import LegalDocumentDeleteConfirmModal from './LegalDocumentDeleteConfirmModal';
+import EstanciasList from './EstanciasList';
+import CategoriasList from './CategoriasList';
 
 const formatDate = (dateString) => {
     if (!dateString) return '';
@@ -61,6 +63,7 @@ const WorkerDataList = () => {
 
     const [activeAccordionKey, setActiveAccordionKey] = useState(null);
     const [activeInnerAccordionKey, setActiveInnerAccordionKey] = useState({});
+    const [activeAuxAccordionKey, setActiveAuxAccordionKey] = useState(null); // New state for Estancias and Categorias
 
     const [showEventModal, setShowEventModal] = useState(false);
     const [currentEvent, setCurrentEvent] = useState(null);
@@ -98,11 +101,16 @@ const WorkerDataList = () => {
             if (!invoicesByBuilding[buildingId] || invoicesByBuilding[buildingId].length === 0 || errorInvoices[buildingId]) {
                 fetchInvoicesForBuilding(buildingId);
             }
-        } else if (innerEventKey === "legal-documentation-section") { // NUEVO
+        } else if (innerEventKey === "legal-documentation-section") {
             if (!legalDocumentsByBuilding[buildingId] || legalDocumentsByBuilding[buildingId].length === 0 || errorLegalDocuments[buildingId]) {
                 fetchLegalDocumentsForBuilding(buildingId);
             }
         }
+    };
+
+    // New handler for the Estancias and Categorias accordion
+    const handleAuxAccordionSelect = (eventKey) => {
+        setActiveAuxAccordionKey(activeAuxAccordionKey === eventKey ? null : eventKey);
     };
 
     const handleEditEvent = (event, buildingId) => {
@@ -168,7 +176,6 @@ const WorkerDataList = () => {
         handleLegalDocumentDelete(deletedDocumentId, buildingId);
         setShowDeleteLegalDocModal(false);
     };
-    // FIN NUEVAS FUNCIONES
 
     const handlePdfViewerOpen = async (documentType, id) => {
         await handleViewPdf(documentType, id);
@@ -274,7 +281,7 @@ const WorkerDataList = () => {
                                                                                 variant="outline-info"
                                                                                 size="sm"
                                                                                 className="mb-2 mb-md-0 me-md-2"
-                                                                                onClick={() => handlePdfViewerOpen('invoice', invoice.id)} // Pasar el tipo de documento
+                                                                                onClick={() => handlePdfViewerOpen('invoice', invoice.id)}
                                                                                 disabled={loadingPdf}
                                                                             >
                                                                                 {loadingPdf ? <Spinner animation="border" size="sm" /> : '📄 Ver PDF'}
@@ -373,6 +380,28 @@ const WorkerDataList = () => {
             ) : (
                 <Alert variant="info">No hay construcciones asociadas a este trabajador.</Alert>
             )}
+
+            {/* Nuevas secciones para Estancias y Categorías dentro de un acordeón */}
+            <h4 className="mb-4 mt-5 text-center text-primary">GESTIÓN DE ESTANCIAS Y CATEGORÍAS:</h4>
+            <Accordion activeKey={activeAuxAccordionKey} onSelect={handleAuxAccordionSelect} className="mt-4">
+                <Card className="mb-3 shadow-sm">
+                    <Accordion.Item eventKey="estancias-section">
+                        <Accordion.Header>Estancias</Accordion.Header>
+                        <Accordion.Body>
+                            <EstanciasList />
+                        </Accordion.Body>
+                    </Accordion.Item>
+                </Card>
+
+                <Card className="mb-3 shadow-sm">
+                    <Accordion.Item eventKey="categorias-section">
+                        <Accordion.Header>Categorías</Accordion.Header>
+                        <Accordion.Body>
+                            <CategoriasList />
+                        </Accordion.Body>
+                    </Accordion.Item>
+                </Card>
+            </Accordion>
 
             {currentEvent && (
                 <EventDetailModal

@@ -4,9 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Vista worker">
+    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="historial acabado">
+      <change afterPath="$PROJECT_DIR$/src/components/worker/CategoriasList.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/worker/EstanciaDeleteConfirmModal.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/worker/EstanciaEditModal.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/worker/EstanciasList.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/client/ProfileElements/Historic.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/ProfileElements/Historic.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/worker/WorkerDataList.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/worker/WorkerDataList.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -277,15 +281,7 @@
       <workItem from="1748369184412" duration="385000" />
       <workItem from="1748413101609" duration="7759000" />
       <workItem from="1748454357452" duration="2088000" />
-      <workItem from="1748500499004" duration="7275000" />
-    </task>
-    <task id="LOCAL-00047" summary="Front chat finiquitado">
-      <option name="closed" value="true" />
-      <created>1747653383828</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
-      <option name="project" value="LOCAL" />
-      <updated>1747653383828</updated>
+      <workItem from="1748500499004" duration="9705000" />
     </task>
     <task id="LOCAL-00048" summary="Vista worker y admin">
       <option name="closed" value="true" />
@@ -671,7 +667,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748513305152</updated>
     </task>
-    <option name="localTasksCounter" value="96" />
+    <task id="LOCAL-00096" summary="historial acabado">
+      <option name="closed" value="true" />
+      <created>1748515239111</created>
+      <option name="number" value="00096" />
+      <option name="presentableId" value="LOCAL-00096" />
+      <option name="project" value="LOCAL" />
+      <updated>1748515239112</updated>
+    </task>
+    <option name="localTasksCounter" value="97" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -701,7 +705,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="LegDoc finalizado" />
     <MESSAGE value="Global view actualizado" />
     <MESSAGE value="Calendario actualizado" />
     <MESSAGE value="Facturas" />
@@ -726,6 +729,7 @@
     <MESSAGE value="admin" />
     <MESSAGE value="Admin 100% funcional" />
     <MESSAGE value="Vista worker" />
-    <option name="LAST_COMMIT_MESSAGE" value="Vista worker" />
+    <MESSAGE value="historial acabado" />
+    <option name="LAST_COMMIT_MESSAGE" value="historial acabado" />
   </component>
 </project>

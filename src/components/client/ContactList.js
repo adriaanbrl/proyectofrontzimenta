@@ -62,7 +62,7 @@ function ContactList() {
       try {
         console.log(`Fetching workers for building ID: ${buildingId}`);
         const response = await fetch(
-            `http://localhost:8080/auth/worker/buildings/${buildingId}/workersInBuilding`,
+          `http://localhost:8080/auth/worker/buildings/${buildingId}/workersInBuilding`,
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
@@ -118,13 +118,18 @@ function ContactList() {
     );
   }
 
-  const handleChatClick = (worker) => { // Recibimos el objeto worker completo
+  const handleChatClick = (worker) => {
+    // Recibimos el objeto worker completo
     navigate(`/chat?workerId=${worker.id}&workerName=${worker.username}`); // Asumiendo que la propiedad del nombre de usuario es 'username'
   };
 
   return (
     <Container className=" p-4  rounded-4 ">
-      {/* ... */}
+      <div className="header-section d-flex align-items-center justify-content-center mb-4">
+        <h1 className=" flex-grow-1 text-title text-center mb-5 fw-bold fs-2 mt-5">
+          Contactos Disponibles
+        </h1>
+      </div>
       <Row className="gy-4">
         {workers.length > 0 ? (
           workers.map((worker) => (
@@ -157,6 +162,5 @@ function ContactList() {
     </Container>
   );
 }
-
 
 export default ContactList;

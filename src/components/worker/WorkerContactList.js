@@ -124,7 +124,11 @@ function WorkerContactList() {
 
   return (
     <Container className=" p-4  rounded-4 ">
-      {/* ... */}
+      <div className="header-section d-flex align-items-center justify-content-center mb-4">
+        <h1 className=" flex-grow-1 text-title text-center mb-5 fw-bold fs-2 mt-5">
+          Contactos Disponibles
+        </h1>
+      </div>
       <Row className="gy-4">
         {contacts.length > 0 ? (
           contacts.map((contact) => (

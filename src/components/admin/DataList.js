@@ -341,14 +341,13 @@ const DataList = () => {
                                     <Col md={6} lg={4} className="mb-4" key={building.id}>
                                         <Card className="shadow-sm">
                                             <Card.Body>
-                                                {/* Display building title if available, otherwise address */}
                                                 <Card.Title className="text-custom">
                                                     {building.title || building.address}
                                                 </Card.Title>
                                                 <Card.Subtitle className="mb-2 text-muted">ID: {building.id}</Card.Subtitle>
                                                 <Card.Text>
                                                     Dirección: {building.address}<br/>
-                                                    Título: {building.title || 'N/A'}<br/> {/* Added title display */}
+                                                    Título: {building.title || 'N/A'}<br/>
                                                     Fecha de Inicio: {building.startDate ? new Date(building.startDate).toLocaleDateString() : 'N/A'}<br/>
                                                     Fecha de Finalización: {building.endDate ? new Date(building.endDate).toLocaleDateString() : 'N/A'}
                                                 </Card.Text>

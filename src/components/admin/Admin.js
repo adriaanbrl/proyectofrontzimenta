@@ -11,15 +11,48 @@ import WorkerRoleAssignment from "./WorkerRoleAssignment";
 import AdminSidebar from './AdminSidebar';
 import { Outlet } from 'react-router-dom';
 
+// Import your default image directly from the same folder
+import defaultAvatar from './perfilPredeterminado.png'; // <--- UPDATED PATH
+
+
 const AdminView = () => {
   const [showCustomerForm, setShowCustomerForm] = useState(false);
   const [showConstructionForm, setShowConstructionForm] = useState(false);
-  const [showWorkerForm, setShowWorkerForm] = useState(false); // This is for creating a new worker
-  const [showWorkerAssigmentForm, setShowWorkerAssigmentForm] = useState(false); // This is for assigning workers to buildings
-  const [showWorkerRoleAssignmentForm, setShowWorkerRoleAssignmentForm] = useState(false); // <--- NEW STATE
+  const [showWorkerForm, setShowWorkerForm] = useState(false);
+  const [showWorkerAssigmentForm, setShowWorkerAssigmentForm] = useState(false);
+  const [showWorkerRoleAssignmentForm, setShowWorkerRoleAssignmentForm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [defaultImageBase64, setDefaultImageBase64] = useState(''); // New state for base64 image
+
+  // Function to convert image to Base64
+  const convertImageToBase64 = async (imageUrl) => {
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      console.error("Error converting image to base64:", error);
+      return null;
+    }
+  };
+
+  // Effect to load the default image as Base64 when the component mounts
+  React.useEffect(() => {
+    const loadImage = async () => {
+      const base64 = await convertImageToBase64(defaultAvatar);
+      if (base64) {
+        setDefaultImageBase64(base64);
+      }
+    };
+    loadImage();
+  }, []); // Run once on component mount
 
   const customerFormik = useFormik({
     initialValues: {
@@ -29,6 +62,8 @@ const AdminView = () => {
       surname: "",
       password: "",
       building_id: "",
+      // Add a field for the image data
+      profile_image: "", // This will store the Base64 string
     },
     validationSchema: Yup.object({
       email: Yup.string().email("Correo electrónico inválido").required("El correo electrónico es obligatorio."),
@@ -37,6 +72,7 @@ const AdminView = () => {
       surname: Yup.string().required("El apellido es obligatorio."),
       password: Yup.string().min(6, "La contraseña debe tener al menos 6 caracteres.").required("La contraseña es obligatoria."),
       building_id: Yup.number().nullable().min(1, "El ID del edificio debe ser un número positivo."),
+      // No validation needed for profile_image if it's always default
     }),
     onSubmit: async (values) => {
       setLoading(true);
@@ -50,7 +86,13 @@ const AdminView = () => {
           return;
         }
 
-        const response = await axios.post("http://localhost:8080/auth/register/client", values, {
+        // Prepare the data to send, including the default image
+        const dataToSend = {
+          ...values,
+          profile_image: defaultImageBase64, // Assign the Base64 string here
+        };
+
+        const response = await axios.post("http://localhost:8080/auth/register/client", dataToSend, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -72,17 +114,16 @@ const AdminView = () => {
     },
   });
 
-  // Construction Formik (updated to include 'title')
   const constructionFormik = useFormik({
     initialValues: {
       address: "",
       endDate: "",
-      title: "", // ADDED: New field for title
+      title: "",
     },
     validationSchema: Yup.object({
       address: Yup.string().required("La dirección es obligatoria."),
       endDate: Yup.date().required("La fecha de fin estimada es obligatoria.").nullable(),
-      title: Yup.string().required("El título es obligatorio."), // ADDED: Validation for title
+      title: Yup.string().required("El título es obligatorio."),
     }),
     onSubmit: async (values) => {
       setLoading(true);
@@ -119,7 +160,6 @@ const AdminView = () => {
     },
   });
 
-  // Worker Assignment (to building) Formik (renamed and unchanged logic)
   const workerAssigmentFormik = useFormik({
     initialValues: {
       buildingId: "",
@@ -185,7 +225,6 @@ const AdminView = () => {
     },
   });
 
-  // Worker Creation Formik (unchanged logic)
   const workerFormik = useFormik({
     initialValues: {
       name: "",
@@ -236,7 +275,6 @@ const AdminView = () => {
     },
   });
 
-  // <--- NEW FORMIK FOR WORKER ROLE ASSIGNMENT
   const workerRoleAssignmentFormik = useFormik({
     initialValues: {
       workerId: "",
@@ -262,10 +300,9 @@ const AdminView = () => {
         const workerId = parseInt(values.workerId, 10);
         const roleId = parseInt(values.roleId, 10);
 
-        // --- CORRECTED BACKEND ENDPOINT FOR ROLE ASSIGNMENT ---
         const response = await axios.post(
-            `http://localhost:8080/api/assignments/worker/${workerId}/role/${roleId}`, // <--- THIS LINE WAS CHANGED
-            {}, // No body needed for this type of assignment
+            `http://localhost:8080/api/assignments/worker/${workerId}/role/${roleId}`,
+            {},
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -297,22 +334,20 @@ const AdminView = () => {
       }
     },
   });
-  // NEW FORMIK FOR WORKER ROLE ASSIGNMENT --->
-
 
   const hideAllForms = () => {
     setShowCustomerForm(false);
     setShowConstructionForm(false);
     setShowWorkerForm(false);
-    setShowWorkerAssigmentForm(false); // Renamed from showFourthForm
-    setShowWorkerRoleAssignmentForm(false); // <--- NEW
+    setShowWorkerAssigmentForm(false);
+    setShowWorkerRoleAssignmentForm(false);
     setSuccessMessage("");
     setErrorMessage("");
     customerFormik.resetForm();
     constructionFormik.resetForm();
     workerFormik.resetForm();
     workerAssigmentFormik.resetForm();
-    workerRoleAssignmentFormik.resetForm(); // <--- NEW
+    workerRoleAssignmentFormik.resetForm();
   };
 
   return (
@@ -383,7 +418,6 @@ const AdminView = () => {
                     Asignar Trabajador
                   </Button>
                 </Col>
-                {/* <--- NEW BUTTON */}
                 <Col xs={6} className="mb-2">
                   <Button
                       variant={showWorkerRoleAssignmentForm ? "btn-custom" : "btn-outline-custom"}
@@ -396,7 +430,6 @@ const AdminView = () => {
                     Asignar Rol a Trabajador
                   </Button>
                 </Col>
-                {/* NEW BUTTON ---> */}
               </Row>
 
               {successMessage && <p className="text-success">{successMessage}</p>}
@@ -564,7 +597,7 @@ const AdminView = () => {
                   <WorkerRol
                       formik={workerFormik}
                       loading={loading}
-                      setLoading={setLoading} // Pass setLoading
+                      setLoading={setLoading}
                       successMessage={successMessage}
                       setSuccessMessage={setSuccessMessage}
                       errorMessage={errorMessage}
@@ -601,7 +634,7 @@ const AdminView = () => {
                           </Form.Group>
                         </Col>
                         <Col md={6}>
-                          <Form.Group controlId="title"> {/* ADDED: Form Group for Title */}
+                          <Form.Group controlId="title">
                             <Form.Label className="fw-bold">Título</Form.Label>
                             <Form.Control
                                 type="text"
@@ -622,7 +655,7 @@ const AdminView = () => {
                           </Form.Group>
                         </Col>
                       </Row>
-                      <Row className="mb-3"> {/* New Row for endDate for better layout */}
+                      <Row className="mb-3">
                         <Col md={6}>
                           <Form.Group controlId="endDate">
                             <Form.Label className="fw-bold">
@@ -670,7 +703,6 @@ const AdminView = () => {
                       setErrorMessage={setErrorMessage}
                   />
               )}
-
 
               {showWorkerRoleAssignmentForm && (
                   <WorkerRoleAssignment

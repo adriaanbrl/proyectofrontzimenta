@@ -10,8 +10,11 @@ import {
   Modal,
 } from "react-bootstrap";
 
-// Importa una imagen predefinida para los planos (reemplaza con tu imagen)
+// Importa una imagen predefinida para los planos.
+// IMPORTANTE: Para que './planos.jpg' funcione, 'planos.jpg' DEBE estar en el
+// MISMO DIRECTORIO que este archivo ClientGallery.jsx.
 import planPlaceholderImage from "./planos.jpg";
+
 
 function ClientGallery() {
   const [groupedImages, setGroupedImages] = useState({});
@@ -24,9 +27,9 @@ function ClientGallery() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [buildingPlanUrl, setBuildingPlanUrl] = useState(null);
-  const [loadingPlan, setLoadingPlan] = useState(true);
+  const [loadingPlan, setLoadingPlan] = useState(true); // Se mantiene true para la carga inicial
   const [errorPlan, setErrorPlan] = useState(null);
-  const [showPlanModal, setShowPlanModal] = useState(false);
+  // const [showPlanModal, setShowPlanModal] = useState(false); // Este estado no se usa en el código proporcionado, lo mantengo comentado.
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
@@ -74,14 +77,14 @@ function ClientGallery() {
                 images: [],
               };
             }
-            acc[roomId].images.push(image);
+            acc[roomId].images.push(image); // Asume que 'image' ahora contiene 'imageBase64' sin prefijo
             return acc;
           }, {});
           setGroupedImages(grouped);
         } catch (error) {
           console.error(
-            `Error fetching imágenes del edificio ${buildingIdFromToken}:`,
-            error
+              `Error fetching imágenes del edificio ${buildingIdFromToken}:`,
+              error
           );
           setErrorImages("Error al cargar las imágenes.");
           setGroupedImages({});
@@ -110,33 +113,19 @@ function ClientGallery() {
           });
 
           if (response.ok) {
-            // No necesitamos el blob, solo la URL para abrir el PDF en una nueva pestaña
-            const contentDisposition = response.headers.get(
-              "Content-Disposition"
-            );
-            if (
-              contentDisposition &&
-              contentDisposition.includes("filename=")
-            ) {
-              // No podemos obtener la URL directa del blob con fetch,
-              // la mejor opción es abrir una nueva ventana con la URL de la API.
-              setBuildingPlanUrl(url);
-            } else {
-              // Si no hay filename, también podemos intentar abrir la URL directamente
-              setBuildingPlanUrl(url);
-            }
+            setBuildingPlanUrl(url); // Si hay plano, guarda la URL
           } else if (response.status === 404) {
-            setBuildingPlanUrl(null);
+            setBuildingPlanUrl(null); // Si no hay plano (404), establece a null
           } else {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
         } catch (error) {
           console.error(
-            `Error fetching URL del plano del edificio ${buildingIdFromToken}:`,
-            error
+              `Error fetching URL del plano del edificio ${buildingIdFromToken}:`,
+              error
           );
           setErrorPlan("Error al obtener la URL del plano.");
-          setBuildingPlanUrl(null);
+          setBuildingPlanUrl(null); // Si hay otro error, también establece a null
         } finally {
           setLoadingPlan(false);
         }
@@ -144,11 +133,11 @@ function ClientGallery() {
     };
 
     fetchBuildingPlanUrl();
-  }, [buildingIdFromToken]);
+  }, [buildingIdFromToken]); // Dependencia: buildingIdFromToken
 
   const toggleRoomExpansion = (roomId) => {
     setExpandedRoom((prevExpandedRoom) =>
-      prevExpandedRoom === roomId ? null : roomId
+        prevExpandedRoom === roomId ? null : roomId
     );
     setSelectedImage(null);
   };
@@ -189,8 +178,8 @@ function ClientGallery() {
         }
       } catch (error) {
         console.error(
-          `Error fetching plano del edificio ${buildingIdFromToken}:`,
-          error
+            `Error fetching plano del edificio ${buildingIdFromToken}:`,
+            error
         );
         setErrorPlan("Error al cargar el plano.");
         setBuildingPlanUrl(null);
@@ -200,138 +189,142 @@ function ClientGallery() {
     }
   };
 
-  const lastRoomId =
-    Object.keys(groupedImages)[Object.keys(groupedImages).length - 1];
+  // lastRoomId no se usa directamente en el renderizado condicional de la card del plano,
+  // pero se mantiene si se usa en otras partes de tu lógica.
+  // const lastRoomId = Object.keys(groupedImages)[Object.keys(groupedImages).length - 1];
 
   return (
-    <Container className="client-gallery-container">
-      <h1
-        className="text-center mb-5 mt-5 fw-bold fs-2"
-        style={{ color: "#f5922c" }}
-      >
-        Galería de Imágenes
-      </h1>
-      {loadingBuildingId && (
-        <p className="loading-message">Cargando ID del edificio...</p>
-      )}
-      {errorBuildingId && <p className="error-message">{errorBuildingId}</p>}
-      {loadingImages && !errorImages && (
-        <p className="loading-message">Cargando imágenes...</p>
-      )}
-      {errorImages && <p className="error-message">{errorImages}</p>}
-      {!loadingBuildingId &&
-      !errorBuildingId &&
-      !loadingImages &&
-      !errorImages &&
-      Object.keys(groupedImages).length > 0 ? (
-        <Row xs={1} md={2} lg={3} className="g-4 room-cards-grid">
-          {Object.entries(groupedImages).map(([roomId, roomData]) => (
-            <Col key={roomId}>
-              <Card>
-                <Card.Header
-                  onClick={() => toggleRoomExpansion(roomId)}
-                  style={{ cursor: "pointer" }}
-                >
-                  {roomData.images[0]?.imageBase64 && (
-                    <div
-                      className="card-image-container"
-                      style={{
-                        backgroundImage: `url(${roomData.images[0].imageBase64})`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        height: "150px",
-                        marginBottom: "10px",
-                      }}
-                    ></div>
-                  )}
-                  <div className="card-info">
-                    <Card.Title>{roomData.name}</Card.Title>
-                    <Card.Subtitle className="mb-2 text-muted">
-                      {roomData.images.length} imágenes
-                    </Card.Subtitle>
-                  </div>
-                </Card.Header>
-                {expandedRoom === roomId && (
-                  <Card.Body className={`image-panel expanded`}>
-                    <div className="d-flex flex-wrap gap-2">
-                      {roomData.images.map((image) => (
-                        <Image
-                          key={image.id}
-                          src={image.imageBase64}
-                          alt={image.title || "Imagen"}
-                          className="panel-image"
-                          style={{
-                            width: "100px",
-                            height: "100px",
-                            objectFit: "cover",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => handleImageClick(image)}
-                        />
-                      ))}
-                    </div>
-                  </Card.Body>
-                )}
-              </Card>
-              {roomId === lastRoomId && (
-                <Card
-                  className="mt-3"
-                  style={{ cursor: "pointer" }}
-                  onClick={handlePlanClick}
-                >
-                  <Card.Img
-                    variant="top"
-                    src={planPlaceholderImage}
-                    style={{ height: "150px", objectFit: "cover" }}
-                  />
-                  <Card.Body className="text-center">
-                    <Card.Title>Ver Plano del Edificio</Card.Title>
-                    {loadingPlan && (
-                      <Card.Text className="text-muted">Cargando...</Card.Text>
-                    )}
-                    {errorPlan && (
-                      <Card.Text className="text-danger">{errorPlan}</Card.Text>
-                    )}
-                    {!loadingPlan && !errorPlan && !buildingPlanUrl && (
-                      <Card.Text className="text-muted">
-                        No disponible
-                      </Card.Text>
-                    )}
-                  </Card.Body>
-                </Card>
-              )}
-            </Col>
-          ))}
-        </Row>
-      ) : (
-        !loadingBuildingId &&
+      <Container className="client-gallery-container">
+        <h1
+            className="text-center mb-5 mt-5 fw-bold fs-2"
+            style={{ color: "#f5922c" }}
+        >
+          Galería de Imágenes
+        </h1>
+        {loadingBuildingId && (
+            <p className="loading-message">Cargando ID del edificio...</p>
+        )}
+        {errorBuildingId && <p className="error-message">{errorBuildingId}</p>}
+        {loadingImages && !errorImages && (
+            <p className="loading-message">Cargando imágenes...</p>
+        )}
+        {errorImages && <p className="error-message">{errorImages}</p>}
+        {!loadingBuildingId &&
         !errorBuildingId &&
         !loadingImages &&
-        !errorImages && (
-          <p className="no-images">No hay imágenes para este edificio.</p>
-        )
-      )}
-      {!loadingBuildingId && !errorBuildingId && !buildingIdFromToken && (
-        <p className="no-id">ID del edificio no disponible.</p>
-      )}
+        !errorImages &&
+        Object.keys(groupedImages).length > 0 ? (
+            <Row xs={1} md={2} lg={3} className="g-4 room-cards-grid">
+              {Object.entries(groupedImages).map(([roomId, roomData]) => (
+                  <Col key={roomId}>
+                    <Card>
+                      <Card.Header
+                          onClick={() => toggleRoomExpansion(roomId)}
+                          style={{ cursor: "pointer" }}
+                      >
+                        {roomData.images[0]?.imageBase64 && (
+                            <div
+                                className="card-image-container"
+                                style={{
+                                  // AÑADIDO EL PREFIJO data:image/jpeg;base64,
+                                  backgroundImage: `url(data:image/jpeg;base64,${roomData.images[0].imageBase64})`,
+                                  backgroundSize: "cover",
+                                  backgroundPosition: "center",
+                                  height: "150px",
+                                  marginBottom: "10px",
+                                }}
+                            ></div>
+                        )}
+                        <div className="card-info">
+                          <Card.Title>{roomData.name}</Card.Title>
+                          <Card.Subtitle className="mb-2 text-muted">
+                            {roomData.images.length} imágenes
+                          </Card.Subtitle>
+                        </div>
+                      </Card.Header>
+                      {expandedRoom === roomId && (
+                          <Card.Body className={`image-panel expanded`}>
+                            <div className="d-flex flex-wrap gap-2">
+                              {roomData.images.map((image) => (
+                                  <Image
+                                      key={image.id}
+                                      // AÑADIDO EL PREFIJO data:image/jpeg;base64,
+                                      src={`data:image/jpeg;base64,${image.imageBase64}`}
+                                      alt={image.title || "Imagen"}
+                                      className="panel-image"
+                                      style={{
+                                        width: "100px",
+                                        height: "100px",
+                                        objectFit: "cover",
+                                        cursor: "pointer",
+                                      }}
+                                      onClick={() => handleImageClick(image)}
+                                  />
+                              ))}
+                            </div>
+                          </Card.Body>
+                      )}
+                    </Card>
+                  </Col>
+              ))}
 
-      <Modal show={showModal} onHide={handleCloseModal} centered size="lg">
-        <Modal.Body className="d-flex justify-content-center align-items-center">
-          {selectedImage && (
-            <Image
-              src={selectedImage.imageBase64}
-              alt={selectedImage.title || "Imagen grande"}
-              fluid
-            />
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            Cerrar
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </Container>
+              {/* Building Plan Card - Condicionalmente renderizado */}
+              {(!loadingPlan && buildingPlanUrl) && ( // Solo muestra la card si NO está cargando Y hay una URL de plano
+                  <Col>
+                    <Card
+                        className="h-100 shadow-sm image-card"
+                        style={{ cursor: "pointer" }}
+                        onClick={handlePlanClick}
+                    >
+                      <Card.Img
+                          variant="top"
+                          src={planPlaceholderImage}
+                          style={{ height: "180px", objectFit: "cover" }}
+                      />
+                      <Card.Body className="text-center py-2">
+                        <Card.Title className="mb-0 small">Ver Plano del Edificio</Card.Title>
+                        {loadingPlan && (
+                            <Card.Text className="text-muted">Cargando...</Card.Text>
+                        )}
+                        {errorPlan && (
+                            <Card.Text className="text-danger">{errorPlan}</Card.Text>
+                        )}
+                        {/* Este else ya no es necesario si la card entera se oculta */}
+                      </Card.Body>
+                    </Card>
+                  </Col>
+              )}
+            </Row>
+        ) : (
+            !loadingBuildingId &&
+            !errorBuildingId &&
+            !loadingImages &&
+            !errorImages && (
+                <p className="no-images">No hay imágenes para este edificio.</p>
+            )
+        )}
+        {!loadingBuildingId && !errorBuildingId && !buildingIdFromToken && (
+            <p className="no-id">ID del edificio no disponible.</p>
+        )}
+
+        <Modal show={showModal} onHide={handleCloseModal} centered size="lg">
+          <Modal.Body className="d-flex justify-content-center align-items-center">
+            {selectedImage && (
+                <Image
+                    // AÑADIDO EL PREFIJO data:image/jpeg;base64,
+                    src={`data:image/jpeg;base64,${selectedImage.imageBase64}`}
+                    alt={selectedImage.title || "Imagen grande"}
+                    fluid
+                />
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseModal}>
+              Cerrar
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </Container>
   );
 }
 

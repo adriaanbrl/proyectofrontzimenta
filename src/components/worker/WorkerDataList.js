@@ -1,3 +1,4 @@
+// src/components/WorkerDataList.jsx
 import React, { useState } from 'react';
 import {
     Container, Card, Button, Accordion, Spinner, Alert, Modal, Form, Row, Col
@@ -13,6 +14,7 @@ import LegalDocumentEditModal from './LegalDocumentEditModal';
 import LegalDocumentDeleteConfirmModal from './LegalDocumentDeleteConfirmModal';
 import EstanciasList from './EstanciasList';
 import CategoriasList from './CategoriasList';
+import BuildingImagesList from './BuildingImagesList'; // Import the new component
 
 const formatDate = (dateString) => {
     if (!dateString) return '';
@@ -63,7 +65,7 @@ const WorkerDataList = () => {
 
     const [activeAccordionKey, setActiveAccordionKey] = useState(null);
     const [activeInnerAccordionKey, setActiveInnerAccordionKey] = useState({});
-    const [activeAuxAccordionKey, setActiveAuxAccordionKey] = useState(null); // New state for Estancias and Categorias
+    const [activeAuxAccordionKey, setActiveAuxAccordionKey] = useState(null); // State for Estancias and Categorias
 
     const [showEventModal, setShowEventModal] = useState(false);
     const [currentEvent, setCurrentEvent] = useState(null);
@@ -93,6 +95,7 @@ const WorkerDataList = () => {
             [buildingId]: prev[buildingId] === innerEventKey ? null : innerEventKey
         }));
 
+        // Fetch data based on the selected inner accordion key
         if (innerEventKey === "events-section") {
             if (!eventsByBuilding[buildingId] || eventsByBuilding[buildingId].length === 0 || errorEvents[buildingId]) {
                 fetchEventsForBuilding(buildingId);
@@ -106,9 +109,10 @@ const WorkerDataList = () => {
                 fetchLegalDocumentsForBuilding(buildingId);
             }
         }
+        // No explicit fetch needed for images here, BuildingImagesList fetches its own data
     };
 
-    // New handler for the Estancias and Categorias accordion
+    // Handler for the Estancias and Categorias accordion
     const handleAuxAccordionSelect = (eventKey) => {
         setActiveAuxAccordionKey(activeAuxAccordionKey === eventKey ? null : eventKey);
     };
@@ -254,6 +258,7 @@ const WorkerDataList = () => {
                                             </Accordion.Body>
                                         </Accordion.Item>
 
+                                        {/* Sección de Facturas */}
                                         <Accordion.Item eventKey="invoices-section">
                                             <Accordion.Header>Facturas</Accordion.Header>
                                             <Accordion.Body>
@@ -315,6 +320,7 @@ const WorkerDataList = () => {
                                             </Accordion.Body>
                                         </Accordion.Item>
 
+                                        {/* Sección de Documentación Legal */}
                                         <Accordion.Item eventKey="legal-documentation-section">
                                             <Accordion.Header>Documentación Legal</Accordion.Header>
                                             <Accordion.Body>
@@ -371,6 +377,15 @@ const WorkerDataList = () => {
                                                 )}
                                             </Accordion.Body>
                                         </Accordion.Item>
+
+                                        {/* New Section for Images */}
+                                        <Accordion.Item eventKey="images-section">
+                                            <Accordion.Header>Imágenes</Accordion.Header>
+                                            <Accordion.Body>
+                                                <BuildingImagesList buildingId={construction.id} />
+                                            </Accordion.Body>
+                                        </Accordion.Item>
+
                                     </Accordion>
                                 </Accordion.Body>
                             </Accordion.Item>

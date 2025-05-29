@@ -5,8 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="Vista worker">
+      <change afterPath="$PROJECT_DIR$/src/components/worker/EventDetailModal.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/worker/InvoiceDeleteConfirmModal.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/worker/InvoiceEditModal.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/worker/PdfViewerModal.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/client/ContactList.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/client/ContactList.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -276,6 +279,8 @@
       <workItem from="1748365316874" duration="618000" />
       <workItem from="1748369184412" duration="385000" />
       <workItem from="1748413101609" duration="7759000" />
+      <workItem from="1748454357452" duration="2088000" />
+      <workItem from="1748500499004" duration="1414000" />
     </task>
     <task id="LOCAL-00044" summary="chat">
       <option name="closed" value="true" />

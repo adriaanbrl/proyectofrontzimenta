@@ -1,0 +1,123 @@
+import React, { useState, useEffect } from 'react';
+import { Modal, Button, Form, Spinner, Alert } from 'react-bootstrap';
+import axios from 'axios';
+
+const LegalDocumentEditModal = ({ show, onHide, documentData, onSave, isLoading, error, setLoading, setError }) => {
+    const [formData, setFormData] = useState({
+        title: '',
+        building_id: '',
+        documentBase64: null 
+    });
+
+    useEffect(() => {
+        if (documentData) {
+            setFormData({
+                title: documentData.title || '',
+                building_id: documentData.building_id || '',
+                documentBase64: null 
+            });
+        }
+        setError(null);
+        setLoading(false);
+    }, [documentData, setError, setLoading]);
+
+    const handleChange = (e) => {
+        const { name, value, type, files } = e.target;
+        if (type === 'file' && files && files[0]) {
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFormData(prev => ({
+                    ...prev,
+                    documentBase64: reader.result.split(',')[1] 
+                }));
+            };
+            reader.readAsDataURL(file);
+        } else {
+            setFormData(prev => ({
+                ...prev,
+                [name]: value
+            }));
+        }
+    };
+
+    const handleSubmit = async () => {
+        if (!documentData || !documentData.id) return;
+
+        setLoading(true);
+        setError(null);
+
+        try {
+            const token = localStorage.getItem("authToken");
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+            const payload = {
+                title: formData.title,
+                documentBase64: formData.documentBase64
+            };
+
+            await axios.put(`http://localhost:8080/api/legal_documentation/${documentData.id}`, payload, {
+                headers: {
+                    ...headers,
+                    'Content-Type': 'application/json'
+                }
+            });
+            onSave(documentData.building_id);
+            onHide();
+        } catch (err) {
+            console.error("Error al actualizar el documento legal:", err.response?.data || err.message);
+            setError(err.response?.data?.message || "Error al actualizar el documento legal.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <Modal show={show} onHide={onHide} centered>
+            <Modal.Header closeButton className="bg-primary text-white py-3">
+                <Modal.Title className="fw-bold fs-5">Editar Documento Legal</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                {error && <Alert variant="danger">{error}</Alert>}
+                {documentData && (
+                    <Form>
+                        
+                        <Form.Group className="mb-3">
+                            <Form.Label className="fw-semibold">Título</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="title"
+                                value={formData.title}
+                                onChange={handleChange}
+                                placeholder="Introduce el título del documento"
+                                required
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label className="fw-semibold">Documento PDF</Form.Label>
+                            <Form.Control
+                                type="file"
+                                name="documentFile"
+                                onChange={handleChange}
+                                accept="application/pdf" 
+                            />
+                            <Form.Text className="text-muted">
+                                Selecciona un nuevo PDF para reemplazar el documento actual (opcional).
+                            </Form.Text>
+                        </Form.Group>
+                    </Form>
+                )}
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={onHide} disabled={isLoading}>
+                    Cancelar
+                </Button>
+                <Button variant="primary" onClick={handleSubmit} disabled={isLoading}>
+                    {isLoading ? <Spinner animation="border" size="sm" /> : 'Guardar Cambios'}
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    );
+};
+
+export default LegalDocumentEditModal;

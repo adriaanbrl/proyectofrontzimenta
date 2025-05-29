@@ -16,6 +16,11 @@ const useWorkerData = () => {
     const [loadingInvoices, setLoadingInvoices] = useState({});
     const [errorInvoices, setErrorInvoices] = useState({});
 
+    const [legalDocumentsByBuilding, setLegalDocumentsByBuilding] = useState({});
+    const [loadingLegalDocuments, setLoadingLegalDocuments] = useState({});
+    const [errorLegalDocuments, setErrorLegalDocuments] = useState({});
+
+
     const [currentPdfUrl, setCurrentPdfUrl] = useState(null);
     const [loadingPdf, setLoadingPdf] = useState(false);
     const [pdfError, setPdfError] = useState(null);
@@ -23,6 +28,8 @@ const useWorkerData = () => {
     const [loadingInvoiceAction, setLoadingInvoiceAction] = useState(false);
     const [invoiceActionError, setInvoiceActionError] = useState(null);
 
+    const [loadingLegalDocAction, setLoadingLegalDocAction] = useState(false);
+    const [legalDocActionError, setLegalDocActionError] = useState(null);
 
     const fetchWorkerConstructions = useCallback(async (id, token) => {
         setLoadingConstructions(true);
@@ -40,7 +47,6 @@ const useWorkerData = () => {
         }
     }, []);
 
-    // Función para obtener los eventos de una construcción específica
     const fetchEventsForBuilding = useCallback(async (buildingId) => {
         if (!buildingId) {
             console.warn("fetchEventsForBuilding llamado sin buildingId. Abortando.");
@@ -62,7 +68,6 @@ const useWorkerData = () => {
         }
     }, []);
 
-    // Función para obtener las facturas de una construcción específica
     const fetchInvoicesForBuilding = useCallback(async (buildingId) => {
         if (!buildingId) {
             console.warn("fetchInvoicesForBuilding llamado sin buildingId. Abortando.");
@@ -84,7 +89,30 @@ const useWorkerData = () => {
         }
     }, []);
 
-    const handleViewPdf = useCallback(async (invoiceId) => {
+    const fetchLegalDocumentsForBuilding = useCallback(async (buildingId) => {
+        if (!buildingId) {
+            console.warn("fetchLegalDocumentsForBuilding llamado sin buildingId. Abortando.");
+            setLoadingLegalDocuments(prev => ({ ...prev, [buildingId]: false }));
+            return;
+        }
+        setLoadingLegalDocuments(prev => ({ ...prev, [buildingId]: true }));
+        setErrorLegalDocuments(prev => ({ ...prev, [buildingId]: null }));
+        try {
+            const token = localStorage.getItem("authToken");
+            const headers = token ? { Authorization: `Bearer ${token}` } : {};
+            // Ajusta la URL de la API según tu backend
+            const response = await axios.get(`http://localhost:8080/api/building/${buildingId}/legal_documentation`, { headers });
+            setLegalDocumentsByBuilding(prev => ({ ...prev, [buildingId]: response.data }));
+        } catch (err) {
+            console.error(`Error fetching legal documents for building ${buildingId}:`, err);
+            setErrorLegalDocuments(prev => ({ ...prev, [buildingId]: err.response?.data?.message || "No hay documentos legales para esta construcción" }));
+        } finally {
+            setLoadingLegalDocuments(prev => ({ ...prev, [buildingId]: false }));
+        }
+    }, []);
+
+
+    const handleViewPdf = useCallback(async (documentType, id) => {
         setLoadingPdf(true);
         setPdfError(null);
         setCurrentPdfUrl(null);
@@ -92,7 +120,17 @@ const useWorkerData = () => {
         try {
             const token = localStorage.getItem("authToken");
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
-            const response = await axios.get(`http://localhost:8080/api/invoices/pdf/${invoiceId}`, {
+            let urlEndpoint = '';
+            if (documentType === 'invoice') {
+                urlEndpoint = `http://localhost:8080/api/invoices/pdf/${id}`;
+            } else if (documentType === 'legal_documentation') {
+                // Ajusta la URL de la API para documentos legales
+                urlEndpoint = `http://localhost:8080/api/legal_documentation/pdf/${id}`;
+            } else {
+                throw new Error('Tipo de documento no soportado para previsualización PDF.');
+            }
+
+            const response = await axios.get(urlEndpoint, {
                 headers,
                 responseType: 'blob'
             });
@@ -101,7 +139,7 @@ const useWorkerData = () => {
             setCurrentPdfUrl(url);
         } catch (err) {
             console.error("Error al cargar el PDF:", err);
-            setPdfError("No se pudo cargar el PDF. Inténtalo de nuevo más tarde.");
+            setPdfError(err.response?.data?.message || "No se pudo cargar el PDF. Inténtalo de nuevo más tarde.");
         } finally {
             setLoadingPdf(false);
         }
@@ -111,7 +149,6 @@ const useWorkerData = () => {
         if (buildingId) {
             await fetchInvoicesForBuilding(buildingId);
         } else {
-            // Fallback: Refresh all invoices if buildingId isn't directly available
             workerConstructions.forEach(construction => fetchInvoicesForBuilding(construction.id));
         }
     }, [fetchInvoicesForBuilding, workerConstructions]);
@@ -157,7 +194,31 @@ const useWorkerData = () => {
         }
     }, [fetchEventsForBuilding, eventsByBuilding]);
 
-    // Efecto para obtener el ID del trabajador del token y cargar las construcciones
+    const handleLegalDocumentUpdate = useCallback(async (buildingId) => {
+        if (buildingId) {
+            await fetchLegalDocumentsForBuilding(buildingId);
+        } else {
+            workerConstructions.forEach(construction => fetchLegalDocumentsForBuilding(construction.id));
+        }
+    }, [fetchLegalDocumentsForBuilding, workerConstructions]);
+
+    const handleLegalDocumentDelete = useCallback(async (deletedDocumentId, buildingId) => {
+        if (buildingId) {
+            await fetchLegalDocumentsForBuilding(buildingId);
+        } else {
+            let buildingIdOfDeletedDoc = null;
+            for (const key in legalDocumentsByBuilding) {
+                if (legalDocumentsByBuilding[key].some(doc => doc.id === deletedDocumentId)) {
+                    buildingIdOfDeletedDoc = key;
+                    break;
+                }
+            }
+            if (buildingIdOfDeletedDoc) {
+                await fetchLegalDocumentsForBuilding(buildingIdOfDeletedDoc);
+            }
+        }
+    }, [legalDocumentsByBuilding, fetchLegalDocumentsForBuilding, workerConstructions]);
+
     useEffect(() => {
         const token = localStorage.getItem("authToken");
         if (token) {
@@ -196,23 +257,33 @@ const useWorkerData = () => {
         invoicesByBuilding,
         loadingInvoices,
         errorInvoices,
+        legalDocumentsByBuilding,
+        loadingLegalDocuments,
+        errorLegalDocuments,
         currentPdfUrl,
         loadingPdf,
         pdfError,
         loadingInvoiceAction,
         invoiceActionError,
+        loadingLegalDocAction,
+        legalDocActionError,
         fetchEventsForBuilding,
         fetchInvoicesForBuilding,
+        fetchLegalDocumentsForBuilding,
         handleViewPdf,
         handleInvoiceUpdate,
         handleInvoiceDelete,
         handleEventUpdate,
         handleEventDelete,
+        handleLegalDocumentUpdate,
+        handleLegalDocumentDelete,
         handleClosePdfModal,
         setLoadingPdf,
         setPdfError,
         setLoadingInvoiceAction,
-        setInvoiceActionError
+        setInvoiceActionError,
+        setLoadingLegalDocAction,
+        setLegalDocActionError
     };
 };
 

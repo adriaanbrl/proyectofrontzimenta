@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import {Container, Card, Button, Accordion, Spinner, Alert, Modal, Form} from 'react-bootstrap';
+import {
+    Container, Card, Button, Accordion, Spinner, Alert, Modal, Form
+} from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import useWorkerData from './hooks/UseWorkerData';
@@ -7,6 +9,8 @@ import EventDetailModal from './EventDetailModal';
 import InvoiceEditModal from './InvoiceEditModal';
 import InvoiceDeleteConfirmModal from './InvoiceDeleteConfirmModal';
 import PdfViewerModal from './PdfViewerModal';
+import LegalDocumentEditModal from './LegalDocumentEditModal';
+import LegalDocumentDeleteConfirmModal from './LegalDocumentDeleteConfirmModal';
 
 const formatDate = (dateString) => {
     if (!dateString) return '';
@@ -26,33 +30,53 @@ const WorkerDataList = () => {
         invoicesByBuilding,
         loadingInvoices,
         errorInvoices,
+        legalDocumentsByBuilding,
+        loadingLegalDocuments,
+        errorLegalDocuments,
         currentPdfUrl,
         loadingPdf,
         pdfError,
         loadingInvoiceAction,
         invoiceActionError,
+        loadingLegalDocAction,
+        legalDocActionError,
         fetchEventsForBuilding,
         fetchInvoicesForBuilding,
+        fetchLegalDocumentsForBuilding,
         handleViewPdf,
         handleInvoiceUpdate,
         handleInvoiceDelete,
         handleEventUpdate,
         handleEventDelete,
+        handleLegalDocumentUpdate,
+        handleLegalDocumentDelete,
         handleClosePdfModal,
         setLoadingPdf,
         setPdfError,
         setLoadingInvoiceAction,
-        setInvoiceActionError
+        setInvoiceActionError,
+        setLoadingLegalDocAction,
+        setLegalDocActionError
     } = useWorkerData();
 
     const [activeAccordionKey, setActiveAccordionKey] = useState(null);
     const [activeInnerAccordionKey, setActiveInnerAccordionKey] = useState({});
+
     const [showEventModal, setShowEventModal] = useState(false);
     const [currentEvent, setCurrentEvent] = useState(null);
+
     const [showEditInvoiceModal, setShowEditInvoiceModal] = useState(false);
     const [currentInvoiceToEdit, setCurrentInvoiceToEdit] = useState(null);
+
     const [showDeleteInvoiceModal, setShowDeleteInvoiceModal] = useState(false);
     const [invoiceToDeleteId, setInvoiceToDeleteId] = useState(null);
+
+    const [showEditLegalDocModal, setShowEditLegalDocModal] = useState(false);
+    const [currentLegalDocToEdit, setCurrentLegalDocToEdit] = useState(null);
+
+    const [showDeleteLegalDocModal, setShowDeleteLegalDocModal] = useState(false);
+    const [legalDocToDeleteId, setLegalDocToDeleteId] = useState(null);
+
     const [showPdfModal, setShowPdfModal] = useState(false);
 
     const handleAccordionSelect = (eventKey) => {
@@ -73,6 +97,10 @@ const WorkerDataList = () => {
         } else if (innerEventKey === "invoices-section") {
             if (!invoicesByBuilding[buildingId] || invoicesByBuilding[buildingId].length === 0 || errorInvoices[buildingId]) {
                 fetchInvoicesForBuilding(buildingId);
+            }
+        } else if (innerEventKey === "legal-documentation-section") { // NUEVO
+            if (!legalDocumentsByBuilding[buildingId] || legalDocumentsByBuilding[buildingId].length === 0 || errorLegalDocuments[buildingId]) {
+                fetchLegalDocumentsForBuilding(buildingId);
             }
         }
     };
@@ -119,19 +147,42 @@ const WorkerDataList = () => {
         setShowDeleteInvoiceModal(false);
     };
 
-    const handlePdfViewerOpen = async (invoiceId) => {
-        await handleViewPdf(invoiceId); 
+    const handleLegalDocEdit = (document) => {
+        setCurrentLegalDocToEdit(document);
+        setShowEditLegalDocModal(true);
+        setLegalDocActionError(null);
+    };
+
+    const handleLegalDocEditSaved = (buildingId) => {
+        handleLegalDocumentUpdate(buildingId);
+        setShowEditLegalDocModal(false);
+    };
+
+    const handleLegalDocDeleteRequest = (documentId, buildingId) => {
+        setLegalDocToDeleteId(documentId);
+        setShowDeleteLegalDocModal(true);
+        setLegalDocActionError(null);
+    };
+
+    const handleLegalDocDeleteConfirmed = (deletedDocumentId, buildingId) => {
+        handleLegalDocumentDelete(deletedDocumentId, buildingId);
+        setShowDeleteLegalDocModal(false);
+    };
+    // FIN NUEVAS FUNCIONES
+
+    const handlePdfViewerOpen = async (documentType, id) => {
+        await handleViewPdf(documentType, id);
         setShowPdfModal(true);
     };
 
     const handlePdfViewerClose = () => {
-        handleClosePdfModal(); 
+        handleClosePdfModal();
         setShowPdfModal(false);
     };
 
     return (
         <Container className="my-4 p-4 rounded shadow-lg bg-light">
-            <h4 className="mb-4 text-center text-custom">GESTIÓN DE EVENTOS Y FACTURAS POR CONSTRUCCIÓN:</h4>
+            <h4 className="mb-4 text-center text-primary">GESTIÓN DE EVENTOS, FACTURAS Y DOCUMENTACIÓN LEGAL POR CONSTRUCCIÓN:</h4>
 
             {loadingConstructions ? (
                 <div className="text-center my-5">
@@ -196,7 +247,6 @@ const WorkerDataList = () => {
                                             </Accordion.Body>
                                         </Accordion.Item>
 
-                                        {/* Sección de Facturas */}
                                         <Accordion.Item eventKey="invoices-section">
                                             <Accordion.Header>Facturas</Accordion.Header>
                                             <Accordion.Body>
@@ -224,7 +274,7 @@ const WorkerDataList = () => {
                                                                                 variant="outline-info"
                                                                                 size="sm"
                                                                                 className="mb-2 mb-md-0 me-md-2"
-                                                                                onClick={() => handlePdfViewerOpen(invoice.id)}
+                                                                                onClick={() => handlePdfViewerOpen('invoice', invoice.id)} // Pasar el tipo de documento
                                                                                 disabled={loadingPdf}
                                                                             >
                                                                                 {loadingPdf ? <Spinner animation="border" size="sm" /> : '📄 Ver PDF'}
@@ -252,6 +302,63 @@ const WorkerDataList = () => {
                                                             ))
                                                         ) : (
                                                             <Alert variant="info">No hay facturas registradas para esta construcción.</Alert>
+                                                        )}
+                                                    </>
+                                                )}
+                                            </Accordion.Body>
+                                        </Accordion.Item>
+
+                                        <Accordion.Item eventKey="legal-documentation-section">
+                                            <Accordion.Header>Documentación Legal</Accordion.Header>
+                                            <Accordion.Body>
+                                                {loadingLegalDocuments[construction.id] ? (
+                                                    <div className="text-center my-3">
+                                                        <Spinner animation="border" size="sm" /> Cargando documentos legales...
+                                                    </div>
+                                                ) : errorLegalDocuments[construction.id] ? (
+                                                    <Alert variant="danger">{errorLegalDocuments[construction.id]}</Alert>
+                                                ) : (
+                                                    <>
+                                                        {legalDocumentsByBuilding[construction.id] && legalDocumentsByBuilding[construction.id].length > 0 ? (
+                                                            legalDocumentsByBuilding[construction.id].map(doc => (
+                                                                <Card key={doc.id} className="mb-2 p-2 shadow-sm">
+                                                                    <Card.Body className="d-flex justify-content-between align-items-center py-2">
+                                                                        <div>
+                                                                            <h6 className="mb-1">{doc.title}</h6>
+                                                                        </div>
+                                                                        <div className="d-flex flex-column flex-md-row">
+                                                                            <Button
+                                                                                variant="outline-info"
+                                                                                size="sm"
+                                                                                className="mb-2 mb-md-0 me-md-2"
+                                                                                onClick={() => handlePdfViewerOpen('legal_documentation', doc.id)}
+                                                                                disabled={loadingPdf}
+                                                                            >
+                                                                                {loadingPdf ? <Spinner animation="border" size="sm" /> : '📄 Ver PDF'}
+                                                                            </Button>
+                                                                            <Button
+                                                                                variant="outline-primary"
+                                                                                size="sm"
+                                                                                className="mb-2 mb-md-0 me-md-2"
+                                                                                onClick={() => handleLegalDocEdit(doc)}
+                                                                                disabled={loadingLegalDocAction}
+                                                                            >
+                                                                                {loadingLegalDocAction ? <Spinner animation="border" size="sm" /> : '✏️ Editar'}
+                                                                            </Button>
+                                                                            <Button
+                                                                                variant="outline-danger"
+                                                                                size="sm"
+                                                                                onClick={() => handleLegalDocDeleteRequest(doc.id, doc.building_id)}
+                                                                                disabled={loadingLegalDocAction}
+                                                                            >
+                                                                                {loadingLegalDocAction ? <Spinner animation="border" size="sm" /> : '🗑️ Borrar'}
+                                                                            </Button>
+                                                                        </div>
+                                                                    </Card.Body>
+                                                                </Card>
+                                                            ))
+                                                        ) : (
+                                                            <Alert variant="info">No hay documentos legales registrados para esta construcción.</Alert>
                                                         )}
                                                     </>
                                                 )}
@@ -307,6 +414,31 @@ const WorkerDataList = () => {
                 error={invoiceActionError}
                 setLoading={setLoadingInvoiceAction}
                 setError={setInvoiceActionError}
+            />
+
+            {currentLegalDocToEdit && (
+                <LegalDocumentEditModal
+                    show={showEditLegalDocModal}
+                    onHide={() => setShowEditLegalDocModal(false)}
+                    documentData={currentLegalDocToEdit}
+                    onSave={handleLegalDocEditSaved}
+                    isLoading={loadingLegalDocAction}
+                    error={legalDocActionError}
+                    setLoading={setLoadingLegalDocAction}
+                    setError={setLegalDocActionError}
+                />
+            )}
+
+            <LegalDocumentDeleteConfirmModal
+                show={showDeleteLegalDocModal}
+                onHide={() => setShowDeleteLegalDocModal(false)}
+                documentId={legalDocToDeleteId}
+                buildingId={currentLegalDocToEdit?.building_id}
+                onDeleteConfirm={handleLegalDocDeleteConfirmed}
+                isLoading={loadingLegalDocAction}
+                error={legalDocActionError}
+                setLoading={setLoadingLegalDocAction}
+                setError={setLegalDocActionError}
             />
         </Container>
     );

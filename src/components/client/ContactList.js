@@ -118,15 +118,13 @@ function ContactList() {
     );
   }
 
-  const handleChatClick = (workerId) => {
-    navigate(`/chat?workerId=${workerId}`);
+  const handleChatClick = (worker) => { // Recibimos el objeto worker completo
+    navigate(`/chat?workerId=${worker.id}&workerName=${worker.username}`); // Asumiendo que la propiedad del nombre de usuario es 'username'
   };
 
   return (
     <Container className=" p-4  rounded-4 ">
-      <h1 className="text-center mb-5  fw-bold fs-2 mt-5" style={{ color: "#f5922c" }}>
-        Lista de Contactos
-      </h1>
+      {/* ... */}
       <Row className="gy-4">
         {workers.length > 0 ? (
           workers.map((worker) => (
@@ -141,11 +139,10 @@ function ContactList() {
                   </Card.Subtitle>
                   <Button
                     color="#ff8c00"
-                    onClick={() => handleChatClick(worker.id)}
-                    className="w-100 fw-bold fs-6" 
+                    onClick={() => handleChatClick(worker)} // Pasamos el objeto worker completo
+                    className="w-100 fw-bold fs-6"
                   >
-                    <MessageCircle className="me-2" />{" "}
-                    Chat
+                    <MessageCircle className="me-2" /> Chat
                   </Button>
                 </Card.Body>
               </Card>
@@ -153,8 +150,6 @@ function ContactList() {
           ))
         ) : (
           <Col>
-            {" "}
-            {/* Wrap Alert in Col for consistent layout */}
             <Alert variant="info">No hay contactos para este edificio.</Alert>
           </Col>
         )}
@@ -162,5 +157,6 @@ function ContactList() {
     </Container>
   );
 }
+
 
 export default ContactList;

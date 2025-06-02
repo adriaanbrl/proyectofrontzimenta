@@ -194,13 +194,12 @@ function ClientGallery() {
   // const lastRoomId = Object.keys(groupedImages)[Object.keys(groupedImages).length - 1];
 
   return (
-      <Container className="client-gallery-container">
-        <h1
-            className="text-center mb-5 mt-5 fw-bold fs-2"
-            style={{ color: "#f5922c" }}
-        >
-          Galería de Imágenes
-        </h1>
+      <Container className="p-3">
+        <div className="header-section d-flex align-items-center justify-content-center mb-4">
+          <h1 className="  flex-grow-1 text-title text-center mb-5 fw-bold fs-2 mt-5">
+            Galería de Imágenes
+          </h1>
+        </div>
         {loadingBuildingId && (
             <p className="loading-message">Cargando ID del edificio...</p>
         )}

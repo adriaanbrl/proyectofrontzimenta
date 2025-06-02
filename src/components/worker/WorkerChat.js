@@ -105,9 +105,7 @@ function WorkerChat() {
 
     useEffect(() => {
         if (chatContainerRef.current) {
-            // Desplazar solo si el usuario no ha subido para ver mensajes antiguos
-            // o si el mensaje actual es del usuario logueado
-            const isScrolledToBottom = chatContainerRef.current.scrollHeight - chatContainerRef.current.clientHeight <= chatContainerRef.current.scrollTop + 1; // +1 para manejar posibles errores de redondeo
+            const isScrolledToBottom = chatContainerRef.current.scrollHeight - chatContainerRef.current.clientHeight <= chatContainerRef.current.scrollTop + 1;
             if (isScrolledToBottom || (messages.length > 0 && messages[messages.length - 1].senderId === workerId)) {
                 chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
             }
@@ -127,7 +125,6 @@ function WorkerChat() {
             const messagePayload = JSON.stringify(messageObject);
             websocket.current.send(messagePayload);
 
-            // Actualizar el estado local de los mensajes inmediatamente
             setMessages((prevMessages) => [...prevMessages, messageObject]);
 
             setNewMessage('');
@@ -137,40 +134,42 @@ function WorkerChat() {
     };
 
     return (
-        // Contenedor principal para centrar el chat y darle un tamaño máximo
-        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
+        // Eliminar 'align-items-center' para que el contenido se alinee arriba
+        // Ajustar minHeight para que ocupe la altura total si es deseado
+        <div className="d-flex justify-content-center" style={{ minHeight: '100vh', backgroundColor: '#e0e0e0', paddingBottom: '20px' }}>
             <Card className="shadow-lg" style={{
-                borderRadius: '15px',
+                borderRadius: '12px',
                 overflow: 'hidden',
                 width: '100%',
-                maxWidth: '600px', // Ancho máximo para el chat en pantallas grandes
-                height: 'calc(100vh - 80px)', // Altura que deja espacio para la barra de navegación inferior
+                maxWidth: '600px',
+                // *** ¡Ajusta este valor de '90px' si es necesario para el sidebar! ***
+                height: 'calc(100vh - 90px)', // Deja espacio para tu barra de navegación inferior
                 display: 'flex',
-                flexDirection: 'column'
+                flexDirection: 'column',
+                backgroundColor: '#f8f9fa',
+                marginTop: '20px' // Añadir un margin-top fijo para asegurar que no se pegue al borde superior
             }}>
+                {/* Encabezado */}
                 <Card.Header
-                    className="py-4 text-center"
+                    className="py-3 text-center"
                     style={{
-                        backgroundColor: '#fff9f0',
-                        borderBottom: '1px solid #f0f0f0',
-                        color: '#333',
+                        backgroundColor: '#f5922c',
+                        color: 'white',
                         fontWeight: 'bold',
-                        fontSize: '1.8rem'
+                        fontSize: '1.6rem',
+                        borderBottom: 'none'
                     }}
                 >
                     Chat con {contactName || "Cliente"}
                 </Card.Header>
 
-                <Card.Body className="d-flex flex-column p-4" style={{ backgroundColor: '#fcfcfc', flexGrow: 1, overflow: 'hidden' }}>
+                {/* Área de mensajes */}
+                <Card.Body className="d-flex flex-column p-0" style={{ flexGrow: 1, overflow: 'hidden' }}>
                     <div
                         ref={chatContainerRef}
-                        className="flex-grow-1 overflow-auto p-3"
+                        className="flex-grow-1 overflow-auto p-4"
                         style={{
-                            border: "1px solid #e0e0e0",
-                            borderRadius: "10px",
-                            backgroundColor: '#ffffff',
-                            boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)',
-                            // Eliminamos minHeight aquí porque flex-grow-1 se encargará de esto
+                            backgroundColor: '#f8f9fa',
                         }}
                     >
                         <ListGroup className="list-unstyled">
@@ -179,14 +178,9 @@ function WorkerChat() {
                                     key={index}
                                     className={`d-flex justify-content-${
                                         msg.senderType === 'worker' ? 'end' : 'start'
-                                    } mb-3 align-items-end`}
+                                    } mb-3 align-items-start`}
                                 >
-                                    {/* Información de tiempo para mensajes del trabajador (a la izquierda de la burbuja) */}
-                                    {msg.senderType === 'worker' && msg.timestamp && (
-                                        <small className="text-muted mr-2" style={{ fontSize: '0.75rem', opacity: 0.8, alignSelf: 'flex-end' }}>
-                                            {moment(msg.timestamp).locale('es').format('LT')}
-                                        </small>
-                                    )}
+                                    {/* Burbuja de mensaje */}
                                     <div
                                         className={`p-3 rounded-lg position-relative ${
                                             msg.senderType === 'worker'
@@ -197,63 +191,60 @@ function WorkerChat() {
                                             maxWidth: '75%',
                                             wordBreak: 'break-word',
                                             backgroundColor: msg.senderType === 'worker' ? '#f5922c' : '#ffffff',
-                                            border: msg.senderType === 'worker' ? 'none' : '1px solid #e0e0e0',
-                                            borderRadius: '15px',
-                                            boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-                                            marginLeft: msg.senderType === 'worker' ? '15px' : '0',
-                                            marginRight: msg.senderType === 'worker' ? '0' : '15px',
-                                            // Asegura que el contenido (nombre, mensaje) tenga espacio
-                                            display: 'flex',
-                                            flexDirection: 'column'
+                                            borderRadius: msg.senderType === 'worker' ? '18px 18px 2px 18px' : '18px 18px 18px 2px',
+                                            boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+                                            margin: '0 8px',
+                                            padding: '10px 15px',
                                         }}
                                     >
                                         <small
                                             className="mb-1 d-block"
                                             style={{
-                                                fontSize: '0.8rem',
-                                                fontWeight: 'bold',
-                                                color: msg.senderType === 'worker' ? 'rgba(255,255,255,0.8)' : '#6c757d',
+                                                fontSize: '0.75rem',
+                                                fontWeight: '600',
+                                                color: msg.senderType === 'worker' ? 'rgba(255,255,255,0.9)' : '#7a7a7a',
                                             }}
                                         >
                                             {msg.senderType === 'worker' ? 'Tú' : contactName || 'Cliente'}
                                         </small>
-                                        <p className="mb-0" style={{ fontSize: '0.95rem', lineHeight: '1.4' }}>
+                                        <p className="mb-0" style={{ fontSize: '0.9rem', lineHeight: '1.4' }}>
                                             {msg.message}
                                         </p>
                                     </div>
-                                    {/* Información de tiempo para mensajes del cliente (a la derecha de la burbuja) */}
-                                    {msg.senderType !== 'worker' && msg.timestamp && (
-                                        <small className="text-muted ml-2" style={{ fontSize: '0.75rem', opacity: 0.8, alignSelf: 'flex-end' }}>
-                                            {moment(msg.timestamp).locale('es').format('LT')}
-                                        </small>
-                                    )}
+                                    {/* Hora del mensaje */}
+                                    <small className="text-muted" style={{ fontSize: '0.65rem', opacity: 0.7, alignSelf: 'flex-end', minWidth: '40px', textAlign: msg.senderType === 'worker' ? 'right' : 'left' }}>
+                                        {moment(msg.timestamp).locale('es').format('LT')}
+                                    </small>
                                 </li>
                             ))}
                         </ListGroup>
                     </div>
                 </Card.Body>
 
-                <div className="p-3" style={{ borderTop: '1px solid #f0f0f0', backgroundColor: '#ffffff' }}>
+                {/* Área de entrada de texto */}
+                <div className="p-3" style={{ borderTop: '1px solid #e0e0e0', backgroundColor: '#ffffff' }}>
                     <Form
                         onSubmit={(e) => {
                             e.preventDefault();
                             handleSendMessage();
                         }}
                     >
-                        <InputGroup className="mb-0" style={{ borderRadius: '50px', overflow: 'hidden' }}> {/* mb-0 para eliminar margen inferior */}
+                        <InputGroup className="mb-0">
                             <Form.Control
                                 type="text"
                                 placeholder="Escribe un mensaje..."
                                 value={newMessage}
                                 onChange={(e) => setNewMessage(e.target.value)}
                                 style={{
-                                    padding: '15px 20px',
+                                    padding: '12px 18px',
                                     border: '1px solid #ced4da',
-                                    borderRight: 'none',
+                                    borderRadius: '25px',
                                     boxShadow: 'none',
-                                    borderRadius: '50px 0 0 50px'
+                                    outline: 'none',
+                                    flexGrow: 1,
+                                    marginRight: '10px'
                                 }}
-                                className="flex-grow-1"
+                                className="focus-ring focus-ring-primary"
                             />
                             <Button
                                 type="submit"
@@ -262,12 +253,15 @@ function WorkerChat() {
                                     backgroundColor: '#f5922c',
                                     borderColor: '#f5922c',
                                     color: 'white',
-                                    padding: '15px 25px',
-                                    borderRadius: '0 50px 50px 0',
-                                    transition: 'background-color 0.2s ease-in-out'
+                                    padding: '12px 20px',
+                                    borderRadius: '25px',
+                                    transition: 'background-color 0.2s ease-in-out, transform 0.1s ease-in-out',
+                                    boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
                                 }}
                                 onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e08427'}
                                 onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f5922c'}
+                                onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.98)'}
+                                onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
                             >
                                 Enviar
                             </Button>

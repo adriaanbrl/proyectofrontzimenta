@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, ListGroup, Spinner, Alert, Button, Modal, Form } from 'react-bootstrap';
 import axios from 'axios';
-import { PencilSquare, Trash } from 'react-bootstrap-icons';
+import { PencilSquare, Trash, PlusCircle } from 'react-bootstrap-icons'; // Import PlusCircle icon
 
 const EstanciasList = () => {
     const [estancias, setEstancias] = useState([]);
@@ -18,6 +18,12 @@ const EstanciasList = () => {
     const [estanciaToDeleteId, setEstanciaToDeleteId] = useState(null);
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [deleteError, setDeleteError] = useState(null);
+
+    // New state for adding estancias
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [newEstanciaName, setNewEstanciaName] = useState('');
+    const [addLoading, setAddLoading] = useState(false);
+    const [addError, setAddError] = useState(null);
 
     useEffect(() => {
         const fetchEstancias = async () => {
@@ -69,12 +75,13 @@ const EstanciasList = () => {
         }
 
         try {
-            await axios.put(`http://localhost:8080/api/estancias/${currentEstancia.id}`, { name: editEstanciaName }, {
+            const response = await axios.put(`http://localhost:8080/api/estancias/${currentEstancia.id}`, { name: editEstanciaName }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            setEstancias(prev => prev.map(est => est.id === currentEstancia.id ? { ...est, name: editEstanciaName } : est));
+            // Update the estancia in the local state with the response data
+            setEstancias(prev => prev.map(est => est.id === currentEstancia.id ? response.data : est));
             setShowEditModal(false);
             setCurrentEstancia(null);
             setEditEstanciaName('');
@@ -114,10 +121,43 @@ const EstanciasList = () => {
         }
     };
 
+    // New handler for adding an estancia
+    const handleAddEstancia = async (e) => {
+        e.preventDefault();
+        setAddLoading(true);
+        setAddError(null);
+        const token = localStorage.getItem('authToken');
+
+        if (!newEstanciaName.trim()) {
+            setAddError("El nombre de la estancia no puede estar vacío.");
+            setAddLoading(false);
+            return;
+        }
+
+        try {
+            const response = await axios.post('http://localhost:8080/api/estancias', { name: newEstanciaName }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setEstancias(prev => [...prev, response.data]); // Add the new estancia to the list
+            setShowAddModal(false);
+            setNewEstanciaName('');
+        } catch (err) {
+            console.error('Error al crear la estancia:', err);
+            setAddError('Error al crear la estancia. Inténtalo de nuevo.');
+        } finally {
+            setAddLoading(false);
+        }
+    };
+
     return (
         <Card className="mb-4 shadow-sm">
-            <Card.Header className="bg-primary text-white">
+            <Card.Header className="bg-primary text-white d-flex justify-content-between align-items-center">
                 <h5 className="mb-0">Estancias Registradas</h5>
+                <Button variant="light" size="sm" onClick={() => { setShowAddModal(true); setNewEstanciaName(''); setAddError(null); }}>
+                    <PlusCircle className="me-1" /> Añadir Estancia
+                </Button>
             </Card.Header>
             <Card.Body>
                 {loading ? (
@@ -134,7 +174,7 @@ const EstanciasList = () => {
                                 className="d-flex justify-content-between align-items-center"
                             >
                                 {estancia.name}
-                                <div className="d-flex"> {/* Add d-flex here */}
+                                <div className="d-flex">
                                     <Button
                                         variant="outline-primary"
                                         size="sm"
@@ -159,6 +199,7 @@ const EstanciasList = () => {
                 )}
             </Card.Body>
 
+            {/* Edit Estancia Modal */}
             <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Editar Estancia</Modal.Title>
@@ -188,6 +229,7 @@ const EstanciasList = () => {
                 </Modal.Body>
             </Modal>
 
+            {/* Delete Confirmation Modal */}
             <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Confirmar Eliminación</Modal.Title>
@@ -203,6 +245,36 @@ const EstanciasList = () => {
                             {deleteLoading ? <Spinner animation="border" size="sm" /> : 'Borrar'}
                         </Button>
                     </div>
+                </Modal.Body>
+            </Modal>
+
+            {/* Add New Estancia Modal */}
+            <Modal show={showAddModal} onHide={() => setShowAddModal(false)} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Añadir Nueva Estancia</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {addError && <Alert variant="danger">{addError}</Alert>}
+                    <Form onSubmit={handleAddEstancia}>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Nombre de la Nueva Estancia</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={newEstanciaName}
+                                onChange={(e) => setNewEstanciaName(e.target.value)}
+                                required
+                                disabled={addLoading}
+                            />
+                        </Form.Group>
+                        <div className="d-flex justify-content-end">
+                            <Button variant="secondary" onClick={() => setShowAddModal(false)} className="me-2" disabled={addLoading}>
+                                Cancelar
+                            </Button>
+                            <Button variant="success" type="submit" disabled={addLoading}>
+                                {addLoading ? <Spinner animation="border" size="sm" /> : 'Añadir Estancia'}
+                            </Button>
+                        </div>
+                    </Form>
                 </Modal.Body>
             </Modal>
         </Card>

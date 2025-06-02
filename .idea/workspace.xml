@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="cambios hechos">
-      <change beforePath="$PROJECT_DIR$/src/components/worker/WorkerChat.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/worker/WorkerChat.js" afterDir="false" />
-    </list>
+    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="cambios hechos" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -279,14 +277,6 @@
       <workItem from="1748454357452" duration="2088000" />
       <workItem from="1748500499004" duration="9705000" />
       <workItem from="1748518618476" duration="8093000" />
-    </task>
-    <task id="LOCAL-00051" summary="Vista admin">
-      <option name="closed" value="true" />
-      <created>1747738335933</created>
-      <option name="number" value="00051" />
-      <option name="presentableId" value="LOCAL-00051" />
-      <option name="project" value="LOCAL" />
-      <updated>1747738335934</updated>
     </task>
     <task id="LOCAL-00052" summary="Vista admin">
       <option name="closed" value="true" />
@@ -672,7 +662,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748858504722</updated>
     </task>
-    <option name="localTasksCounter" value="100" />
+    <task id="LOCAL-00100" summary="cambios hechos">
+      <option name="closed" value="true" />
+      <created>1748859047710</created>
+      <option name="number" value="00100" />
+      <option name="presentableId" value="LOCAL-00100" />
+      <option name="project" value="LOCAL" />
+      <updated>1748859047710</updated>
+    </task>
+    <option name="localTasksCounter" value="101" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

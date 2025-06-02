@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, ListGroup, Spinner, Alert, Button, Modal, Form } from 'react-bootstrap';
 import axios from 'axios';
-import { PencilSquare, Trash } from 'react-bootstrap-icons';
+import { PencilSquare, Trash, PlusCircle } from 'react-bootstrap-icons'; // Import PlusCircle icon
 
 const CategoriasList = () => {
     const [categorias, setCategorias] = useState([]);
@@ -18,6 +18,12 @@ const CategoriasList = () => {
     const [categoriaToDeleteId, setCategoriaToDeleteId] = useState(null);
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [deleteError, setDeleteError] = useState(null);
+
+    // New state for adding categories
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [newCategoriaName, setNewCategoriaName] = useState('');
+    const [addLoading, setAddLoading] = useState(false);
+    const [addError, setAddError] = useState(null);
 
     useEffect(() => {
         const fetchCategorias = async () => {
@@ -69,12 +75,13 @@ const CategoriasList = () => {
         }
 
         try {
-            await axios.put(`http://localhost:8080/api/categorias/${currentCategoria.id}`, { name: editCategoriaName }, {
+            const response = await axios.put(`http://localhost:8080/api/categorias/${currentCategoria.id}`, { name: editCategoriaName }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            setCategorias(prev => prev.map(cat => cat.id === currentCategoria.id ? { ...cat, name: editCategoriaName } : cat));
+            // Update the category in the local state with the response data (if your backend returns the updated object)
+            setCategorias(prev => prev.map(cat => cat.id === currentCategoria.id ? response.data : cat));
             setShowEditModal(false);
             setCurrentCategoria(null);
             setEditCategoriaName('');
@@ -114,10 +121,43 @@ const CategoriasList = () => {
         }
     };
 
+    // New handler for adding a category
+    const handleAddCategoria = async (e) => {
+        e.preventDefault();
+        setAddLoading(true);
+        setAddError(null);
+        const token = localStorage.getItem('authToken');
+
+        if (!newCategoriaName.trim()) {
+            setAddError("El nombre de la categoría no puede estar vacío.");
+            setAddLoading(false);
+            return;
+        }
+
+        try {
+            const response = await axios.post('http://localhost:8080/api/categorias', { name: newCategoriaName }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setCategorias(prev => [...prev, response.data]); // Add the new category to the list
+            setShowAddModal(false);
+            setNewCategoriaName('');
+        } catch (err) {
+            console.error('Error al crear la categoría:', err);
+            setAddError('Error al crear la categoría. Inténtalo de nuevo.');
+        } finally {
+            setAddLoading(false);
+        }
+    };
+
     return (
         <Card className="mb-4 shadow-sm">
-            <Card.Header className="bg-primary text-white">
+            <Card.Header className="bg-primary text-white d-flex justify-content-between align-items-center">
                 <h5 className="mb-0">Categorías Registradas</h5>
+                <Button variant="light" size="sm" onClick={() => { setShowAddModal(true); setNewCategoriaName(''); setAddError(null); }}>
+                    <PlusCircle className="me-1" /> Añadir Categoría
+                </Button>
             </Card.Header>
             <Card.Body>
                 {loading ? (
@@ -134,7 +174,7 @@ const CategoriasList = () => {
                                 className="d-flex justify-content-between align-items-center"
                             >
                                 {categoria.name}
-                                <div className="d-flex"> {/* Add d-flex here */}
+                                <div className="d-flex">
                                     <Button
                                         variant="outline-primary"
                                         size="sm"
@@ -159,6 +199,7 @@ const CategoriasList = () => {
                 )}
             </Card.Body>
 
+            {/* Edit Category Modal */}
             <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Editar Categoría</Modal.Title>
@@ -188,6 +229,7 @@ const CategoriasList = () => {
                 </Modal.Body>
             </Modal>
 
+            {/* Delete Confirmation Modal */}
             <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Confirmar Eliminación</Modal.Title>
@@ -203,6 +245,36 @@ const CategoriasList = () => {
                             {deleteLoading ? <Spinner animation="border" size="sm" /> : 'Borrar'}
                         </Button>
                     </div>
+                </Modal.Body>
+            </Modal>
+
+            {/* Add New Category Modal */}
+            <Modal show={showAddModal} onHide={() => setShowAddModal(false)} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Añadir Nueva Categoría</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {addError && <Alert variant="danger">{addError}</Alert>}
+                    <Form onSubmit={handleAddCategoria}>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Nombre de la Nueva Categoría</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={newCategoriaName}
+                                onChange={(e) => setNewCategoriaName(e.target.value)}
+                                required
+                                disabled={addLoading}
+                            />
+                        </Form.Group>
+                        <div className="d-flex justify-content-end">
+                            <Button variant="secondary" onClick={() => setShowAddModal(false)} className="me-2" disabled={addLoading}>
+                                Cancelar
+                            </Button>
+                            <Button variant="success" type="submit" disabled={addLoading}>
+                                {addLoading ? <Spinner animation="border" size="sm" /> : 'Añadir Categoría'}
+                            </Button>
+                        </div>
+                    </Form>
                 </Modal.Body>
             </Modal>
         </Card>

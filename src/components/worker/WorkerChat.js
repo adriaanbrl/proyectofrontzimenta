@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, Form, Button, ListGroup, InputGroup } from 'react-bootstrap';
-import { useLocation } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+import { useLocation } from 'react-router-dom'; // Asumiendo que react-router-dom está disponible en tu entorno
+import { jwtDecode } from 'jwt-decode'; // Asumiendo que jwt-decode está disponible en tu entorno
 import moment from 'moment';
 import 'moment/locale/es';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css'; // El CSS de Bootstrap sigue siendo necesario y se importa aquí.
 
 
-function WorkerChat() {
+// El componente WorkerChat es ahora la exportación predeterminada
+export default function WorkerChat() {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const chatContainerRef = useRef(null);
@@ -19,6 +20,9 @@ function WorkerChat() {
     const [contactName, setContactName] = useState("");
     const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
 
+    // No se añaden scripts de Tailwind CSS ni bloques <style> personalizados.
+
+    // Efecto para analizar los parámetros de consulta y establecer la conexión WebSocket
     useEffect(() => {
         console.log('useEffect con location.search ejecutado (Worker)');
         const queryParams = new URLSearchParams(location.search);
@@ -38,7 +42,8 @@ function WorkerChat() {
                     setWorkerId(decodedToken.id);
                     console.log('contactId (Worker):', contactId, 'workerId (Worker):', workerId);
 
-                    websocket.current = new WebSocket('ws://localhost:8080/chat');
+                    // Inicializar la conexión WebSocket
+                    websocket.current = new WebSocket('ws://localhost:8080/chat'); // Endpoint: SIN CAMBIOS
 
                     websocket.current.onopen = () => {
                         console.log('Conexión WebSocket establecida (Worker).');
@@ -60,31 +65,34 @@ function WorkerChat() {
                         setIsWebSocketConnected(false);
                     };
 
+                    // Función de limpieza para WebSocket
                     return () => {
                         if (websocket.current && websocket.current.readyState === WebSocket.OPEN) {
                             websocket.current.close();
                         }
                     };
                 } catch (decodeError) {
-                    console.error("Error decoding token (Worker):", decodeError);
+                    console.error("Error decodificando el token (Worker):", decodeError);
                 }
             }
         };
         fetchWorkerIdAndHistory();
-    }, [location.search]);
+    }, [location.search]); // Se ejecuta de nuevo si los parámetros de búsqueda de la ubicación cambian
 
+    // Efecto para cargar el historial del chat una vez que contactId, workerId y authToken estén disponibles
     useEffect(() => {
         if (contactId && workerId && authToken) {
             loadChatHistory(workerId, 'worker', parseInt(contactId), 'customer');
         }
-    }, [contactId, workerId, authToken]);
+    }, [contactId, workerId, authToken]); // Se ejecuta de nuevo cuando estas dependencias cambian
 
+    // Función para obtener el historial del chat desde el backend
     const loadChatHistory = async (user1Id, user1Type, user2Id, user2Type) => {
         console.log('authToken en loadChatHistory (Worker):', authToken);
         if (authToken) {
             try {
                 const response = await fetch(
-                    `http://localhost:8080/api/chat/history?user1Id=${user1Id}&user1Type=${user1Type}&user2Id=${user2Id}&user2Type=${user2Type}`,
+                    `http://localhost:8080/api/chat/history?user1Id=${user1Id}&user1Type=${user1Type}&user2Id=${user2Id}&user2Type=${user2Type}`, // Endpoint: SIN CAMBIOS
                     {
                         headers: {
                             Authorization: `Bearer ${authToken}`,
@@ -105,15 +113,19 @@ function WorkerChat() {
         }
     };
 
+    // Efecto para desplazar automáticamente al final del chat cuando llegan nuevos mensajes
     useEffect(() => {
         if (chatContainerRef.current) {
-            const isScrolledToBottom = chatContainerRef.current.scrollHeight - chatContainerRef.current.clientHeight <= chatContainerRef.current.scrollTop + 1;
+            // Comprobar si el usuario ya está cerca del final o si el nuevo mensaje es del usuario actual
+            const { scrollHeight, clientHeight, scrollTop } = chatContainerRef.current;
+            const isScrolledToBottom = scrollHeight - clientHeight <= scrollTop + 1;
             if (isScrolledToBottom || (messages.length > 0 && messages[messages.length - 1].senderId === workerId)) {
-                chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+                chatContainerRef.current.scrollTop = scrollHeight;
             }
         }
-    }, [messages]);
+    }, [messages, workerId]); // Se ejecuta de nuevo cuando los mensajes o workerId cambian
 
+    // Manejador para enviar un nuevo mensaje
     const handleSendMessage = () => {
         if (newMessage.trim() && websocket.current && websocket.current.readyState === WebSocket.OPEN && contactId && workerId) {
             const messageObject = {
@@ -127,36 +139,44 @@ function WorkerChat() {
             const messagePayload = JSON.stringify(messageObject);
             websocket.current.send(messagePayload);
 
+            // Añadir el mensaje de forma optimista a la UI
             setMessages((prevMessages) => [...prevMessages, messageObject]);
 
-            setNewMessage('');
+            setNewMessage(''); // Limpiar el campo de entrada
         } else if (!isWebSocketConnected) {
             console.log("La conexión WebSocket no está activa. Intenta reconectar o espera.");
         }
     };
 
     return (
-        <div className="d-flex justify-content-center bg-light min-vh-100 pb-4">
-            <Card className="shadow-lg mt-3 w-100" style={{ maxWidth: '600px', height: 'calc(100vh - 90px)' }}>
-                {/* Header */}
-                <Card.Header className="text-white text-center fw-bold fs-4 border-0 py-3 bg-custom" >
+        <div className="d-flex justify-content-center align-items-center min-vh-100 p-3" style={{ backgroundColor: '#f0f2f5' }}>
+            <Card className="shadow-lg w-100 d-flex flex-column" style={{ maxWidth: '900px', height: 'calc(100vh - 100px)', borderRadius: '1rem' }}>
+                {/* Encabezado del chat */}
+                <Card.Header className="text-white text-center fw-bold fs-4 py-3 border-0 rounded-top-4" style={{ backgroundColor: '#f5922c', borderBottom: '3px solid rgba(255, 255, 255, 0.2)' }}>
                     Chat con {contactName || 'Cliente'}
                 </Card.Header>
 
-                {/* Mensajes */}
-                <Card.Body className="d-flex flex-column p-0 flex-grow-1 overflow-hidden bg-light">
+                {/* Cuerpo de los mensajes */}
+                <Card.Body className="d-flex flex-column p-0 flex-grow-1 overflow-hidden" style={{ backgroundColor: '#f8f9fa', borderRadius: '0 0 1rem 1rem' }}>
                     <div ref={chatContainerRef} className="flex-grow-1 overflow-auto p-4">
                         <ListGroup as="ul" className="list-unstyled">
                             {messages.map((msg, index) => (
                                 <li
                                     key={index}
-                                    className={`d-flex mb-3 align-items-start justify-content-${msg.senderType === 'worker' ? 'end' : 'start'}`}
+                                    className={`d-flex mb-3 align-items-start ${msg.senderType === 'worker' ? 'justify-content-end' : 'justify-content-start'}`}
                                 >
                                     <div
-                                        className={`px-3 py-2 rounded-4 shadow-sm position-relative ${
-                                            msg.senderType === 'worker' ? 'text-white bg-custom' : 'text-dark bg-white'
-                                        } ${msg.senderType === 'worker' ? 'rounded-end-4 rounded-start-2' : 'rounded-start-4 rounded-end-2'}`}
-                                        style={{ maxWidth: '75%' }}
+                                        className={`px-3 py-2 shadow-sm position-relative`}
+                                        style={{
+                                            maxWidth: '75%',
+                                            wordBreak: 'break-word',
+                                            borderRadius: '1.25rem', // Bordes más redondeados para las burbujas
+                                            backgroundColor: msg.senderType === 'worker' ? '#f5922c' : '#ffffff',
+                                            color: msg.senderType === 'worker' ? '#ffffff' : '#212529',
+                                            // Ajustes para las esquinas inferiores de las burbujas
+                                            borderBottomRightRadius: msg.senderType === 'worker' ? '0.375rem' : '1.25rem',
+                                            borderBottomLeftRadius: msg.senderType === 'customer' ? '0.375rem' : '1.25rem'
+                                        }}
                                     >
                                         <small className={`d-block fw-semibold mb-1 ${msg.senderType === 'worker' ? 'text-white-50' : 'text-muted'}`}>
                                             {msg.senderType === 'worker' ? 'Tú' : contactName || 'Cliente'}
@@ -165,7 +185,7 @@ function WorkerChat() {
                                             {msg.message}
                                         </p>
                                     </div>
-                                    <small className={`text-muted opacity-75 align-self-end ms-2 ${msg.senderType === 'worker' ? 'text-end' : 'text-start'}`} style={{ fontSize: '0.65rem', minWidth: '40px' }}>
+                                    <small className={`text-muted opacity-75 align-self-end ${msg.senderType === 'worker' ? 'ms-2 text-end' : 'me-2 text-start'}`} style={{ fontSize: '0.65rem', minWidth: '40px', whiteSpace: 'nowrap' }}>
                                         {moment(msg.timestamp).locale('es').format('LT')}
                                     </small>
                                 </li>
@@ -174,8 +194,8 @@ function WorkerChat() {
                     </div>
                 </Card.Body>
 
-                {/* Input */}
-                <div className="p-3 border-top bg-white">
+                {/* Área de entrada de mensajes */}
+                <div className="p-3 border-top bg-white" style={{ borderRadius: '0 0 1rem 1rem' }}>
                     <Form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }}>
                         <InputGroup>
                             <Form.Control
@@ -184,16 +204,26 @@ function WorkerChat() {
                                 value={newMessage}
                                 onChange={(e) => setNewMessage(e.target.value)}
                                 className="rounded-pill border-secondary shadow-none me-2 px-4 py-2"
+                                style={{
+                                    borderColor: '#ced4da', // Color de borde por defecto de Bootstrap
+                                    outline: 'none', // Eliminar el contorno en foco
+                                    boxShadow: 'none' // Eliminar la sombra en foco
+                                }}
                             />
                             <Button
                                 type="submit"
                                 disabled={!isWebSocketConnected}
-                                className="rounded-pill px-4 py-2 text-white border-0"
-                                style={{ backgroundColor: '#f5922c' }}
+                                className="rounded-pill px-4 py-2 text-white border-0 d-flex align-items-center justify-content-center"
+                                style={{ backgroundColor: '#f5922c', transition: 'background-color 0.2s ease-in-out' }}
                                 onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e08427'}
                                 onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f5922c'}
                             >
-                                Enviar
+                                {/* Icono de enviar SVG */}
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-send">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                                <span className="ms-2">Enviar</span>
                             </Button>
                         </InputGroup>
                         {!isWebSocketConnected && (
@@ -207,5 +237,3 @@ function WorkerChat() {
         </div>
     );
 }
-
-export default WorkerChat;

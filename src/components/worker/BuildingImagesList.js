@@ -39,6 +39,7 @@ const BuildingImagesList = ({ buildingId }) => {
     const [selectedPlanFile, setSelectedPlanFile] = useState(null);
     const [uploadingPlan, setUploadingPlan] = useState(false);
     const [uploadPlanError, setUploadPlanError] = useState(null);
+    const [planTitle, setPlanTitle] = useState('');
 
     const [showPlanDeleteConfirmModal, setShowPlanDeleteConfirmModal] = useState(false);
     const [deletingPlan, setDeletingPlan] = useState(false);
@@ -377,6 +378,7 @@ const BuildingImagesList = ({ buildingId }) => {
 
     const handleEditPlanClick = () => {
         setSelectedPlanFile(null);
+        setPlanTitle('');
         setUploadPlanError(null);
         setShowPlanEditModal(true);
     };
@@ -385,12 +387,18 @@ const BuildingImagesList = ({ buildingId }) => {
         setShowPlanEditModal(false);
         setSelectedPlanFile(null);
         setUploadPlanError(null);
+        setPlanTitle('');
     };
 
     const handlePlanFileChange = (e) => {
         setSelectedPlanFile(e.target.files[0]);
         setUploadPlanError(null);
     };
+
+    const handlePlanTitleChange = (e) => {
+        setPlanTitle(e.target.value);
+    };
+
 
     const handleUploadPlan = async (e) => {
         e.preventDefault();
@@ -402,6 +410,11 @@ const BuildingImagesList = ({ buildingId }) => {
             setUploadPlanError("Solo se permiten archivos PDF.");
             return;
         }
+        if (!planTitle.trim()) {
+            setUploadPlanError("Por favor, introduce un título para el plano.");
+            return;
+        }
+
 
         setUploadingPlan(true);
         setUploadPlanError(null);
@@ -412,11 +425,17 @@ const BuildingImagesList = ({ buildingId }) => {
         }
 
         const formData = new FormData();
-        formData.append('file', selectedPlanFile);
+        formData.append('plan', selectedPlanFile);
+        formData.append('titulo', planTitle);
+        // AÑADIDO: Incluir buildingId en el FormData
+        formData.append('buildingId', buildingId);
 
         try {
-            const response = await fetch(`http://localhost:8080/api/buildings/${buildingId}/planos`, {
-                method: 'POST',
+            const method = buildingPlanUrl ? 'PUT' : 'POST';
+            const url = `http://localhost:8080/api/buildings/${buildingId}/planos`;
+
+            const response = await fetch(url, {
+                method: method,
                 headers: {
                     'Authorization': `Bearer ${token}`
                 },
@@ -425,9 +444,10 @@ const BuildingImagesList = ({ buildingId }) => {
 
             if (!response.ok) {
                 if (response.status === 403 || response.status === 401) {
-                    throw new Error("Acceso denegado o sesión expirada al subir el plano.");
+                    throw new Error("Acceso denegado o sesión expirada al subir/actualizar el plano.");
                 }
-                throw new Error(`Error al subir el plano: ${response.statusText}`);
+                const errorData = await response.text();
+                throw new Error(`Error al subir/actualizar el plano: ${response.status} - ${errorData || response.statusText}`);
             }
 
             await getBuildingPlanUrl(buildingId);
@@ -729,6 +749,17 @@ const BuildingImagesList = ({ buildingId }) => {
                     {uploadingPlan && <div className="text-center"><Spinner animation="border" size="sm" /> Subiendo plano...</div>}
                     {uploadPlanError && <Alert variant="danger">{uploadPlanError}</Alert>}
                     <Form onSubmit={handleUploadPlan}>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Título del Plano</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={planTitle}
+                                onChange={handlePlanTitleChange}
+                                placeholder="Introduce un título para el plano"
+                                required
+                            />
+                        </Form.Group>
+
                         <Form.Group className="mb-3">
                             <Form.Label>Seleccionar archivo PDF</Form.Label>
                             <Form.Control

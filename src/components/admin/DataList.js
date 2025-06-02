@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useCallback } from 'react'; // Import useCallback
+import React, { useState, useEffect, useCallback } from 'react';
 import { Container, Row, Col, Card, Spinner, Alert, Tabs, Tab, Button } from 'react-bootstrap';
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
-import EditFormModal from './EditFormModal'; // Importar el nuevo componente del modal
+import EditFormModal from './EditFormModal';
 
 const DataList = () => {
     const [buildings, setBuildings] = useState([]);
     const [workers, setWorkers] = useState([]);
     const [customers, setCustomers] = useState([]);
+    const [allRoles, setAllRoles] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [deleteMessage, setDeleteMessage] = useState(null);
-    const [editMessage, setEditMessage] = useState(null); // Para mensajes de éxito/error de edición
+    const [editMessage, setEditMessage] = useState(null);
 
-    // Estados para el modal de edición
     const [showEditModal, setShowEditModal] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
     const [editingItemType, setEditingItemType] = useState('');
@@ -25,12 +25,36 @@ const DataList = () => {
 
     const navigate = useNavigate();
 
-    // Memoize fetchData to prevent unnecessary re-creations, especially in useEffect
+    const fetchAllRoles = useCallback(async (token) => {
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        };
+        try {
+            const rolesResponse = await fetch(`http://localhost:8080/auth/admin/roles`, { headers });
+            if (!rolesResponse.ok) {
+                if (rolesResponse.status === 403 || rolesResponse.status === 401) {
+                    throw new Error("Acceso denegado o sesión expirada al cargar roles. Por favor, inicie sesión de nuevo.");
+                }
+                throw new Error(`Error al cargar roles: ${rolesResponse.statusText}`);
+            }
+            const rolesData = await rolesResponse.json();
+            setAllRoles(rolesData);
+        } catch (err) {
+            setError(`Error al cargar roles disponibles: ${err.message}`);
+            if (err.message.includes("Acceso denegado") || err.message.includes("sesión expirada")) {
+                localStorage.removeItem("authToken");
+                setTimeout(() => navigate('/login'), 2000);
+            }
+        }
+    }, [navigate]);
+
+
     const fetchData = useCallback(async (token) => {
         setLoading(true);
         setError(null);
         setDeleteMessage(null);
-        setEditMessage(null); // Limpiar mensajes de edición al recargar datos
+        setEditMessage(null);
 
         const headers = {
             'Content-Type': 'application/json',
@@ -38,10 +62,8 @@ const DataList = () => {
         };
 
         try {
-            // Fetch buildings
             const buildingsResponse = await fetch(`http://localhost:8080/auth/admin/buildings`, { headers });
             if (!buildingsResponse.ok) {
-                // Centralize error handling for 403/unauthorized
                 if (buildingsResponse.status === 403 || buildingsResponse.status === 401) {
                     throw new Error("Acceso denegado o sesión expirada. Por favor, inicie sesión de nuevo.");
                 }
@@ -50,7 +72,6 @@ const DataList = () => {
             const buildingsData = await buildingsResponse.json();
             setBuildings(buildingsData);
 
-            // Fetch workers
             const workersResponse = await fetch(`http://localhost:8080/auth/admin/workers`, { headers });
             if (!workersResponse.ok) {
                 if (workersResponse.status === 403 || workersResponse.status === 401) {
@@ -61,8 +82,6 @@ const DataList = () => {
             const workersData = await workersResponse.json();
             setWorkers(workersData);
 
-
-            // Fetch customers
             const customersResponse = await fetch(`http://localhost:8080/auth/admin/customers`, { headers });
             if (!customersResponse.ok) {
                 if (customersResponse.status === 403 || customersResponse.status === 401) {
@@ -75,17 +94,15 @@ const DataList = () => {
 
         } catch (err) {
             setError(`Error al cargar datos: ${err.message}`);
-            // Redirect to login if access denied or token invalid
             if (err.message.includes("Acceso denegado") || err.message.includes("sesión expirada")) {
-                localStorage.removeItem("authToken"); // Clear invalid token
-                setTimeout(() => navigate('/login'), 2000); // Redirect after 2 seconds
+                localStorage.removeItem("authToken");
+                setTimeout(() => navigate('/login'), 2000);
             }
         } finally {
             setLoading(false);
         }
-    }, [navigate]); // Add navigate to dependencies for useCallback
+    }, [navigate]);
 
-    // Effect hook for initial data fetch and tab changes
     useEffect(() => {
         document.title = `Panel de Administración - ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`;
 
@@ -94,7 +111,6 @@ const DataList = () => {
         if (!token) {
             setError("No se encontró el token de autenticación. Por favor, inicie sesión.");
             setLoading(false);
-            // Optionally redirect immediately if no token at all
             setTimeout(() => navigate('/login'), 1000);
             return;
         }
@@ -102,32 +118,29 @@ const DataList = () => {
         try {
             jwtDecode(token);
             fetchData(token);
+            fetchAllRoles(token);
         } catch (err) {
             setError("Error al autenticar. El token es inválido o ha expirado.");
             setLoading(false);
-            localStorage.removeItem("authToken"); // Clear invalid token
-            setTimeout(() => navigate('/login'), 2000); // Redirect after 2 seconds
+            localStorage.removeItem("authToken");
+            setTimeout(() => navigate('/login'), 2000);
         }
-    }, [activeTab, fetchData, navigate]); // Add fetchData and navigate to dependencies
+    }, [activeTab, fetchData, fetchAllRoles, navigate]);
 
-    // Effect hook for URL search params changes (minor improvement for consistency)
     useEffect(() => {
         const tabFromUrl = searchParams.get('tab');
         if (tabFromUrl && tabFromUrl !== activeTab) {
             setActiveTab(tabFromUrl);
         } else if (!tabFromUrl && activeTab !== 'buildings') {
-            // If URL param is removed, default to 'buildings'
             setActiveTab('buildings');
         }
     }, [searchParams, activeTab]);
 
-    // Handler for tab selection
     const handleTabSelect = (key) => {
         setActiveTab(key);
         setSearchParams({ tab: key });
     };
 
-    // Handler for deleting an item
     const handleDelete = async (id, type) => {
         const confirmDelete = window.confirm(`¿Estás seguro de que quieres eliminar este ${type} (ID: ${id})?`);
         if (!confirmDelete) {
@@ -176,8 +189,7 @@ const DataList = () => {
             });
 
             if (!response.ok) {
-                // Read response body once
-                const responseBody = await response.json(); // Try to parse as JSON first
+                const responseBody = await response.json();
                 let errorDetails = '';
                 if (responseBody && responseBody.message) {
                     errorDetails = ` - Detalles: ${responseBody.message}`;
@@ -203,21 +215,18 @@ const DataList = () => {
         }
     };
 
-    // Function to open the edit modal
     const handleEdit = (item, type) => {
         setEditingItem(item);
         setEditingItemType(type);
         setShowEditModal(true);
     };
 
-    // Function to close the edit modal
     const handleCloseEditModal = () => {
         setShowEditModal(false);
-        setEditingItem(null); // Limpiar el elemento en edición
+        setEditingItem(null);
         setEditingItemType('');
     };
 
-    // Function to save edited changes
     const handleSaveEdit = async (updatedItem, type) => {
         setLoading(true);
         setError(null);
@@ -261,8 +270,7 @@ const DataList = () => {
             });
 
             if (!response.ok) {
-                // Read response body once
-                const responseBody = await response.json(); // Try to parse as JSON first
+                const responseBody = await response.json();
                 let errorDetails = '';
                 if (responseBody && responseBody.message) {
                     errorDetails = ` - Detalles: ${responseBody.message}`;
@@ -290,7 +298,6 @@ const DataList = () => {
         }
     };
 
-    // Conditional rendering for loading state
     if (loading) {
         return (
             <div style={{ paddingBottom: '60px', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
@@ -305,7 +312,6 @@ const DataList = () => {
         );
     }
 
-    // Conditional rendering for error state
     if (error) {
         return (
             <div style={{ paddingBottom: '60px', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
@@ -318,7 +324,6 @@ const DataList = () => {
         );
     }
 
-    // Main render function
     return (
         <div style={{ paddingBottom: '60px', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
             <Container className="my-5 flex-grow-1">
@@ -394,9 +399,10 @@ const DataList = () => {
                                                     Apellido: {worker.surname}<br/>
                                                     Nombre de Usuario: {worker.username || 'N/A'}<br/>
                                                     Contacto: {worker.contact || 'N/A'}<br/>
-                                                    Puesto: {worker.workertypes && worker.workertypes.length > 0
-                                                    ? worker.workertypes.map(wt => wt.role?.name).filter(Boolean).join(', ') // Changed .nombre to .name for Role entity
-                                                    : 'N/A'}
+                                                    Puesto:
+                                                    {worker.workertypes && worker.workertypes.length > 0
+                                                        ? ' ' + worker.workertypes.map(wt => wt.role?.name).filter(Boolean).join(', ')
+                                                        : 'N/A'}
                                                 </Card.Text>
                                             </Card.Body>
                                             <Card.Footer className="text-end">
@@ -478,6 +484,7 @@ const DataList = () => {
                     item={editingItem}
                     itemType={editingItemType}
                     onSave={handleSaveEdit}
+                    allRoles={allRoles}
                 />
             </Container>
             <AdminSidebar />

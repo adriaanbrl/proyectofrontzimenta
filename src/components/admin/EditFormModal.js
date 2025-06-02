@@ -1,41 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 
-const EditFormModal = ({ show, onHide, item, itemType, onSave }) => {
-    // Estado local para los datos del formulario, inicializado con el item recibido
+const EditFormModal = ({ show, onHide, item, itemType, onSave, allRoles }) => {
     const [formData, setFormData] = useState({});
+    const [selectedRoleIds, setSelectedRoleIds] = useState(new Set());
 
-    // Efecto para actualizar formData cuando el 'item' prop cambia (ej. al editar un nuevo elemento)
     useEffect(() => {
-        if (item) {
-            // Clonar el item para evitar mutar el estado original directamente
+        if (show && item) {
             const newItem = { ...item };
 
-            // Manejo específico para el tipo 'worker'
             if (itemType === 'worker') {
-                // Asegurar que 'contact' sea un string para el input
                 newItem.contact = newItem.contact !== undefined && newItem.contact !== null
                     ? String(newItem.contact)
                     : '';
 
-                // If 'rol' is the old direct role, it might be removed or handled differently
-                // Based on recent changes, worker.rol is now permissionRol, and worker.workertypes handles positions.
-                // For editing, we generally only send back primitive fields unless specific relations are editable here.
-                // Assuming 'rol' here refers to the old direct field that's no longer part of the update.
-                delete newItem.rol; // Remove old 'rol' if it's not part of the editable fields
+                if (item.workertypes) {
+                    const currentRoleIds = new Set(item.workertypes.map(wt => wt.role?.id).filter(Boolean));
+                    setSelectedRoleIds(currentRoleIds);
+                } else {
+                    setSelectedRoleIds(new Set());
+                }
             }
 
-            // Manejo específico para fechas y AÑADIDO 'title' en 'building'
             if (itemType === 'building') {
                 newItem.startDate = newItem.startDate ? new Date(newItem.startDate).toISOString().split('T')[0] : '';
                 newItem.endDate = newItem.endDate ? new Date(newItem.endDate).toISOString().split('T')[0] : '';
-                newItem.title = newItem.title || ''; // Initialize title field
+                newItem.title = newItem.title || '';
             }
 
             setFormData(newItem);
         }
-    }, [item, itemType]);
-
+    }, [show, item, itemType]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -45,24 +40,41 @@ const EditFormModal = ({ show, onHide, item, itemType, onSave }) => {
         }));
     };
 
+    const handleRoleChange = (roleId, isChecked) => {
+        setSelectedRoleIds(prev => {
+            const newSet = new Set(prev);
+            if (isChecked) {
+                newSet.add(roleId);
+            } else {
+                newSet.delete(roleId);
+            }
+            return newSet;
+        });
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         const dataToSave = { ...formData };
 
         if (itemType === 'worker') {
-            // Convert contact back to integer if it's a number string
             dataToSave.contact = dataToSave.contact ? parseInt(dataToSave.contact, 10) : null;
+
+            dataToSave.workertypes = Array.from(selectedRoleIds).map(roleId => {
+                const role = allRoles.find(r => r.id === roleId);
+                return {
+                    role: { id: role.id, name: role.name }
+                };
+            });
         }
 
         onSave(dataToSave, itemType);
+        onHide();
     };
-
 
     if (!item) {
         return null;
     }
 
-    // Renderizado condicional del formulario según el tipo de elemento
     const renderFormFields = () => {
         switch (itemType) {
             case 'building':
@@ -79,7 +91,6 @@ const EditFormModal = ({ show, onHide, item, itemType, onSave }) => {
                                 />
                             </Col>
                         </Form.Group>
-                        {/* ADDED: Form Group for Title */}
                         <Form.Group as={Row} className="mb-3">
                             <Form.Label column sm="3">Título</Form.Label>
                             <Col sm="9">
@@ -97,7 +108,7 @@ const EditFormModal = ({ show, onHide, item, itemType, onSave }) => {
                                 <Form.Control
                                     type="date"
                                     name="startDate"
-                                    value={formData.startDate || ''} // Ya pre-procesado en useEffect
+                                    value={formData.startDate || ''}
                                     onChange={handleChange}
                                 />
                             </Col>
@@ -108,7 +119,7 @@ const EditFormModal = ({ show, onHide, item, itemType, onSave }) => {
                                 <Form.Control
                                     type="date"
                                     name="endDate"
-                                    value={formData.endDate || ''} // Ya pre-procesado en useEffect
+                                    value={formData.endDate || ''}
                                     onChange={handleChange}
                                 />
                             </Col>
@@ -151,6 +162,25 @@ const EditFormModal = ({ show, onHide, item, itemType, onSave }) => {
                                     maxLength={9}
                                     pattern="[0-9]*"
                                 />
+                            </Col>
+                        </Form.Group>
+                        <Form.Group as={Row} className="mb-3">
+                            <Form.Label column sm="3">Puestos</Form.Label>
+                            <Col sm="9">
+                                {allRoles.length > 0 ? (
+                                    allRoles.map(role => (
+                                        <Form.Check
+                                            key={role.id}
+                                            type="checkbox"
+                                            id={`role-${role.id}`}
+                                            label={role.name}
+                                            checked={selectedRoleIds.has(role.id)}
+                                            onChange={(e) => handleRoleChange(role.id, e.target.checked)}
+                                        />
+                                    ))
+                                ) : (
+                                    <p>No hay puestos disponibles.</p>
+                                )}
                             </Col>
                         </Form.Group>
                     </>

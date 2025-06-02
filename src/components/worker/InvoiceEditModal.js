@@ -76,7 +76,7 @@ const InvoiceEditModal = ({ show, onHide, invoiceData, onSave, isLoading, error,
 
     return (
         <Modal show={show} onHide={onHide} centered>
-            <Modal.Header closeButton className="bg-primary text-white py-3">
+            <Modal.Header closeButton className="bg-custom text-white py-3">
                 <Modal.Title className="fw-bold fs-5">Editar Factura</Modal.Title>
             </Modal.Header>
             <Modal.Body>

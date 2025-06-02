@@ -4,7 +4,7 @@ import { Modal, Button, Spinner, Alert } from 'react-bootstrap';
 const PdfViewerModal = ({ show, onHide, pdfUrl, isLoading, error }) => {
     return (
         <Modal show={show} onHide={onHide} size="lg" centered>
-            <Modal.Header closeButton className="bg-secondary text-white py-3">
+            <Modal.Header closeButton className="bg-custom text-white py-3">
                 <Modal.Title className="fw-bold fs-5">Visualizar PDF de Factura</Modal.Title>
             </Modal.Header>
             <Modal.Body className="p-0" style={{ height: '80vh' }}>

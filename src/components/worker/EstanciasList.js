@@ -153,10 +153,10 @@ const EstanciasList = () => {
 
     return (
         <Card className="mb-4 shadow-sm">
-            <Card.Header className="bg-primary text-white d-flex justify-content-between align-items-center">
+            <Card.Header className="bg-custom text-white d-flex justify-content-between align-items-center">
                 <h5 className="mb-0">Estancias Registradas</h5>
                 <Button variant="light" size="sm" onClick={() => { setShowAddModal(true); setNewEstanciaName(''); setAddError(null); }}>
-                    <PlusCircle className="me-1" /> Añadir Estancia
+                    <PlusCircle className="me-1 " /> Añadir Estancia
                 </Button>
             </Card.Header>
             <Card.Body>
@@ -270,7 +270,7 @@ const EstanciasList = () => {
                             <Button variant="secondary" onClick={() => setShowAddModal(false)} className="me-2" disabled={addLoading}>
                                 Cancelar
                             </Button>
-                            <Button variant="success" type="submit" disabled={addLoading}>
+                            <Button variant="primary" type="submit" disabled={addLoading}>
                                 {addLoading ? <Spinner animation="border" size="sm" /> : 'Añadir Estancia'}
                             </Button>
                         </div>

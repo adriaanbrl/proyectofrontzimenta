@@ -69,7 +69,7 @@ const EventDetailModal = ({ show, onHide, eventData, onSave, onDelete }) => {
     return (
         <>
             <Modal show={show} onHide={onHide} centered>
-                <Modal.Header closeButton className="bg-primary text-white py-3">
+                <Modal.Header closeButton className="bg-custom text-white py-3">
                     <Modal.Title className="fw-bold fs-5">{eventData?.id ? 'Editar Evento' : 'Detalle del Evento'}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="p-4">

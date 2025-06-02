@@ -4,6 +4,10 @@
     color: #f5922c !important;
 }
 
+.bg-custom {
+    background-color: #f5922c !important;
+}
+
 .btn-custom:hover {
     background-color: #f5922c;
     color: #fff;

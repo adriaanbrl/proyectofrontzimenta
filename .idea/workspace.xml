@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="historial acabado">
+    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="cambios hechos">
+      <change afterPath="$PROJECT_DIR$/src/components/worker/workerView/IncidentEditModal.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/admin/DataList.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/admin/DataList.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/admin/EditFormModal.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/admin/EditFormModal.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/worker/WorkerChat.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/worker/WorkerChat.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/worker/workerView/BuildingIncidentsSection.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/worker/workerView/BuildingIncidentsSection.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -281,14 +282,6 @@
       <workItem from="1748454357452" duration="2088000" />
       <workItem from="1748500499004" duration="9705000" />
       <workItem from="1748518618476" duration="8093000" />
-    </task>
-    <task id="LOCAL-00049" summary="Vista admin">
-      <option name="closed" value="true" />
-      <created>1747665409970</created>
-      <option name="number" value="00049" />
-      <option name="presentableId" value="LOCAL-00049" />
-      <option name="project" value="LOCAL" />
-      <updated>1747665409970</updated>
     </task>
     <task id="LOCAL-00050" summary="Vista admin">
       <option name="closed" value="true" />
@@ -674,7 +667,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748518805809</updated>
     </task>
-    <option name="localTasksCounter" value="98" />
+    <task id="LOCAL-00098" summary="cambios hechos">
+      <option name="closed" value="true" />
+      <created>1748857080330</created>
+      <option name="number" value="00098" />
+      <option name="presentableId" value="LOCAL-00098" />
+      <option name="project" value="LOCAL" />
+      <updated>1748857080330</updated>
+    </task>
+    <option name="localTasksCounter" value="99" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -704,7 +705,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Global view actualizado" />
     <MESSAGE value="Calendario actualizado" />
     <MESSAGE value="Facturas" />
     <MESSAGE value="Manual usuario, facturas y legislacion legal actualizado" />
@@ -729,6 +729,7 @@
     <MESSAGE value="Admin 100% funcional" />
     <MESSAGE value="Vista worker" />
     <MESSAGE value="historial acabado" />
-    <option name="LAST_COMMIT_MESSAGE" value="historial acabado" />
+    <MESSAGE value="cambios hechos" />
+    <option name="LAST_COMMIT_MESSAGE" value="cambios hechos" />
   </component>
 </project>

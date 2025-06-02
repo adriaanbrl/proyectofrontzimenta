@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Card, Form, Button, ListGroup, InputGroup } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-import { BsSendFill } from 'react-icons/bs'; // Importar el icono de envío
 import moment from 'moment';
 import 'moment/locale/es';
 
@@ -15,7 +14,7 @@ function WorkerChat() {
     const [contactId, setContactId] = useState(null);
     const [workerId, setWorkerId] = useState(null);
     const [authToken, setAuthToken] = useState(null);
-    const [contactName, setContactName] = useState(""); // Para el título
+    const [contactName, setContactName] = useState("");
     const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
 
     useEffect(() => {
@@ -37,7 +36,6 @@ function WorkerChat() {
                     setWorkerId(decodedToken.id);
                     console.log('contactId (Worker):', contactId, 'workerId (Worker):', workerId);
 
-                    // Establecer la conexión WebSocket aquí, cuando authToken está disponible
                     websocket.current = new WebSocket('ws://localhost:8080/chat');
 
                     websocket.current.onopen = () => {
@@ -107,7 +105,12 @@ function WorkerChat() {
 
     useEffect(() => {
         if (chatContainerRef.current) {
-            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+            // Desplazar solo si el usuario no ha subido para ver mensajes antiguos
+            // o si el mensaje actual es del usuario logueado
+            const isScrolledToBottom = chatContainerRef.current.scrollHeight - chatContainerRef.current.clientHeight <= chatContainerRef.current.scrollTop + 1; // +1 para manejar posibles errores de redondeo
+            if (isScrolledToBottom || (messages.length > 0 && messages[messages.length - 1].senderId === workerId)) {
+                chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+            }
         }
     }, [messages]);
 
@@ -134,78 +137,150 @@ function WorkerChat() {
     };
 
     return (
-        <Card className="shadow-sm w-100 h-100">
-            <Card.Header className="bg-light">
-                <div className="header-section d-flex align-items-center justify-content-center mb-4">
-                    <h1 className=" flex-grow-1 text-title text-center mb-5 fw-bold fs-2 mt-5">
-                        Chat con {contactName || "Cliente"}
-                    </h1>
-                </div>
-            </Card.Header>
-            <Card.Body className="d-flex flex-column">
-                <div
-                    ref={chatContainerRef}
-                    className="mb-3 flex-grow-1 overflow-auto p-3"
+        // Contenedor principal para centrar el chat y darle un tamaño máximo
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', backgroundColor: '#f8f9fa' }}>
+            <Card className="shadow-lg" style={{
+                borderRadius: '15px',
+                overflow: 'hidden',
+                width: '100%',
+                maxWidth: '600px', // Ancho máximo para el chat en pantallas grandes
+                height: 'calc(100vh - 80px)', // Altura que deja espacio para la barra de navegación inferior
+                display: 'flex',
+                flexDirection: 'column'
+            }}>
+                <Card.Header
+                    className="py-4 text-center"
                     style={{
-                        border: "1px solid #e0e0e0",
-                        borderRadius: "5px",
-                        maxHeight: "400px",
+                        backgroundColor: '#fff9f0',
+                        borderBottom: '1px solid #f0f0f0',
+                        color: '#333',
+                        fontWeight: 'bold',
+                        fontSize: '1.8rem'
                     }}
                 >
-                    <ListGroup className="list-unstyled">
-                        {messages.map((msg, index) => (
-                            <li
-                                key={index}
-                                className={`d-flex justify-content-${
-                                    msg.senderType === 'worker' ? 'end' : 'start'
-                                } mb-2 align-items-end`}
-                            >
-                                {msg.senderType === 'worker' && msg.timestamp && (
-                                    <small className="text-muted mr-2">{moment(msg.timestamp).locale('es').format('LT')}</small>
-                                )}
-                                <div
-                                    className={`${
-                                        msg.senderType === 'worker'
-                                            ? 'bg-warning text-white'
-                                            : 'bg-light text-dark'
-                                    } p-2 rounded ${msg.senderType === 'worker' ? 'ml-2' : 'mr-2'}`}
-                                    style={{ maxWidth: '70%', wordBreak: 'break-word' }}
+                    Chat con {contactName || "Cliente"}
+                </Card.Header>
+
+                <Card.Body className="d-flex flex-column p-4" style={{ backgroundColor: '#fcfcfc', flexGrow: 1, overflow: 'hidden' }}>
+                    <div
+                        ref={chatContainerRef}
+                        className="flex-grow-1 overflow-auto p-3"
+                        style={{
+                            border: "1px solid #e0e0e0",
+                            borderRadius: "10px",
+                            backgroundColor: '#ffffff',
+                            boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)',
+                            // Eliminamos minHeight aquí porque flex-grow-1 se encargará de esto
+                        }}
+                    >
+                        <ListGroup className="list-unstyled">
+                            {messages.map((msg, index) => (
+                                <li
+                                    key={index}
+                                    className={`d-flex justify-content-${
+                                        msg.senderType === 'worker' ? 'end' : 'start'
+                                    } mb-3 align-items-end`}
                                 >
-                                    <small className="text-muted">
-                                        {msg.senderType === 'worker' ? 'Tú' : contactName || 'Cliente'}
-                                    </small>
-                                    <p className="mb-0">{msg.message}</p>
-                                </div>
-                                {msg.senderType !== 'worker' && msg.timestamp && (
-                                    <small className="text-muted ml-2">{moment(msg.timestamp).locale('es').format('LT')}</small>
-                                )}
-                            </li>
-                        ))}
-                    </ListGroup>
+                                    {/* Información de tiempo para mensajes del trabajador (a la izquierda de la burbuja) */}
+                                    {msg.senderType === 'worker' && msg.timestamp && (
+                                        <small className="text-muted mr-2" style={{ fontSize: '0.75rem', opacity: 0.8, alignSelf: 'flex-end' }}>
+                                            {moment(msg.timestamp).locale('es').format('LT')}
+                                        </small>
+                                    )}
+                                    <div
+                                        className={`p-3 rounded-lg position-relative ${
+                                            msg.senderType === 'worker'
+                                                ? 'text-white'
+                                                : 'text-dark'
+                                        }`}
+                                        style={{
+                                            maxWidth: '75%',
+                                            wordBreak: 'break-word',
+                                            backgroundColor: msg.senderType === 'worker' ? '#f5922c' : '#ffffff',
+                                            border: msg.senderType === 'worker' ? 'none' : '1px solid #e0e0e0',
+                                            borderRadius: '15px',
+                                            boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+                                            marginLeft: msg.senderType === 'worker' ? '15px' : '0',
+                                            marginRight: msg.senderType === 'worker' ? '0' : '15px',
+                                            // Asegura que el contenido (nombre, mensaje) tenga espacio
+                                            display: 'flex',
+                                            flexDirection: 'column'
+                                        }}
+                                    >
+                                        <small
+                                            className="mb-1 d-block"
+                                            style={{
+                                                fontSize: '0.8rem',
+                                                fontWeight: 'bold',
+                                                color: msg.senderType === 'worker' ? 'rgba(255,255,255,0.8)' : '#6c757d',
+                                            }}
+                                        >
+                                            {msg.senderType === 'worker' ? 'Tú' : contactName || 'Cliente'}
+                                        </small>
+                                        <p className="mb-0" style={{ fontSize: '0.95rem', lineHeight: '1.4' }}>
+                                            {msg.message}
+                                        </p>
+                                    </div>
+                                    {/* Información de tiempo para mensajes del cliente (a la derecha de la burbuja) */}
+                                    {msg.senderType !== 'worker' && msg.timestamp && (
+                                        <small className="text-muted ml-2" style={{ fontSize: '0.75rem', opacity: 0.8, alignSelf: 'flex-end' }}>
+                                            {moment(msg.timestamp).locale('es').format('LT')}
+                                        </small>
+                                    )}
+                                </li>
+                            ))}
+                        </ListGroup>
+                    </div>
+                </Card.Body>
+
+                <div className="p-3" style={{ borderTop: '1px solid #f0f0f0', backgroundColor: '#ffffff' }}>
+                    <Form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            handleSendMessage();
+                        }}
+                    >
+                        <InputGroup className="mb-0" style={{ borderRadius: '50px', overflow: 'hidden' }}> {/* mb-0 para eliminar margen inferior */}
+                            <Form.Control
+                                type="text"
+                                placeholder="Escribe un mensaje..."
+                                value={newMessage}
+                                onChange={(e) => setNewMessage(e.target.value)}
+                                style={{
+                                    padding: '15px 20px',
+                                    border: '1px solid #ced4da',
+                                    borderRight: 'none',
+                                    boxShadow: 'none',
+                                    borderRadius: '50px 0 0 50px'
+                                }}
+                                className="flex-grow-1"
+                            />
+                            <Button
+                                type="submit"
+                                disabled={!isWebSocketConnected}
+                                style={{
+                                    backgroundColor: '#f5922c',
+                                    borderColor: '#f5922c',
+                                    color: 'white',
+                                    padding: '15px 25px',
+                                    borderRadius: '0 50px 50px 0',
+                                    transition: 'background-color 0.2s ease-in-out'
+                                }}
+                                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#e08427'}
+                                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#f5922c'}
+                            >
+                                Enviar
+                            </Button>
+                        </InputGroup>
+                        {!isWebSocketConnected && (
+                            <small className="text-danger d-block text-center mt-2">
+                                No conectado al chat. Recargando la página puede ayudar.
+                            </small>
+                        )}
+                    </Form>
                 </div>
-                <Form
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        handleSendMessage();
-                    }}
-                >
-                    <InputGroup>
-                        <Form.Control
-                            type="text"
-                            placeholder="Escribe un mensaje..."
-                            value={newMessage}
-                            onChange={(e) => setNewMessage(e.target.value)}
-                        />
-                        <Button variant="primary" type="submit" disabled={!isWebSocketConnected}>
-                            Enviar
-                        </Button>
-                    </InputGroup>
-                    {!isWebSocketConnected && (
-                        <small className="text-danger mt-1">No conectado al chat. Recargando la página puede ayudar.</small>
-                    )}
-                </Form>
-            </Card.Body>
-        </Card>
+            </Card>
+        </div>
     );
 }
 

@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Card, Form, Button, Alert, Spinner } from 'react-bootstrap';
 
-// Cambiado: Ahora acepta 'buildingTitle' como prop
 function BudgetUploadForm({ buildingId, buildingTitle, onUploadSuccess }) {
     const [selectedFile, setSelectedFile] = useState(null);
+    const [budgetTitle, setBudgetTitle] = useState('');
+    const [budgetAmount, setBudgetAmount] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-
 
     const getAuthToken = () => {
         return localStorage.getItem('authToken');
@@ -20,11 +20,31 @@ function BudgetUploadForm({ buildingId, buildingTitle, onUploadSuccess }) {
         setError('');
     };
 
+    const handleTitleChange = (event) => {
+        setBudgetTitle(event.target.value);
+        setMessage('');
+        setError('');
+    };
+
+    const handleAmountChange = (event) => {
+        const value = event.target.value;
+        if (value === '' || /^\d*([.,]\d*)?$/.test(value)) {
+            setBudgetAmount(value);
+            setMessage('');
+            setError('');
+        }
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         if (!selectedFile) {
             setError('Por favor, selecciona un archivo Excel (.xlsx o .xls).');
+            return;
+        }
+
+        if (!budgetTitle.trim()) {
+            setError('Por favor, introduce un título para el presupuesto.');
             return;
         }
 
@@ -42,6 +62,8 @@ function BudgetUploadForm({ buildingId, buildingTitle, onUploadSuccess }) {
         const formData = new FormData();
         formData.append('file', selectedFile);
         formData.append('buildingId', buildingId.toString());
+        formData.append('title', budgetTitle.trim());
+        formData.append('amount', budgetAmount.replace(',', '.'));
 
         const headers = {};
 
@@ -54,6 +76,8 @@ function BudgetUploadForm({ buildingId, buildingTitle, onUploadSuccess }) {
 
             setMessage(response.data);
             setSelectedFile(null);
+            setBudgetTitle('');
+            setBudgetAmount('');
 
             if (onUploadSuccess) {
                 onUploadSuccess(response.data);
@@ -76,22 +100,48 @@ function BudgetUploadForm({ buildingId, buildingTitle, onUploadSuccess }) {
     return (
         <Card className="shadow-sm">
             <Card.Body>
-                {/* Cambiado: Usar buildingTitle en lugar de buildingId */}
                 <Card.Title className="mb-3 text-center">Subir Presupuesto para: {buildingTitle || `Edificio ID: ${buildingId}`}</Card.Title>
                 <Form onSubmit={handleSubmit}>
+                    <Form.Group controlId="budgetTitle" className="mb-3">
+                        <Form.Label>Título del Presupuesto:</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Introduce el título del presupuesto"
+                            value={budgetTitle}
+                            onChange={handleTitleChange}
+                            required
+                        />
+                    </Form.Group>
+
+                    <Form.Group controlId="budgetAmount" className="mb-3">
+                        <Form.Label>Monto Total:</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Introduce el monto total (ej. 1234.56)"
+                            value={budgetAmount}
+                            onChange={handleAmountChange}
+                            inputMode="decimal"
+                            required
+                        />
+                        <Form.Text className="text-muted">
+                            Este campo es opcional. Si se deja vacío, el monto se calculará a partir del Excel.
+                        </Form.Text>
+                    </Form.Group>
+
                     <Form.Group controlId="excelFile" className="mb-3">
                         <Form.Label>Seleccionar archivo Excel:</Form.Label>
                         <Form.Control
                             type="file"
                             accept=".xlsx, .xls"
                             onChange={handleFileChange}
+                            required
                         />
                     </Form.Group>
 
                     <Button
                         variant="primary"
                         type="submit"
-                        disabled={isLoading || !selectedFile}
+                        disabled={isLoading || !selectedFile || !budgetTitle.trim()}
                         className="w-100"
                     >
                         {isLoading ? (

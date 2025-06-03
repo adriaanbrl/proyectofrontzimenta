@@ -4,8 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="crear estancias y categorias">
+    <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="quitado comentarios">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/worker/WorkerSidebar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/worker/WorkerSidebar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/worker/workerView/BudgetUploadForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/worker/workerView/BudgetUploadForm.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -279,14 +281,7 @@
       <workItem from="1748454357452" duration="2088000" />
       <workItem from="1748500499004" duration="9705000" />
       <workItem from="1748518618476" duration="8093000" />
-    </task>
-    <task id="LOCAL-00055" summary="Vista admin">
-      <option name="closed" value="true" />
-      <created>1747749886375</created>
-      <option name="number" value="00055" />
-      <option name="presentableId" value="LOCAL-00055" />
-      <option name="project" value="LOCAL" />
-      <updated>1747749886375</updated>
+      <workItem from="1748931968012" duration="1941000" />
     </task>
     <task id="LOCAL-00056" summary="Separacion inicio en archivos">
       <option name="closed" value="true" />
@@ -672,7 +667,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748875152471</updated>
     </task>
-    <option name="localTasksCounter" value="104" />
+    <task id="LOCAL-00104" summary="quitado comentarios">
+      <option name="closed" value="true" />
+      <created>1748932081356</created>
+      <option name="number" value="00104" />
+      <option name="presentableId" value="LOCAL-00104" />
+      <option name="project" value="LOCAL" />
+      <updated>1748932081356</updated>
+    </task>
+    <option name="localTasksCounter" value="105" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -702,7 +705,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Facturas" />
     <MESSAGE value="Manual usuario, facturas y legislacion legal actualizado" />
     <MESSAGE value="Incidentes registro acabado" />
     <MESSAGE value="calendario" />
@@ -727,6 +729,7 @@
     <MESSAGE value="historial acabado" />
     <MESSAGE value="cambios hechos" />
     <MESSAGE value="crear estancias y categorias" />
-    <option name="LAST_COMMIT_MESSAGE" value="crear estancias y categorias" />
+    <MESSAGE value="quitado comentarios" />
+    <option name="LAST_COMMIT_MESSAGE" value="quitado comentarios" />
   </component>
 </project>

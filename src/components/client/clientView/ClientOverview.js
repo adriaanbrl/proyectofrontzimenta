@@ -156,7 +156,7 @@ const ClientOverview = ({
   };
 
   return (
-    <Row className="h-100 align-items-stretch">
+    <Row className="h-100 ">
       <Col md={6} xs={12}>
         <Card className="shadow-sm h-100 d-flex flex-column">
           <Card.Body className="d-flex flex-column align-items-start flex-grow-1">
@@ -165,7 +165,6 @@ const ClientOverview = ({
             </div>
             <div className="d-flex align-items-center mt-3 flex-grow-1">
               {" "}
-              {/* Añade flex-grow-1 aquí */}
               <div
                 className="position-relative"
                 style={{ width: "240px", height: "240px" }}
@@ -214,55 +213,107 @@ const ClientOverview = ({
                 </div>
               </div>
             </div>
-            {/* El flex-grow-1 en Card.Body debería hacer que ocupe el espacio */}
           </Card.Body>
         </Card>
       </Col>
-
-       <Col md={6} xs={12}>
-        <Card className="shadow-sm h-100 d-flex flex-column">
-            <Card.Body className="d-flex flex-column justify-content-between h-100">
-                <div>
-                    <Card.Title className="mb-3 fw-semibold d-flex align-items-center">
-                        <FileEarmarkTextFill className="me-2 text-custom" size={20} /> Última Factura
-                    </Card.Title>
-                    {lastInvoice ? (
-                        <Stack gap={1}>
-                            <div>
-                                <span className="text-muted ">Mes:</span>{" "}
-                                <Badge pill bg="light" text="custom" className="ms-1">
-                                    {lastInvoice.title}
-                                </Badge>
-                            </div>
-                            <div>
-                                <span className="text-muted ">Monto:</span>{" "}
-                                <span className="text-custom fw-bold">
-                                    {new Intl.NumberFormat("es-ES", {
-                                        style: "currency",
-                                        currency: "EUR",
-                                    }).format(lastInvoice.amount)}
-                                </span>
-                            </div>
-                        </Stack>
-                    ) : (
-                        <div className="text-muted small">No hay facturas disponibles.</div>
-                    )}
+       <Col md={6} xs={12} className="d-flex flex-column gap-3">
+        <Card className="shadow-sm">
+          {" "}
+          <Card.Body className="d-flex flex-column justify-content-between">
+            {" "}
+            <div>
+              <Card.Title className="mb-3 fw-semibold d-flex align-items-center">
+                <FileEarmarkTextFill className="me-2 text-custom" size={20} />{" "}
+                Última Factura
+              </Card.Title>
+              {lastInvoice ? (
+                <Stack gap={1}>
+                  <div>
+                    <span className="text-muted">Mes:</span>{" "}
+                    <Badge pill bg="light" text="custom" className="ms-1">
+                      {lastInvoice.title}
+                    </Badge>
+                  </div>
+                  <div>
+                    <span className="text-muted">Monto:</span>{" "}
+                    <span className="text-custom fw-bold">
+                      {new Intl.NumberFormat("es-ES", {
+                        style: "currency",
+                        currency: "EUR",
+                      }).format(lastInvoice.amount)}
+                    </span>
+                  </div>
+                </Stack>
+              ) : (
+                <div className="text-muted small">
+                  No hay facturas disponibles.
                 </div>
-                {lastInvoice?.id && (
-                    <div>
-                        <Button
-                            variant="primary"
-                            size="md"
-                            onClick={handleOpenPdf}
-                            className="rounded-pill mt-3"
-                        >
-                            <FileEarmarkTextFill className="me-2" /> Ver Factura
-                        </Button>
-                    </div>
-                )}
-            </Card.Body>
+              )}
+            </div>
+            {lastInvoice?.id && (
+              <div>
+                <Button
+                  variant="primary"
+                  size="md"
+                  onClick={handleOpenPdf}
+                  className="rounded-pill mt-3"
+                >
+                  <FileEarmarkTextFill className="me-2" /> Ver Factura
+                </Button>
+              </div>
+            )}
+          </Card.Body>
         </Card>
-    </Col>
+
+        <Card className="shadow-sm">
+          {" "}
+          <Card.Body className="d-flex flex-column justify-content-between">
+            {" "}
+            <div>
+              <Card.Title className="mb-3 fw-semibold d-flex align-items-center">
+                <FileEarmarkTextFill className="me-2 text-custom" size={20} />{" "}
+                Última Factura
+              </Card.Title>
+              {lastInvoice ? (
+                <Stack gap={1}>
+                  <div>
+                    <span className="text-muted">Mes:</span>{" "}
+                    <Badge pill bg="light" text="custom" className="ms-1">
+                      {lastInvoice.title}
+                    </Badge>
+                  </div>
+                  <div>
+                    <span className="text-muted">Monto:</span>{" "}
+                    <span className="text-custom fw-bold">
+                      {new Intl.NumberFormat("es-ES", {
+                        style: "currency",
+                        currency: "EUR",
+                      }).format(lastInvoice.amount)}
+                    </span>
+                  </div>
+                </Stack>
+              ) : (
+                <div className="text-muted small">
+                  No hay facturas disponibles.
+                </div>
+              )}
+            </div>
+            {lastInvoice?.id && (
+              <div>
+                <Button
+                  variant="primary"
+                  size="md"
+                  onClick={handleOpenPdf}
+                  className="rounded-pill mt-3"
+                >
+                  <FileEarmarkTextFill className="me-2" /> Ver Factura
+                </Button>
+              </div>
+            )}
+          </Card.Body>
+        </Card>
+      </Col>
+      
     </Row>
   );
 };

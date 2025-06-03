@@ -37,7 +37,7 @@
 
     return (
         <Container className="mt-4">
-        <Row>
+        <Row className="mb-2">
             <Col md={12}>
             <h2 className="text-start mb-2 text fw-bold">
                 HOLA, {clientName || "Client"}:

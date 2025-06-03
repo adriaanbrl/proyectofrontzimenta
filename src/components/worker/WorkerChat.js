@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Card, Form, Button, ListGroup, InputGroup } from 'react-bootstrap';
+import { Card, Form, Button, ListGroup, InputGroup, Container } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import moment from 'moment';
@@ -141,7 +141,7 @@ export default function WorkerChat() {
     };
 
     return (
-        <div className="d-flex justify-content-center align-items-center min-vh-100 p-3" style={{ backgroundColor: '#f0f2f5' }}>
+        <Container className="d-flex justify-content-center align-items-center min-vh-100 p-3 mb-5">
             <Card className="shadow-lg w-100 d-flex flex-column" style={{ maxWidth: '900px', height: 'calc(100vh - 100px)', borderRadius: '1rem' }}>
                 {/* Encabezado del chat */}
                 <Card.Header className="text-white text-center fw-bold fs-4 py-3 border-0 rounded-top-4" style={{ backgroundColor: '#f5922c', borderBottom: '3px solid rgba(255, 255, 255, 0.2)' }}>
@@ -187,7 +187,7 @@ export default function WorkerChat() {
                 </Card.Body>
 
                 {/* Área de entrada de mensajes */}
-                <div className="p-3 border-top bg-white" style={{ borderRadius: '0 0 1rem 1rem' }}>
+                <div className="p-3 border-top bg-white rounded-bottom-4 mb-2" >
                     <Form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }}>
                         <InputGroup>
                             <Form.Control
@@ -226,6 +226,6 @@ export default function WorkerChat() {
                     </Form>
                 </div>
             </Card>
-        </div>
+        </Container>
     );
 }

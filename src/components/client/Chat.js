@@ -157,7 +157,7 @@ function ClientChat() {
   };
 
   return (
-    <Container className="d-flex justify-content-center align-items-center min-vh-100 p-3">
+    <Container className="d-flex justify-content-center align-items-center min-vh-100 p-3 mb-5">
       <Card
         className="shadow-lg w-100 d-flex flex-column"
         style={{
@@ -234,7 +234,7 @@ function ClientChat() {
         </Card.Body>
 
         {/* Input de mensaje */}
-        <div className="p-3 border-top bg-white">
+        <div className="p-3 border-top bg-white rounded-bottom-4 mb-2">
           <Form
             onSubmit={(e) => {
               e.preventDefault();

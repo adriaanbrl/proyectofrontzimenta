@@ -219,7 +219,7 @@ function InvoicesDoc() {
                           className="d-flex justify-content-between align-items-center border rounded mb-2"
                       >
                         <div className="d-flex align-items-center">
-                          <File size={24} className="me-3 text-warning" />
+                          <File size={24} className="me-3 text-custom" />
                           <span>
                       {/* Display item.title, fallback to item.filename if title is not available */}
                             {item.title || item.filename} ({item.dateInfo})

@@ -132,7 +132,7 @@ function Warranty() {
     <Container className="py-5">
       <Row className="justify-content-center">
         <Col md={8} lg={6}>
-          <Card className="shadow-sm rounded-lg border-0">
+          <Card className="shadow rounded-lg border-0">
             <Card.Body className="p-2">
                <div className="d-flex justify-content-center align-items-center mb-3">
                           <Button
@@ -224,7 +224,7 @@ function Warranty() {
                   variant="primary"
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-100 rounded-pill fw-bold shadow"
+                  className="w-100 rounded-pill fw-bold shadow mb-4"
                 >
                   {isSubmitting ? 'Enviando...' : 'Enviar Reporte'}
                 </Button>

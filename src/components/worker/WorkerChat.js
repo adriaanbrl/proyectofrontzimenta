@@ -19,7 +19,6 @@ export default function WorkerChat() {
     const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
 
     useEffect(() => {
-        console.log('useEffect con location.search ejecutado (Worker)');
         const queryParams = new URLSearchParams(location.search);
         setContactId(queryParams.get('contactId'));
         const fetchedContactName = queryParams.get('contactName');
@@ -29,18 +28,16 @@ export default function WorkerChat() {
 
         const fetchWorkerIdAndHistory = async () => {
             const token = localStorage.getItem("authToken");
-            console.log('Token recuperado (Worker):', token);
             if (token) {
                 setAuthToken(token);
                 try {
                     const decodedToken = jwtDecode(token);
                     setWorkerId(decodedToken.id);
-                    console.log('contactId (Worker):', contactId, 'workerId (Worker):', workerId);
 
                     websocket.current = new WebSocket('ws://localhost:8080/chat'); 
 
                     websocket.current.onopen = () => {
-                        console.log('Conexión WebSocket establecida (Worker).');
+
                         setIsWebSocketConnected(true);
                     };
 
@@ -50,12 +47,12 @@ export default function WorkerChat() {
                     };
 
                     websocket.current.onclose = () => {
-                        console.log('Conexión WebSocket cerrada (Worker).');
+
                         setIsWebSocketConnected(false);
                     };
 
                     websocket.current.onerror = (error) => {
-                        console.error('Error en la conexión WebSocket (Worker):', error);
+     
                         setIsWebSocketConnected(false);
                     };
 
@@ -65,7 +62,6 @@ export default function WorkerChat() {
                         }
                     };
                 } catch (decodeError) {
-                    console.error("Error decodificando el token (Worker):", decodeError);
                 }
             }
         };
@@ -76,11 +72,10 @@ export default function WorkerChat() {
         if (contactId && workerId && authToken) {
             loadChatHistory(workerId, 'worker', parseInt(contactId), 'customer');
         }
-    }, [contactId, workerId, authToken]); // Se ejecuta de nuevo cuando estas dependencias cambian
+    }, [contactId, workerId, authToken]);
 
     // Función para obtener el historial del chat desde el backend
     const loadChatHistory = async (user1Id, user1Type, user2Id, user2Type) => {
-        console.log('authToken en loadChatHistory (Worker):', authToken);
         if (authToken) {
             try {
                 const response = await fetch(
@@ -94,13 +89,11 @@ export default function WorkerChat() {
                 );
                 if (response.ok) {
                     const history = await response.json();
-                    console.log('Historial cargado (Worker):', history);
                     setMessages(history);
                 } else {
-                    console.error('Error al cargar el historial del chat (Worker):', response.status);
                 }
             } catch (error) {
-                console.error('Error al cargar el historial del chat (Worker):', error);
+              
             }
         }
     };
@@ -134,9 +127,9 @@ export default function WorkerChat() {
             // Añadir el mensaje de forma optimista a la UI
             setMessages((prevMessages) => [...prevMessages, messageObject]);
 
-            setNewMessage(''); // Limpiar el campo de entrada
+            setNewMessage(''); 
         } else if (!isWebSocketConnected) {
-            console.log("La conexión WebSocket no está activa. Intenta reconectar o espera.");
+           
         }
     };
 
@@ -162,10 +155,9 @@ export default function WorkerChat() {
                                         style={{
                                             maxWidth: '75%',
                                             wordBreak: 'break-word',
-                                            borderRadius: '1.25rem', // Bordes más redondeados para las burbujas
+                                            borderRadius: '1.25rem', 
                                             backgroundColor: msg.senderType === 'worker' ? '#f5922c' : '#ffffff',
                                             color: msg.senderType === 'worker' ? '#ffffff' : '#212529',
-                                            // Ajustes para las esquinas inferiores de las burbujas
                                             borderBottomRightRadius: msg.senderType === 'worker' ? '0.375rem' : '1.25rem',
                                             borderBottomLeftRadius: msg.senderType === 'customer' ? '0.375rem' : '1.25rem'
                                         }}
@@ -197,9 +189,9 @@ export default function WorkerChat() {
                                 onChange={(e) => setNewMessage(e.target.value)}
                                 className="rounded-pill border-secondary shadow-none me-2 px-4 py-2"
                                 style={{
-                                    borderColor: '#ced4da', // Color de borde por defecto de Bootstrap
-                                    outline: 'none', // Eliminar el contorno en foco
-                                    boxShadow: 'none' // Eliminar la sombra en foco
+                                    borderColor: '#ced4da', 
+                                    outline: 'none', 
+                                    boxShadow: 'none' 
                                 }}
                             />
                             <Button

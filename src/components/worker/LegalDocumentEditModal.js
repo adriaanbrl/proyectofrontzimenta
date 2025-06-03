@@ -28,12 +28,11 @@ const LegalDocumentEditModal = ({ show, onHide, documentData, onSave, isLoading,
 
         if (type === 'file' && files && files[0]) {
             const file = files[0];
-            // No client-side PDF type check here, relying on 'accept' attribute and backend validation
             const reader = new FileReader();
             reader.onloadend = () => {
                 setFormData(prev => ({
                     ...prev,
-                    documentBase64: reader.result.split(',')[1] // Store base64 string
+                    documentBase64: reader.result.split(',')[1] 
                 }));
             };
             reader.readAsDataURL(file);
@@ -58,22 +57,20 @@ const LegalDocumentEditModal = ({ show, onHide, documentData, onSave, isLoading,
             const token = localStorage.getItem("authToken");
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-            // Construct payload similar to InvoiceEditModal
+           
             const payload = {
                 title: formData.title,
-                documentBase64: formData.documentBase64, // Send base64 string
-                // Include buildingId if your backend requires it for updates
+                documentBase64: formData.documentBase64, 
                 buildingId: parseInt(formData.building_id, 10)
             };
 
-            // Make the PUT request with application/json content type
             await axios.put(
                 `http://localhost:8080/api/legal_documentation/${documentData.id}`,
                 payload,
                 {
                     headers: {
                         ...headers,
-                        'Content-Type': 'application/json' // Explicitly set for JSON payload
+                        'Content-Type': 'application/json' 
                     }
                 }
             );
@@ -81,7 +78,6 @@ const LegalDocumentEditModal = ({ show, onHide, documentData, onSave, isLoading,
             onSave(documentData.building_id);
             onHide();
         } catch (err) {
-            console.error("Error al actualizar el documento legal:", err.response?.data || err.message);
             const errorMessage = err.response?.data?.message || err.response?.data?.error || err.message || "Error al actualizar el documento legal.";
             setError(errorMessage);
         } finally {

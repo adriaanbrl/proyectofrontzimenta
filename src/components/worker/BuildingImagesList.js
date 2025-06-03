@@ -160,7 +160,6 @@ const BuildingImagesList = ({ buildingId }) => {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
         } catch (error) {
-            console.error(`Error fetching plan URL for building ${id}:`, error);
             setErrorPlan("Error al obtener la URL del plano.");
             setBuildingPlanUrl(null);
             setPlanFetched(true);
@@ -364,7 +363,6 @@ const BuildingImagesList = ({ buildingId }) => {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
             } catch (error) {
-                console.error(`Error fetching plano del edificio:`, error);
                 setErrorPlan("Error al cargar el plano.");
                 setBuildingPlanUrl(null);
                 setPlanFetched(true);
@@ -427,7 +425,6 @@ const BuildingImagesList = ({ buildingId }) => {
         const formData = new FormData();
         formData.append('plan', selectedPlanFile);
         formData.append('titulo', planTitle);
-        // AÑADIDO: Incluir buildingId en el FormData
         formData.append('buildingId', buildingId);
 
         try {

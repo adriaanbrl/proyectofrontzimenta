@@ -17,7 +17,7 @@ const EstanciaEditModal = ({ show, onHide, estanciaData, onSave }) => {
         setLoading(true);
         setError(null);
         try {
-            // Simulate API call to update estancia name
+            
             await new Promise(resolve => setTimeout(resolve, 500));
             if (!name.trim()) {
                 throw new Error("El nombre de la estancia no puede estar vacío.");

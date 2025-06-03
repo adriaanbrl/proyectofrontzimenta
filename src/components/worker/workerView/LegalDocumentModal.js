@@ -23,7 +23,6 @@ const LegalDocumentModal = ({ show, onHide, buildingId, buildingTitle }) => {
         setError(null);
         setSuccess(false);
 
-        // Client-side validation for file type
         if (documentFile && documentFile.type !== 'application/pdf') {
             setError('Por favor, sube solo archivos PDF.');
             setLoading(false);
@@ -53,8 +52,7 @@ const LegalDocumentModal = ({ show, onHide, buildingId, buildingTitle }) => {
 
             await response.json();
             setSuccess(true);
-            // Optionally, you might want to call onHide() here to close the modal on success
-            // onHide();
+       
         } catch (err) {
             setError(err.message);
         } finally {
@@ -84,7 +82,7 @@ const LegalDocumentModal = ({ show, onHide, buildingId, buildingTitle }) => {
                         <Form.Label>Archivo</Form.Label>
                         <Form.Control
                             type="file"
-                            accept="application/pdf" // <--- This attribute restricts file selection to PDFs
+                            accept="application/pdf" 
                             onChange={(e) => setDocumentFile(e.target.files[0])}
                             required
                         />

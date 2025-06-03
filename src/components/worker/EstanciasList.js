@@ -19,7 +19,7 @@ const EstanciasList = () => {
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [deleteError, setDeleteError] = useState(null);
 
-    // New state for adding estancias
+   
     const [showAddModal, setShowAddModal] = useState(false);
     const [newEstanciaName, setNewEstanciaName] = useState('');
     const [addLoading, setAddLoading] = useState(false);
@@ -80,7 +80,7 @@ const EstanciasList = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            // Update the estancia in the local state with the response data
+           
             setEstancias(prev => prev.map(est => est.id === currentEstancia.id ? response.data : est));
             setShowEditModal(false);
             setCurrentEstancia(null);
@@ -121,7 +121,7 @@ const EstanciasList = () => {
         }
     };
 
-    // New handler for adding an estancia
+    
     const handleAddEstancia = async (e) => {
         e.preventDefault();
         setAddLoading(true);
@@ -140,7 +140,7 @@ const EstanciasList = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            setEstancias(prev => [...prev, response.data]); // Add the new estancia to the list
+            setEstancias(prev => [...prev, response.data]); 
             setShowAddModal(false);
             setNewEstanciaName('');
         } catch (err) {

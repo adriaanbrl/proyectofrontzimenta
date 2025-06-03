@@ -1,44 +1,42 @@
-// src/components/IncidentEditModal.jsx
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Button, Spinner, Alert } from 'react-bootstrap';
 
 const IncidentEditModal = ({ show, onHide, incidentData, onSave, isLoading, error, setLoading, setError }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [newImage, setNewImage] = useState(null); // For new image upload
-    const [currentImageDisplay, setCurrentImageDisplay] = useState(''); // To show existing image thumbnail
+    const [newImage, setNewImage] = useState(null); 
+    const [currentImageDisplay, setCurrentImageDisplay] = useState(''); 
 
     useEffect(() => {
         if (show && incidentData) {
             setTitle(incidentData.title || '');
             setDescription(incidentData.description || '');
-            setNewImage(null); // Clear new image selection
+            setNewImage(null); 
             setCurrentImageDisplay(incidentData.image ? `data:image/jpeg;base64,${incidentData.image}` : '');
-            setError(null); // Clear errors when modal opens
+            setError(null); 
         }
     }, [show, incidentData, setError]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true); // Use the setter passed from parent
-        setError(null);    // Use the setter passed from parent
+        setLoading(true); 
+        setError(null);   
 
         const formData = new FormData();
-        formData.append('id', incidentData.id); // Important: include incident ID for update
+        formData.append('id', incidentData.id); 
         formData.append('title', title);
         formData.append('description', description);
-        formData.append('buildingId', incidentData.buildingId); // Assuming buildingId is part of incidentData
+        formData.append('buildingId', incidentData.buildingId); 
 
-        // Only append new image if selected
+
         if (newImage) {
             formData.append('image', newImage);
         }
 
-        // Pass the updated incident data and formData back to the parent for API call
-        // The parent (BuildingIncidentsSection) will handle the actual axios.put
+ 
         onSave({ id: incidentData.id, formData: formData });
 
-        // The modal will be closed by the parent after the save operation
+
     };
 
     return (

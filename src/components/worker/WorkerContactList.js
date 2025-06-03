@@ -26,11 +26,11 @@ function WorkerContactList() {
       if (token) {
         try {
           const decodedToken = jwtDecode(token);
-          console.log("Decoded Token:", decodedToken);
+     
           setWorkerId(decodedToken.id);
           setAuthToken(token);
         } catch (decodeError) {
-          console.error("Error decoding token:", decodeError);
+
           setError("Error al decodificar el token.");
           setLoading(false);
         }
@@ -46,21 +46,21 @@ function WorkerContactList() {
   useEffect(() => {
     const fetchContacts = async () => {
       if (!workerId) {
-        console.warn("workerId is undefined or null. Cannot fetch contacts.");
+
         setError("ID del trabajador no encontrado.");
         setLoading(false);
         return;
       }
 
       if (!authToken) {
-        console.warn("authToken is undefined or null. Cannot fetch contacts.");
+ 
         setError("Token de autenticación no encontrado.");
         setLoading(false);
         return;
       }
 
       try {
-        console.log(`Fetching contacts for worker ID: ${workerId}`);
+    
         const response = await fetch(
           `http://localhost:8080/auth/worker/${workerId}/assigned-customers`,
           {
@@ -72,19 +72,16 @@ function WorkerContactList() {
         );
         if (!response.ok) {
           const errorText = await response.text();
-          console.error(
-            `HTTP error! status: ${response.status}, response: ${errorText}`
-          );
+
           throw new Error(
             `Error HTTP: ${response.status}, Mensaje: ${errorText}`
           );
         }
         const data = await response.json();
-        console.log("Received contacts data:", data);
+
         setContacts(data);
         setLoading(false);
       } catch (error) {
-        console.error("Error al obtener los contactos:", error);
         setError(error);
         setLoading(false);
       }

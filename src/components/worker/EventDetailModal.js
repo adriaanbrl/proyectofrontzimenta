@@ -42,7 +42,6 @@ const EventDetailModal = ({ show, onHide, eventData, onSave, onDelete }) => {
             await axios.put(`http://localhost:8080/auth/building/updateEvents/${eventData.id}`, updatedEvent, { headers });
             onSave(updatedEvent);
         } catch (err) {
-            console.error("Error al guardar el evento:", err);
             setError(err.response?.data?.message || "Error al guardar el evento.");
         } finally {
             setIsLoading(false);
@@ -58,7 +57,6 @@ const EventDetailModal = ({ show, onHide, eventData, onSave, onDelete }) => {
             await axios.delete(`http://localhost:8080/auth/building/deleteEvents/${eventData.id}`, { headers });
             onDelete(eventData.id, eventData.buildingId);
         } catch (err) {
-            console.error("Error al eliminar el evento:", err);
             setError(err.response?.data?.message || "Error al eliminar el evento.");
         } finally {
             setIsLoading(false);

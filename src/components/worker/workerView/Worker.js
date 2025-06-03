@@ -255,7 +255,7 @@ const WorkerView = () => {
                 <Modal show={showBudgetUploadModal} onHide={handleCloseBudgetUploadModal} size="md" centered>
                     <Modal.Header closeButton>
                         <Modal.Title>
-                            {/* Proteger la lectura de 'title' y 'address' */}
+                         
                             Subir Presupuesto Excel para {selectedBuildingForBudgetUpload ? (selectedBuildingForBudgetUpload.title || selectedBuildingForBudgetUpload.address) : 'Edificio Seleccionado'}
                         </Modal.Title>
                     </Modal.Header>

@@ -6,8 +6,7 @@ import {
   Card,
   Spinner,
   Alert,
-} from "react-bootstrap"; // Added Spinner and Alert
-// Removed import for ChevronLeft as the back button is being removed
+} from "react-bootstrap"; 
 import { useNavigate } from "react-router-dom";
 
 function BudgetDisplay({ buildingId }) {
@@ -17,7 +16,7 @@ function BudgetDisplay({ buildingId }) {
   const [openChapters, setOpenChapters] = useState({});
   const token = localStorage.getItem("authToken");
   const [showAllChapters, setShowAllChapters] = useState(false);
-  const navigate = useNavigate(); // Still keep navigate for potential future use or if other logic uses it
+  const navigate = useNavigate();
   const chaptersToShowInitially = 5;
 
   useEffect(() => {
@@ -47,15 +46,14 @@ function BudgetDisplay({ buildingId }) {
             } catch (e) {
               errorMessage = `Error al cargar el presupuesto: ${response.status} ${response.statusText}`;
             }
-            console.error(errorMessage);
+
             setError(errorMessage);
           } else {
             const data = await response.json();
-            console.log("Datos recibidos de la API:", data);
+
             setBudgetData(data);
           }
         } catch (error) {
-          console.error("Error de red al cargar el presupuesto:", error);
           setError("Error de red al cargar el presupuesto.");
         } finally {
           setLoading(false);
@@ -86,7 +84,7 @@ function BudgetDisplay({ buildingId }) {
     setShowAllChapters(!showAllChapters);
   };
 
-  // Removed handleGoBack function as the back button is removed
+  
 
   if (loading) {
     return (
@@ -119,23 +117,16 @@ function BudgetDisplay({ buildingId }) {
     chaptersToDisplay = chaptersToDisplay.slice(0, chaptersToShowInitially);
   }
 
-  // Placeholder functions for edit and delete actions
-  const handleEditBudget = () => {
-    console.log("Editar presupuesto");
-    // Implement your edit logic here
-  };
+  const handleEditBudget = () => {};
 
-  const handleDeleteBudget = () => {
-    console.log("Borrar presupuesto");
-    // Implement your delete logic here
-  };
+  const handleDeleteBudget = () => {};
 
   return (
     <Container className="budget-container">
-      {/* Removed the entire budget-header div which contained the top "Presupuesto" title and back button */}
+     
 
       {budgetData.title && (
-        // Changed h2 to h6 for a smaller title
+      
         <h6 className="text-center mt-3 mb-4 text-muted">
           {budgetData.title}
           {budgetData.amount && (
@@ -257,10 +248,10 @@ function BudgetDisplay({ buildingId }) {
 
       {numberOfChapters > chaptersToShowInitially && (
         <Button
-          variant="outline-secondary" // Changed variant for a more subtle button
+          variant="outline-secondary" 
           className="mt-3 w-100"
           onClick={handleShowAllChapters}
-          size="sm" // Make the button smaller
+          size="sm" 
         >
           Ver{" "}
           {showAllChapters
@@ -269,18 +260,18 @@ function BudgetDisplay({ buildingId }) {
         </Button>
       )}
 
-      {/* Buttons below "Ver más capítulos" */}
+     
       <div className="d-flex gap-2 mt-3">
         <Button
           variant="outline-primary"
           size="sm"
           onClick={handleEditBudget}
-          disabled={loading} // Assuming 'loading' state should disable these buttons too
+          disabled={loading} 
         >
           {loading ? <Spinner animation="border" size="sm" /> : "✏️ Editar"}
         </Button>
         <Button
-          variant="outline-danger" // Changed to 'danger' for delete action
+          variant="outline-danger" 
           size="sm"
           onClick={handleDeleteBudget}
           disabled={loading}

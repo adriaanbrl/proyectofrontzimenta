@@ -1,4 +1,3 @@
-// components/InvoiceUploadModal.jsx
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Button, Spinner, Alert } from 'react-bootstrap';
 

@@ -12,7 +12,7 @@ const InvoiceDeleteConfirmModal = ({ show, onHide, invoiceId, onDeleteConfirm, i
             const token = localStorage.getItem("authToken");
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
             await axios.delete(`http://localhost:8080/api/invoices/${invoiceId}`, { headers });
-            onDeleteConfirm(invoiceId); // Pass invoiceId to refresh relevant data
+            onDeleteConfirm(invoiceId); 
             onHide();
         } catch (err) {
             console.error("Error al borrar la factura:", err);

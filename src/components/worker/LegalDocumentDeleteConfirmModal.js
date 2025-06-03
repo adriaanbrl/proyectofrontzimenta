@@ -15,7 +15,6 @@ const LegalDocumentDeleteConfirmModal = ({ show, onHide, documentId, buildingId,
             onDeleteConfirm(documentId, buildingId); 
             onHide();
         } catch (err) {
-            console.error("Error al borrar el documento legal:", err);
             setError(err.response?.data?.message || "Error al borrar el documento legal.");
         } finally {
             setLoading(false);

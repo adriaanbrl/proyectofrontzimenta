@@ -9,7 +9,7 @@ const EstanciaDeleteConfirmModal = ({ show, onHide, estanciaId, onDeleteConfirm 
         setLoading(true);
         setError(null);
         try {
-            // Simulate API call to delete estancia
+     
             await new Promise(resolve => setTimeout(resolve, 500));
             onDeleteConfirm(estanciaId);
         } catch (err) {

@@ -16,7 +16,7 @@ const InvoiceEditModal = ({ show, onHide, invoiceData, onSave, isLoading, error,
                 amount: invoiceData.amount || '',
                 date: invoiceData.date ? new Date(invoiceData.date).toISOString().split('T')[0] : '',
                 title: invoiceData.title || '',
-                documentBase64: null // Reset file input
+                documentBase64: null 
             });
         }
     }, [invoiceData]);
@@ -64,10 +64,9 @@ const InvoiceEditModal = ({ show, onHide, invoiceData, onSave, isLoading, error,
                     'Content-Type': 'application/json'
                 }
             });
-            onSave(invoiceData.buildingId); // Pass buildingId to refresh
+            onSave(invoiceData.buildingId); 
             onHide();
         } catch (err) {
-            console.error("Error al actualizar la factura:", err.response?.data || err.message);
             setError(err.response?.data?.message || "Error al actualizar la factura.");
         } finally {
             setLoading(false);

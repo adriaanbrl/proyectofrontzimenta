@@ -3,20 +3,20 @@ import { Modal, Button, Form, Alert, Row, Col, Spinner } from 'react-bootstrap';
 import { File } from 'lucide-react';
 import { jwtDecode } from 'jwt-decode';
 
-// Helper function to check if a token is expired
+
 const isTokenExpired = (token) => {
     if (!token) {
-        console.log("isTokenExpired: Token is null or empty.");
+   
         return true;
     }
     try {
         const decodedToken = jwtDecode(token);
         const currentTime = Date.now() / 1000;
         const expired = decodedToken.exp < currentTime;
-        console.log(`isTokenExpired: Token exp: ${decodedToken.exp}, Current time: ${currentTime}, Expired: ${expired}`);
+ 
         return expired;
     } catch (error) {
-        console.error("isTokenExpired: Error decoding token:", error);
+      
         return true;
     }
 };
@@ -25,32 +25,31 @@ const UploadImageModal = ({ show, onHide, buildingId, buildingDetails, onUploadS
     const [imageFile, setImageFile] = useState(null);
     const [title, setTitle] = useState('');
     const [roomId, setRoomId] = useState('');
-    const [estancias, setEstancias] = useState([]); // Rooms for the selected building
+    const [estancias, setEstancias] = useState([]); 
     const [loadingRooms, setLoadingRooms] = useState(true);
     const [errorRooms, setErrorRooms] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [uploadError, setUploadError] = useState('');
     const [uploadSuccess, setUploadSuccess] = useState('');
 
-    // Fetch rooms for the specific building when the modal opens
     useEffect(() => {
-        console.log(`UploadImageModal useEffect triggered. show: ${show}, buildingId: ${buildingId}`);
+     
         if (show && buildingId) {
             const fetchEstancias = async () => {
                 setLoadingRooms(true);
                 setErrorRooms(null);
                 const token = localStorage.getItem("authToken");
-                console.log("fetchEstancias: Token from localStorage:", token ? token.substring(0, 30) + '...' : 'null/undefined');
+           
 
-                // Token validation before fetching estancias
+               
                 if (!token || isTokenExpired(token)) {
-                    console.log("fetchEstancias: Token is invalid or missing. Returning early.");
+                   
                     setErrorRooms('Su sesión ha expirado o no está autenticado. Por favor, inicie sesión de nuevo.');
                     setLoadingRooms(false);
                     if (token) localStorage.removeItem("authToken");
                     return;
                 }
-                console.log("fetchEstancias: Token is valid. Proceeding with fetch request.");
+       
 
                 try {
                     const response = await fetch("http://localhost:8080/api/estancias", {
@@ -60,8 +59,8 @@ const UploadImageModal = ({ show, onHide, buildingId, buildingDetails, onUploadS
                     });
                     if (!response.ok) {
                         const errorData = await response.json();
-                        console.error('fetchEstancias: Backend response not OK:', response.status, errorData);
-                        // Handle specific auth errors if needed
+          
+                    
                         if (response.status === 401 || response.status === 403) {
                             localStorage.removeItem("authToken");
                             setErrorRooms('Acceso denegado a las estancias. Su sesión ha expirado.');
@@ -71,9 +70,9 @@ const UploadImageModal = ({ show, onHide, buildingId, buildingDetails, onUploadS
                     }
                     const data = await response.json();
                     setEstancias(data);
-                    console.log("fetchEstancias: Estancias loaded successfully:", data);
+                   
                 } catch (error) {
-                    console.error('fetchEstancias: Error during fetch operation:', error);
+                 
                     setErrorRooms(`Error al cargar las estancias: ${error.message}`);
                 } finally {
                     setLoadingRooms(false);
@@ -81,8 +80,8 @@ const UploadImageModal = ({ show, onHide, buildingId, buildingDetails, onUploadS
             };
             fetchEstancias();
         } else {
-            console.log("UploadImageModal useEffect: Modal is hidden or buildingId is missing. Resetting states.");
-            // Reset states when modal is hidden
+       
+           
             setImageFile(null);
             setTitle('');
             setRoomId('');
@@ -106,11 +105,11 @@ const UploadImageModal = ({ show, onHide, buildingId, buildingDetails, onUploadS
         setUploadSuccess('');
 
         const token = localStorage.getItem("authToken");
-        console.log("handleSubmit: Token from localStorage:", token ? token.substring(0, 30) + '...' : 'null/undefined');
+       
 
-        // Token validation before submitting image
+       
         if (!token || isTokenExpired(token)) {
-            console.log("handleSubmit: Token is invalid or missing. Preventing upload.");
+     
             setUploadError('Su sesión ha expirado o no está autenticado. Por favor, inicie sesión de nuevo.');
             setIsSubmitting(false);
             if (token) localStorage.removeItem("authToken");
@@ -141,10 +140,10 @@ const UploadImageModal = ({ show, onHide, buildingId, buildingDetails, onUploadS
         const formData = new FormData();
         formData.append('image', imageFile);
         formData.append('title', title.trim());
-        formData.append('roomId', parseInt(roomId, 10)); // Ensure it's an integer
+        formData.append('roomId', parseInt(roomId, 10)); 
 
         try {
-            console.log(`handleSubmit: Sending image upload request for building ${buildingId}...`);
+          
             const response = await fetch(
                 `http://localhost:8080/api/buildings/${buildingId}/images`,
                 {
@@ -161,16 +160,16 @@ const UploadImageModal = ({ show, onHide, buildingId, buildingDetails, onUploadS
                 setImageFile(null);
                 setTitle('');
                 setRoomId('');
-                // Clear the file input field after successful upload
+          
                 event.target.elements.imageFile.value = '';
                 if (onUploadSuccess) {
                     onUploadSuccess();
                 }
-                console.log("handleSubmit: Image uploaded successfully.");
+          
             } else {
                 const errorText = await response.text();
-                console.error('handleSubmit: Error al subir la imagen:', response.status, errorText);
-                // Handle specific auth errors during upload
+
+           
                 if (response.status === 401 || response.status === 403) {
                     localStorage.removeItem("authToken");
                     setUploadError('Acceso denegado al subir la imagen. Su sesión ha expirado.');
@@ -179,7 +178,6 @@ const UploadImageModal = ({ show, onHide, buildingId, buildingDetails, onUploadS
                 }
             }
         } catch (error) {
-            console.error('handleSubmit: Error de red al subir la imagen:', error);
             setUploadError('Error de red al subir la imagen.');
         } finally {
             setIsSubmitting(false);

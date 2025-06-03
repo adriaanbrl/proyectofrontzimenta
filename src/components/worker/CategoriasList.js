@@ -19,7 +19,7 @@ const CategoriasList = () => {
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [deleteError, setDeleteError] = useState(null);
 
-    // New state for adding categories
+    
     const [showAddModal, setShowAddModal] = useState(false);
     const [newCategoriaName, setNewCategoriaName] = useState('');
     const [addLoading, setAddLoading] = useState(false);
@@ -45,7 +45,6 @@ const CategoriasList = () => {
                 });
                 setCategorias(response.data);
             } catch (err) {
-                console.error('Error al cargar las categorías:', err);
                 setError('Error al cargar las categorías. Por favor, inténtalo de nuevo más tarde.');
             } finally {
                 setLoading(false);
@@ -80,13 +79,12 @@ const CategoriasList = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            // Update the category in the local state with the response data (if your backend returns the updated object)
+        
             setCategorias(prev => prev.map(cat => cat.id === currentCategoria.id ? response.data : cat));
             setShowEditModal(false);
             setCurrentCategoria(null);
             setEditCategoriaName('');
         } catch (err) {
-            console.error('Error al actualizar la categoría:', err);
             setEditError('Error al actualizar la categoría. Inténtalo de nuevo.');
         } finally {
             setEditLoading(false);
@@ -114,14 +112,13 @@ const CategoriasList = () => {
             setShowDeleteModal(false);
             setCategoriaToDeleteId(null);
         } catch (err) {
-            console.error('Error al borrar la categoría:', err);
             setDeleteError('Error al borrar la categoría. Inténtalo de nuevo.');
         } finally {
             setDeleteLoading(false);
         }
     };
 
-    // New handler for adding a category
+    
     const handleAddCategoria = async (e) => {
         e.preventDefault();
         setAddLoading(true);
@@ -144,7 +141,6 @@ const CategoriasList = () => {
             setShowAddModal(false);
             setNewCategoriaName('');
         } catch (err) {
-            console.error('Error al crear la categoría:', err);
             setAddError('Error al crear la categoría. Inténtalo de nuevo.');
         } finally {
             setAddLoading(false);

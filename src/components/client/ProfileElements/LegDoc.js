@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Container,
@@ -6,39 +6,37 @@ import {
   Col,
   Button,
   Alert,
+  Card,
   ListGroup,
-  Spinner
+  Spinner,
 } from "react-bootstrap";
-import { ChevronLeft, File } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
+import { File } from "lucide-react";
 
 function LegDoc() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [buildingId, setBuildingId] = useState(null);
+  const [buildingId, setBuildingId] = useState("");
   const [pdfDataList, setPdfDataList] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     document.title = "Documentación Legal";
-
     if (location.state && location.state.building_id) {
       setBuildingId(location.state.building_id);
     } else {
-      setError("No se proporcionó el ID del edificio. Volviendo a la página anterior...");
-      // navigate(-1); // Consider uncommenting this if you want to automatically go back
+      setError("No se proporcionó el ID del edificio.");
     }
-  }, [location.state, navigate]);
+  }, [location.state]);
 
-  // Make sure `fetchLegalDocuments` depends on `buildingId`
-  const fetchLegalDocuments = useCallback(async (id) => {
-    // This `id` parameter should be the `buildingId`
-    if (!id) { // Add a check to ensure `id` is not null/undefined
-      console.log("Building ID is not available yet for fetching documents.");
-      setLoading(false); // Ensure loading is off if no ID
-      return;
+  useEffect(() => {
+    if (buildingId) {
+      fetchLegalDocuments(buildingId);
     }
+  }, [buildingId]);
 
+  const fetchLegalDocuments = async (id) => {
     setLoading(true);
     setError(null);
     setPdfDataList([]);
@@ -46,149 +44,148 @@ function LegDoc() {
     const token = localStorage.getItem("authToken");
 
     if (!token) {
-      setError("No se encontró el token de autenticación. Por favor, inicie sesión de nuevo.");
+      setError("No se encontró el token de autenticación.");
       setLoading(false);
       return;
     }
 
     try {
-      const responseDocs = await fetch(
-          `http://localhost:8080/api/building/${id}/legal_documentation`, // Ensure 'id' here is a number
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+      const responseIds = await fetch(
+        `http://localhost:8080/auth/building/${id}/legalDocumentsIds`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
-      if (!responseDocs.ok) {
-        const errorData = await responseDocs.json().catch(() => ({ message: "Error desconocido" }));
+      if (!responseIds.ok) {
         throw new Error(
-            `Error al obtener la lista de documentos: ${responseDocs.status} - ${errorData.message || responseDocs.statusText}`
+          `Error al obtener la lista de documentos: ${responseIds.status}`
         );
       }
 
-      const documentInfoList = await responseDocs.json();
+      const idList = await responseIds.json();
 
-      if (Array.isArray(documentInfoList) && documentInfoList.length > 0) {
-        // Here, we create the URLs directly because the backend serves the PDF via GET /api/legal_documentation/pdf/{id}
-        const pdfsReadyForDisplay = documentInfoList.map(doc => ({
-          filename: doc.title,
-          url: `http://localhost:8080/api/legal_documentation/pdf/${doc.id}` // Use doc.id from the fetched list
-        }));
-        setPdfDataList(pdfsReadyForDisplay);
-        setError(null);
-      } else if (Array.isArray(documentInfoList) && documentInfoList.length === 0) {
+      if (Array.isArray(idList) && idList.length > 0) {
+        const responsePdfs = await fetch(
+          `http://localhost:8080/legaldocuments/pdfs`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(idList),
+          }
+        );
+
+        if (!responsePdfs.ok) {
+          throw new Error(
+            `Error al descargar los documentos: ${responsePdfs.status}`
+          );
+        }
+
+        const pdfDataListFromServer = await responsePdfs.json();
+        const pdfsWithInfo = pdfDataListFromServer.map((pdfData) => {
+          const byteString = atob(pdfData.data);
+          const byteArray = new Uint8Array(byteString.length);
+          for (let i = 0; i < byteString.length; i++) {
+            byteArray[i] = byteString.charCodeAt(i);
+          }
+          const fileBlob = new Blob([byteArray], { type: "application/pdf" });
+          const url = URL.createObjectURL(fileBlob);
+          return { filename: pdfData.filename, url: url };
+        });
+        setPdfDataList(pdfsWithInfo);
+        setLoading(false);
+      } else if (Array.isArray(idList) && idList.length === 0) {
         setError("No hay documentos legales disponibles para este edificio.");
+        setLoading(false);
       } else {
         setError(
-            "Respuesta inesperada del servidor al obtener documentos: Se esperaba una lista."
+          "Respuesta inesperada del servidor: Se esperaba una lista de IDs."
         );
+        setLoading(false);
       }
     } catch (err) {
-      console.error("Error en fetchLegalDocuments:", err);
-      setError(`Fallo al cargar documentos: ${err.message}`);
-    } finally {
+      setError(err.message);
       setLoading(false);
     }
-  }, []); // The `id` parameter here makes `useCallback` linting happy, but the actual `buildingId` is passed below.
+  };
 
-  // This useEffect ensures fetchLegalDocuments is called when buildingId changes
-  useEffect(() => {
-    if (buildingId) { // Only call if buildingId is not null
-      fetchLegalDocuments(buildingId); // Pass the actual buildingId from state
-    }
-  }, [buildingId, fetchLegalDocuments]); // Depend on buildingId and fetchLegalDocuments
-
-  // We are now using direct PDF URLs, so revokeObjectURL is NOT needed.
-  // The backend sends the actual PDF content, not a Base64 string to be converted to Blob.
-  // The `window.open` will simply navigate to the PDF URL.
-  /*
   useEffect(() => {
     return () => {
-      pdfDataList.forEach((item) => {
-        if (item.url) {
-          URL.revokeObjectURL(item.url);
-        }
-      });
+      pdfDataList.forEach((item) => URL.revokeObjectURL(item.url));
     };
   }, [pdfDataList]);
-  */
 
   const handleGoBack = () => {
     navigate(-1);
   };
 
   return (
-      <Container className="py-4">
-        <Row>
-          <Col>
-            <div className="d-flex justify-content-center align-items-center mb-4">
-              <Button
-                  variant="link"
-                  onClick={handleGoBack}
-                  className="back-button me-3"
-                  aria-label="Volver atrás"
-                  style={{ padding: 0 }}
-              >
-                <ChevronLeft size={20} color="orange" />
-              </Button>
-              <h2 className="leg-doc-title mb-0">Documentación Legal</h2>
+    <Container className="py-4">
+      <Row>
+        <Col>
+          <div className="d-flex justify-content-center align-items-center mb-4">
+            <Button
+              variant="link"
+              onClick={handleGoBack}
+              className="back-button me-3"
+              aria-label="Volver atrás"
+              style={{ padding: 0 }}
+            >
+              <ChevronLeft size={20} color="orange" />
+            </Button>
+            <h2 className="leg-doc-title mb-0">Documentación Legal</h2>
+          </div>
+          {error && <Alert variant="danger">{error}</Alert>}
+          {loading && (
+            <div className="d-flex justify-content-center">
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Cargando...</span>
+              </Spinner>
             </div>
-
-            {loading && (
-                <div className="d-flex justify-content-center my-4">
-                  <Spinner animation="border" role="status" className="text-primary">
-                    <span className="visually-hidden">Cargando documentos...</span>
-                  </Spinner>
-                  <p className="ms-2 text-muted">Cargando documentos...</p>
-                </div>
-            )}
-
-            {error && <Alert variant="danger">{error}</Alert>}
-
-            {!loading && pdfDataList.length > 0 && (
-                <ListGroup>
-                  {pdfDataList.map((item, index) => (
-                      <ListGroup.Item
-                          key={item.url || index} // Use item.url as key (unique for each PDF URL)
-                          className="d-flex justify-content-between align-items-center"
-                      >
-                        <div className="d-flex align-items-center">
-                          <File
-                              size={24}
-                              className="me-3"
-                              style={{ color: "orange" }}
-                          />
-                          <span>{item.filename}</span>
-                        </div>
-                        <Button
-                            variant="primary"
-                            size="sm"
-                            onClick={() => window.open(item.url, "_blank")}
-                            className="ms-4"
-                        >
-                          Ver Documento
-                        </Button>
-                      </ListGroup.Item>
-                  ))}
-                </ListGroup>
-            )}
-
-            {!loading && pdfDataList.length === 0 && !error && buildingId && (
-                <Alert variant="info" className="text-center">
-                  No hay documentos legales disponibles para este edificio.
-                </Alert>
-            )}
-
-            {!buildingId && !error && !loading && (
-                <Alert variant="info" className="text-center">
-                  Esperando el ID del edificio para cargar los documentos...
-                </Alert>
-            )}
-          </Col>
-        </Row>
-      </Container>
+          )}
+          {!loading && pdfDataList.length > 0 && (
+            <ListGroup>
+              {pdfDataList.map((item, index) => (
+                <ListGroup.Item
+                  key={index}
+                  className="d-flex justify-content-between align-items-center"
+                >
+                  <div className="d-flex align-items-center">
+                    <File
+                      size={24}
+                      className="me-3"
+                      style={{ color: "orange" }}
+                    />{" "}
+                    <span>{item.filename}</span>
+                  </div>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => window.open(item.url, "_blank")}
+                    className="ms-4"
+                  >
+                    Ver Documento
+                  </Button>
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          )}
+          {!loading && !pdfDataList.length && !error && buildingId && (
+            <p className="text-muted">
+              No hay documentos legales disponibles para este edificio.
+            </p>
+          )}
+          {!buildingId && !error && (
+            <p className="text-muted">Esperando el ID del edificio...</p>
+          )}
+        </Col>
+      </Row>
+    </Container>
   );
 }
 

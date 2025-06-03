@@ -40,7 +40,7 @@ const useWorkerData = () => {
             });
             setWorkerConstructions(response.data);
         } catch (err) {
-            console.error("Error fetching worker constructions:", err);
+   
             setErrorConstructions(err.response?.data?.message || "Error al cargar construcciones.");
         } finally {
             setLoadingConstructions(false);
@@ -49,7 +49,7 @@ const useWorkerData = () => {
 
     const fetchEventsForBuilding = useCallback(async (buildingId) => {
         if (!buildingId) {
-            console.warn("fetchEventsForBuilding llamado sin buildingId. Abortando.");
+
             setLoadingEvents(prev => ({ ...prev, [buildingId]: false }));
             return;
         }
@@ -61,7 +61,7 @@ const useWorkerData = () => {
             const response = await axios.get(`http://localhost:8080/auth/building/${buildingId}/events`, { headers });
             setEventsByBuilding(prev => ({ ...prev, [buildingId]: response.data }));
         } catch (err) {
-            console.error(`Error fetching events for building ${buildingId}:`, err);
+
             setErrorEvents(prev => ({ ...prev, [buildingId]: err.response?.data?.message || "No hay eventos para esta construcción" }));
         } finally {
             setLoadingEvents(prev => ({ ...prev, [buildingId]: false }));
@@ -70,7 +70,7 @@ const useWorkerData = () => {
 
     const fetchInvoicesForBuilding = useCallback(async (buildingId) => {
         if (!buildingId) {
-            console.warn("fetchInvoicesForBuilding llamado sin buildingId. Abortando.");
+      
             setLoadingInvoices(prev => ({ ...prev, [buildingId]: false }));
             return;
         }
@@ -82,7 +82,7 @@ const useWorkerData = () => {
             const response = await axios.get(`http://localhost:8080/api/building/${buildingId}/invoices`, { headers });
             setInvoicesByBuilding(prev => ({ ...prev, [buildingId]: response.data }));
         } catch (err) {
-            console.error(`Error fetching invoices for building ${buildingId}:`, err);
+   
             setErrorInvoices(prev => ({ ...prev, [buildingId]: err.response?.data?.message || "No hay facturas para esta construcción" }));
         } finally {
             setLoadingInvoices(prev => ({ ...prev, [buildingId]: false }));
@@ -91,7 +91,7 @@ const useWorkerData = () => {
 
     const fetchLegalDocumentsForBuilding = useCallback(async (buildingId) => {
         if (!buildingId) {
-            console.warn("fetchLegalDocumentsForBuilding llamado sin buildingId. Abortando.");
+
             setLoadingLegalDocuments(prev => ({ ...prev, [buildingId]: false }));
             return;
         }
@@ -100,11 +100,10 @@ const useWorkerData = () => {
         try {
             const token = localStorage.getItem("authToken");
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
-            // Ajusta la URL de la API según tu backend
+           
             const response = await axios.get(`http://localhost:8080/api/building/${buildingId}/legal_documentation`, { headers });
             setLegalDocumentsByBuilding(prev => ({ ...prev, [buildingId]: response.data }));
         } catch (err) {
-            console.error(`Error fetching legal documents for building ${buildingId}:`, err);
             setErrorLegalDocuments(prev => ({ ...prev, [buildingId]: err.response?.data?.message || "No hay documentos legales para esta construcción" }));
         } finally {
             setLoadingLegalDocuments(prev => ({ ...prev, [buildingId]: false }));
@@ -124,7 +123,7 @@ const useWorkerData = () => {
             if (documentType === 'invoice') {
                 urlEndpoint = `http://localhost:8080/api/invoices/pdf/${id}`;
             } else if (documentType === 'legal_documentation') {
-                // Ajusta la URL de la API para documentos legales
+            
                 urlEndpoint = `http://localhost:8080/api/legal_documentation/pdf/${id}`;
             } else {
                 throw new Error('Tipo de documento no soportado para previsualización PDF.');
@@ -138,7 +137,7 @@ const useWorkerData = () => {
             const url = URL.createObjectURL(blob);
             setCurrentPdfUrl(url);
         } catch (err) {
-            console.error("Error al cargar el PDF:", err);
+       
             setPdfError(err.response?.data?.message || "No se pudo cargar el PDF. Inténtalo de nuevo más tarde.");
         } finally {
             setLoadingPdf(false);
@@ -228,7 +227,7 @@ const useWorkerData = () => {
                 setWorkerId(currentWorkerId);
                 fetchWorkerConstructions(currentWorkerId, token);
             } catch (error) {
-                console.error("Error decoding token:", error);
+     
                 setErrorConstructions("Error de autenticación.");
                 setLoadingConstructions(false);
             }

@@ -13,7 +13,7 @@ function TestProfileImage() {
 
                 setLoggedInUsername(decodedToken.username || decodedToken.sub || 'Usuario');
             } catch (error) {
-                console.error('Error decoding JWT:', error);
+
                 setLoggedInUsername('Usuario'); 
             }
         } else {

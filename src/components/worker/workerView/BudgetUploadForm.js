@@ -84,7 +84,7 @@ function BudgetUploadForm({ buildingId, buildingTitle, onUploadSuccess }) {
             }
 
         } catch (err) {
-            console.error('Error al subir el presupuesto:', err);
+
             if (err.response && err.response.data) {
                 setError(`Fallo al subir el presupuesto: ${err.response.data}`);
             } else if (err.message) {

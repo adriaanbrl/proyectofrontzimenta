@@ -16,14 +16,12 @@ function ProfileImage({ username }) {
             const token = localStorage.getItem('authToken'); 
 
             if (!token) {
-                console.warn('No authentication token found. Cannot fetch profile image.');
                 setError('No autenticación. Inicia sesión.'); 
                 setLoading(false);
                 return;
             }
 
             if (!username) {
-                console.warn('Username no proporcionado para la imagen de perfil.');
                 setError('Usuario no especificado.');
                 setLoading(false);
                 return;
@@ -42,24 +40,22 @@ function ProfileImage({ username }) {
                     const imageUrl = URL.createObjectURL(imageBlob);
                     setProfileImageUrl(imageUrl);
                 } else if (response.status === 404) {
-                    console.log('Imagen de perfil no encontrada para este usuario (404).');
-                    setProfileImageUrl(''); // Keep it empty to show default icon
+
+                    setProfileImageUrl(''); 
                     setError('Imagen no encontrada.');
                 } else if (response.status === 401 || response.status === 403) {
-                    console.error('Acceso denegado a la imagen de perfil:', response.status);
+
                     setError('Acceso denegado. Vuelve a iniciar sesión.');
-                    // Optionally, redirect to login or clear token if 401/403
+
                     localStorage.removeItem('authToken');
                 }
                 else {
-                    console.error('Error al cargar la imagen de perfil:', response.status);
                     setError(`Error al cargar la imagen: ${response.status}`);
                 }
             } catch (error) {
-                console.error('Error de red al cargar la imagen de perfil:', error);
                 setError('Error de red. Inténtalo de nuevo.');
             } finally {
-                setLoading(false); // End loading
+                setLoading(false);
             }
         };
 

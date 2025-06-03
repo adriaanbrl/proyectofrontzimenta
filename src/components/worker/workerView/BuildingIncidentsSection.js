@@ -14,9 +14,7 @@ import {
 } from "react-bootstrap";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-
-// --- NEW IMPORT ---
-import IncidentEditModal from "./IncidentEditModal"; // You'll need to create this file
+import IncidentEditModal from "./IncidentEditModal"; 
 
 const isTokenExpired = (token) => {
   if (!token) return true;
@@ -25,7 +23,7 @@ const isTokenExpired = (token) => {
     const currentTime = Date.now() / 1000;
     return decodedToken.exp < currentTime;
   } catch (error) {
-    console.error("Error decoding token in BuildingIncidentsSection:", error);
+
     return true;
   }
 };
@@ -38,11 +36,11 @@ const BuildingIncidentsSection = ({ buildingData }) => {
   const [showImageModal, setShowImageModal] = useState(false);
   const [currentImageBase64, setCurrentImageBase64] = useState("");
 
-  // --- NEW STATES FOR EDITING ---
+
   const [showEditIncidentModal, setShowEditIncidentModal] = useState(false);
   const [currentIncidentToEdit, setCurrentIncidentToEdit] = useState(null);
-  const [loadingIncidentAction, setLoadingIncidentAction] = useState(false); // To show spinner on save
-  const [incidentActionError, setIncidentActionError] = useState(null); // To show error on save
+  const [loadingIncidentAction, setLoadingIncidentAction] = useState(false); 
+  const [incidentActionError, setIncidentActionError] = useState(null); 
 
   const fetchIncidents = useCallback(async (buildingId) => {
     setLoading(true);
@@ -69,7 +67,7 @@ const BuildingIncidentsSection = ({ buildingData }) => {
       );
       setIncidents(response.data);
     } catch (err) {
-      console.error("Error al obtener los incidentes:", err);
+ 
       if (axios.isAxiosError(err) && err.response) {
         if (err.response.status === 401 || err.response.status === 403) {
           localStorage.removeItem("authToken");
@@ -150,10 +148,10 @@ const BuildingIncidentsSection = ({ buildingData }) => {
           },
         }
       );
-      // After successful status change, re-fetch all incidents to ensure consistency
+      
       fetchIncidents(buildingData.id);
     } catch (err) {
-      console.error("Error al actualizar el estado del incidente:", err);
+
       setIncidents(originalIncidents);
       if (axios.isAxiosError(err) && err.response) {
         if (err.response.status === 401 || err.response.status === 403) {
@@ -176,14 +174,14 @@ const BuildingIncidentsSection = ({ buildingData }) => {
     }
   };
 
-  // --- NEW: handleEditIncident function ---
+  
   const handleEditIncident = (incident) => {
     setCurrentIncidentToEdit(incident);
     setShowEditIncidentModal(true);
-    setIncidentActionError(null); // Clear any previous errors
+    setIncidentActionError(null);
   };
 
-  // --- NEW: handleIncidentSaved function (callback from modal) ---
+ 
   const handleIncidentSaved = async (updatedIncidentData) => {
     setLoadingIncidentAction(true);
     setIncidentActionError(null);
@@ -197,23 +195,23 @@ const BuildingIncidentsSection = ({ buildingData }) => {
     }
 
     try {
-      // Backend endpoint for updating an incident (ensure this exists and accepts PUT with incident ID)
+     
       const response = await axios.put(
         `http://localhost:8080/api/buildings/${buildingData.id}/incidents/${updatedIncidentData.id}`,
-        updatedIncidentData.formData, // Assuming your modal returns formData directly
+        updatedIncidentData.formData, 
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            // No 'Content-Type' for FormData, Axios handles it.
+           
           },
         }
       );
-      // After successful update, re-fetch all incidents for this building
+     
       fetchIncidents(buildingData.id);
-      setShowEditIncidentModal(false); // Close modal on success
-      setCurrentIncidentToEdit(null); // Clear edited incident data
+      setShowEditIncidentModal(false); 
+      setCurrentIncidentToEdit(null); 
     } catch (err) {
-      console.error("Error al actualizar el incidente:", err);
+
       if (axios.isAxiosError(err) && err.response) {
         setIncidentActionError(
           `Error al actualizar incidente: ${
@@ -412,14 +410,14 @@ const BuildingIncidentsSection = ({ buildingData }) => {
                       </div>
                       <div className="mt-3 mt-md-0 d-flex flex-column flex-md-row gap-2">
                         {" "}
-                        {/* Added flex layout for buttons */}
+                      
                         <Form.Select
                           size="sm"
                           value={incident.status}
                           onChange={(e) =>
                             handleStatusChange(incident.id, e.target.value)
                           }
-                          disabled={updatingStatus} // Allow status change for resolved/closed
+                          disabled={updatingStatus} 
                           className="w-auto"
                         >
                           {statusOptions.map((status) => (
@@ -428,7 +426,7 @@ const BuildingIncidentsSection = ({ buildingData }) => {
                             </option>
                           ))}
                         </Form.Select>
-                        {/* --- NEW: Edit Button for Resolved/Closed Incidents --- */}
+                      
                         <Button
                           variant="outline-primary"
                           size="sm"
@@ -494,7 +492,7 @@ const BuildingIncidentsSection = ({ buildingData }) => {
       </Modal>
 
       {/* --- NEW: Incident Edit Modal --- */}
-      {currentIncidentToEdit && ( // Only render if an incident is selected for editing
+      {currentIncidentToEdit && ( 
         <IncidentEditModal
           show={showEditIncidentModal}
           onHide={() => setShowEditIncidentModal(false)}
@@ -502,7 +500,6 @@ const BuildingIncidentsSection = ({ buildingData }) => {
           onSave={handleIncidentSaved}
           isLoading={loadingIncidentAction}
           error={incidentActionError}
-          // Pass setters down to the modal if it needs to manage its own loading/error
           setLoading={setLoadingIncidentAction}
           setError={setIncidentActionError}
         />

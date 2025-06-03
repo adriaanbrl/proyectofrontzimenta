@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ChevronLeft } from "lucide-react"; // Importa el icono
+import { ChevronLeft } from "lucide-react"; 
 
 const policies = [
     {
@@ -175,7 +175,7 @@ export default function PrivacyPolicy() {
                     Política de Privacidad
                 </h1>
                 <div style={{ width: '24px', visibility: 'hidden' }}>
-                    {/* Espacio oculto para mantener el centrado */}
+  
                     <ChevronLeft size={24} color="transparent" />
                 </div>
             </div>

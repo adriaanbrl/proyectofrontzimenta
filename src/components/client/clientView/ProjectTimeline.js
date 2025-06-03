@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Col, Modal, Button } from "react-bootstrap";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js"; // Import if needed for centerTextPlugin
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
-// Assuming formatDate is a common utility or passed as prop
 const formatDate = (dateString) => {
     if (!dateString) return "No disponible";
     try {
@@ -59,7 +58,8 @@ const ProjectTimeline = ({ timelineItems }) => {
                     {timelineItems.map((item, index) => {
                         if (!item.date) return null;
                         let position;
-                        const firstElementOffset = 4;
+                        // Adjusted firstElementOffset to move the first event slightly less to the right
+                        const firstElementOffset = 6; // Changed from 10 to 6
                         if (timelineItems.length > 1) {
                             const availableSpace = 100 - firstElementOffset;
                             const spacing = availableSpace / (timelineItems.length - 1);

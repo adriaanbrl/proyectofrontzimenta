@@ -155,10 +155,6 @@ function LoginForm() {
             </Button>
           </Form>
 
-          <div className="mt-3 text-center">
-            <a href="#">Olvidé mi contraseña</a>
-          </div>
-
           <p className="mt-3 text-center">
             By continuing, you agree to the{" "}
             <Link to="/terms-use">Terms of Use</Link> and{" "}

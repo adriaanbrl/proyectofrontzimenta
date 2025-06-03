@@ -15,8 +15,9 @@ import {
   EyeSlashFill,
   FileEarmarkTextFill,
 } from "react-bootstrap-icons";
-import EstimatedPrice from "./EstimatedPrice"; // Importa EstimatedPrice aquí
-import { CalendarEventFill } from "react-bootstrap-icons"; // Importa el icono aquí
+import EstimatedPrice from "./EstimatedPrice";
+import { CalendarEventFill } from "react-bootstrap-icons";
+import {  useNavigate } from "react-router-dom";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -78,13 +79,14 @@ const ClientOverview = ({
   pendingAmountValue,
   lastInvoice,
   fetchLastInvoice,
-  buildingId, 
+  buildingId,
+  upcomingEvents,
+  loadingEvents,
+  errorEvents,
 }) => {
-   console.log("Building ID recibido:", buildingId); 
+  console.log("Building ID recibido:", buildingId);
   const [verDetallePago, setVerDetallePago] = useState(false);
-  const [upcomingEvents, setUpcomingEvents] = useState([]);
-  const [loadingEvents, setLoadingEvents] = useState(true);
-  const [errorEvents, setErrorEvents] = useState(null);
+   const navigate = useNavigate();
 
   const toggleVerDetallePago = () => setVerDetallePago(!verDetallePago);
 
@@ -161,43 +163,26 @@ const ClientOverview = ({
     },
   };
 
-  useEffect(() => {
-    const fetchUpcomingEvents = async () => {
-      if (!buildingId) {
-        setLoadingEvents(false);
-        return;
-      }
+   const getNearestEvent = (events) => {
+    if (!events || !Array.isArray(events) || events.length === 0) {
+      return null;
+    }
+    const now = new Date();
+    const futureEvents = events.filter((event) => new Date(event.date) >= now);
+    if (futureEvents.length === 0) {
+      return null;
+    }
+    futureEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+    return futureEvents[0];
+  };
 
-      setLoadingEvents(true);
-      setErrorEvents(null);
-      const token = localStorage.getItem("authToken");
+  const nearestEvent = getNearestEvent(upcomingEvents);
 
-      try {
-        const response = await fetch(
-          `http://localhost:8080/auth/building/${buildingId}/events`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setUpcomingEvents(data);
-        } else {
-          setErrorEvents("Error al cargar los próximos eventos.");
-          console.error("Error al obtener los próximos eventos:", response.status);
-        }
-      } catch (error) {
-        setErrorEvents("Error de conexión al cargar los próximos eventos.");
-        console.error("Error al obtener los próximos eventos:", error);
-      } finally {
-        setLoadingEvents(false);
-      }
-    };
+   const handleVerTodosEventos = () => {
+     navigate("/calendar", { state: { scrollToEvents: true } }); 
+    console.log("Navegando al calendario de eventos");
 
-    fetchUpcomingEvents();
-  }, [buildingId]); // Dependencia en buildingId para recargar si cambia
+  };
 
   return (
     <Row className="h-100 ">
@@ -293,8 +278,8 @@ const ClientOverview = ({
                 <Button
                   variant="outline-custom"
                   size="md"
-                  onClick={handleOpenPdf}
                   className="rounded-pill mt-3"
+                  onClick={handleOpenPdf}
                 >
                   <FileEarmarkTextFill className="me-2 " /> Ver Factura
                 </Button>
@@ -308,41 +293,41 @@ const ClientOverview = ({
             <div>
               <Card.Title className="mb-3 fw-semibold d-flex align-items-center">
                 <CalendarEventFill className="me-2 text-custom " size={20} />
-                Próximos Eventos
+                Próximo Evento
               </Card.Title>
               {loadingEvents ? (
-                <div className="text-muted small">Cargando eventos...</div>
+                <div className="text-muted small">Cargando evento...</div>
               ) : errorEvents ? (
                 <div className="text-danger small">{errorEvents}</div>
-              ) : upcomingEvents.length > 0 ? (
+              ) : nearestEvent ? (
                 <ListGroup variant="flush">
-                  {upcomingEvents.map((event) => (
-                    <ListGroup.Item key={event.id}>
-                      <div className="fw-bold">{event.title}</div>
+                  <ListGroup.Item key={nearestEvent.id}>
+                    <div className="fw-bold">{nearestEvent.title}</div>
+                    <div className="text-muted small">
+                      {new Date(nearestEvent.date).toLocaleDateString("es-ES", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </div>
+                    {nearestEvent.description && (
                       <div className="text-muted small">
-                        {new Date(event.date).toLocaleDateString("es-ES", {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })}
+                        {nearestEvent.description}
                       </div>
-                      {event.description && <div className="text-muted small">{event.description}</div>}
-                    </ListGroup.Item>
-                  ))}
+                    )}
+                  </ListGroup.Item>
                 </ListGroup>
               ) : (
-                <div className="text-muted small">No hay eventos para este edificio.</div>
+                <div className="text-muted small">No hay eventos futuros para este edificio.</div>
               )}
             </div>
-            {upcomingEvents.length > 0 && (
+            {upcomingEvents.length > 1 && nearestEvent && (
               <div>
                 <Button
                   variant="outline-custom"
                   size="md"
                   className="rounded-pill mt-3"
-                  onClick={() => {
-                    console.log("Ver todos los eventos del edificio");
-                  }}
+                  onClick={handleVerTodosEventos}
                 >
                   Ver Todos los Eventos
                 </Button>

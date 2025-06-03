@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Container, Button, ListGroup, Card } from "react-bootstrap";
-import { ChevronLeft } from "lucide-react";
+import { Container, Button, ListGroup, Card, Spinner, Alert } from "react-bootstrap"; // Added Spinner and Alert
+// Removed import for ChevronLeft as the back button is being removed
 import { useNavigate } from "react-router-dom";
 
-// Modified to accept buildingId as a prop
 function BudgetDisplay({ buildingId }) {
     const [budgetData, setBudgetData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -11,18 +10,14 @@ function BudgetDisplay({ buildingId }) {
     const [openChapters, setOpenChapters] = useState({});
     const token = localStorage.getItem("authToken");
     const [showAllChapters, setShowAllChapters] = useState(false);
-    const navigate = useNavigate();
+    const navigate = useNavigate(); // Still keep navigate for potential future use or if other logic uses it
     const chaptersToShowInitially = 5;
-
-    // Removed the useEffect for decoding buildingId from token,
-    // as buildingId is now passed as a prop.
 
     useEffect(() => {
         const fetchBudget = async () => {
-            if (buildingId) { // Use the buildingId prop directly
+            if (buildingId) {
                 setLoading(true);
                 setError(null);
-                // CORRECTED URL: Changed from /api/budget/building/${buildingId} to /api/budget/${buildingId}/budget
                 const url = `http://localhost:8080/api/budget/${buildingId}/budget`;
 
                 try {
@@ -59,16 +54,14 @@ function BudgetDisplay({ buildingId }) {
                     setLoading(false);
                 }
             } else {
-                // If buildingId is not provided, set loading to false and clear data/error
                 setLoading(false);
                 setBudgetData(null);
                 setError("No se proporcionó un ID de edificio para cargar el presupuesto.");
             }
         };
 
-        // Fetch budget whenever buildingId or token changes
         fetchBudget();
-    }, [buildingId, token]); // Dependencies updated
+    }, [buildingId, token]);
 
     const toggleChapter = (chapterId) => {
         setOpenChapters((prevState) => ({
@@ -84,22 +77,19 @@ function BudgetDisplay({ buildingId }) {
         setShowAllChapters(!showAllChapters);
     };
 
-    const handleGoBack = () => {
-        navigate(-1);
-    };
+    // Removed handleGoBack function as the back button is removed
 
-    // Removed loadingBuildingId and errorBuildingId checks
     if (loading) {
-        return <div className="loading">Cargando presupuesto...</div>;
+        return <div className="text-center my-3"><Spinner animation="border" size="sm" /> Cargando presupuesto...</div>;
     }
 
     if (error) {
-        return <div className="error">Error al cargar el presupuesto: {error}</div>;
+        return <Alert variant="danger" className="mt-3">Error al cargar el presupuesto: {error}</Alert>;
     }
 
     if (!budgetData) {
         return (
-            <div className="no-data">No se han encontrado datos de presupuesto.</div>
+            <Alert variant="info" className="mt-3">No se han encontrado datos de presupuesto para esta construcción.</Alert>
         );
     }
 
@@ -112,26 +102,14 @@ function BudgetDisplay({ buildingId }) {
 
     return (
         <Container className="budget-container">
-            <div className="budget-header d-flex align-items-center justify-content-between">
-                <Button
-                    variant="link"
-                    onClick={handleGoBack}
-                    className="back-button"
-                    aria-label="Volver atrás"
-                >
-                    <ChevronLeft size={20} color="orange" />
-                </Button>
-                <h1 className="budget-title fw-bold text-center m-0">Presupuesto</h1>
-                <div style={{ visibility: "hidden" }}>
-                    <ChevronLeft size={20} color="orange" />
-                </div>
-            </div>
+            {/* Removed the entire budget-header div which contained the top "Presupuesto" title and back button */}
 
             {budgetData.title && (
-                <h2 className="text-center mt-3 mb-4">
+                // Changed h2 to h6 for a smaller title
+                <h6 className="text-center mt-3 mb-4 text-muted">
                     {budgetData.title}
                     {budgetData.amount && (
-                        <span className="ms-3">
+                        <span className="ms-2">
               Total:{" "}
                             {parseFloat(budgetData.amount).toLocaleString("es-ES", {
                                 minimumFractionDigits: 2,
@@ -140,7 +118,7 @@ function BudgetDisplay({ buildingId }) {
                             €
             </span>
                     )}
-                </h2>
+                </h6>
             )}
 
             <ListGroup className="chapters-list">
@@ -157,18 +135,18 @@ function BudgetDisplay({ buildingId }) {
                         }
 
                         return (
-                            <Card key={chapter.id} className="chapter-card">
-                                <Card.Header className="chapter-header">
+                            <Card key={chapter.id} className="chapter-card mb-2 shadow-sm">
+                                <Card.Header className="chapter-header d-flex justify-content-between align-items-center py-2">
                                     <Button
-                                        variant="btn-outline-custom"
+                                        variant="link" // Changed to link for a more subtle look, less prominent
                                         onClick={() => toggleChapter(chapter.id)}
-                                        className={`chapter-button ${
+                                        className={`chapter-button p-0 text-decoration-none ${
                                             openChapters[chapter.id] ? "open" : ""
                                         }`}
                                         aria-expanded={openChapters[chapter.id]}
                                         aria-controls={`chapter-${chapter.id}`}
                                     >
-                                        {chapter.chapterCode ? `${chapter.chapterCode} - ` : ''}{chapter.title}{" "}
+                                        <strong>{chapter.chapterCode ? `${chapter.chapterCode} - ` : ''}{chapter.title}</strong>
                                     </Button>
                                     <div className="chapter-total-header fw-bold ms-2">
                                         Total:{" "}
@@ -181,19 +159,20 @@ function BudgetDisplay({ buildingId }) {
                                 </Card.Header>
                                 {openChapters[chapter.id] && (
                                     <Card.Body
-                                        className="chapter-body"
+                                        className="chapter-body p-2"
                                         id={`chapter-${chapter.id}`}
                                     >
                                         <ListGroup className="items-list">
                                             {chapter.items && Array.isArray(chapter.items) && chapter.items.length > 0 ? (
                                                 chapter.items.map((item) => (
-                                                    <ListGroup.Item key={item.id} className="item-item">
+                                                    <ListGroup.Item key={item.id} className="item-item d-flex justify-content-between align-items-center py-1 px-2 border-0">
                                                         <div className="item-header">
-                                          <span className="item-title">
+                                          <span className="item-title text-muted small">
                                             {item.itemCode ? `${item.itemCode} - ` : ''}{item.title}
                                           </span>
-                                                            {item.amount && (
-                                                                <span className="item-amount fw-bold">
+                                                        </div>
+                                                        {item.amount && (
+                                                            <span className="item-amount fw-bold ms-auto small">
                                   {parseFloat(item.amount).toLocaleString(
                                       "es-ES",
                                       {
@@ -201,19 +180,18 @@ function BudgetDisplay({ buildingId }) {
                                           maximumFractionDigits: 2,
                                       }
                                   )}{" "}
-                                                                    €
+                                                                €
                                 </span>
-                                                            )}
-                                                        </div>
+                                                        )}
                                                     </ListGroup.Item>
                                                 ))
                                             ) : (
-                                                <ListGroup.Item className="no-items">
+                                                <ListGroup.Item className="no-items text-muted small border-0">
                                                     No hay partidas para este capítulo.
                                                 </ListGroup.Item>
                                             )}
                                         </ListGroup>
-                                        <div className="chapter-total-body fw-bold mt-3">
+                                        <div className="chapter-total-body fw-bold mt-2 text-end border-top pt-2">
                                             Importe del capítulo:{" "}
                                             {chapterTotal.toLocaleString("es-ES", {
                                                 minimumFractionDigits: 2,
@@ -227,19 +205,20 @@ function BudgetDisplay({ buildingId }) {
                         );
                     })
                 ) : (
-                    <ListGroup.Item>
+                    <Alert variant="info" className="mt-3">
                         {Array.isArray(chaptersToDisplay) && chaptersToDisplay.length === 0
                             ? "No hay capítulos disponibles para este presupuesto."
                             : "Error: Los datos del presupuesto no tienen el formato esperado."}
-                    </ListGroup.Item>
+                    </Alert>
                 )}
             </ListGroup>
 
             {numberOfChapters > chaptersToShowInitially && (
                 <Button
-                    variant="btn-outline-custom"
-                    className="btn-outline-custom mt-3 w-100"
+                    variant="outline-secondary" // Changed variant for a more subtle button
+                    className="mt-3 w-100"
                     onClick={handleShowAllChapters}
+                    size="sm" // Make the button smaller
                 >
                     Ver{" "}
                     {showAllChapters

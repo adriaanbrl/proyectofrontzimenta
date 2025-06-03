@@ -43,10 +43,10 @@ function ManualsDoc() {
       const response = await fetch(
         `http://localhost:8080/auth/building/${id}/manual/zip`,
         {
-          method: "GET", // Asegúrate de que el método sea GET
+          method: "GET", 
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json", // Añade explícitamente el Content-Type
+            "Content-Type": "application/json", 
           },
         }
       );

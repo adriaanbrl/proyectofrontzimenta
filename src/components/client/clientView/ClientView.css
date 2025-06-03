@@ -43,7 +43,7 @@
     transition: opacity 0.3s ease-in-out;
 }
 
-/* New rule for the bottom margin of the information section */
+
 .info-section-spacing {
     margin-bottom: 80px; /* Adjust this value as needed, e.g., 60px, 100px */
 }

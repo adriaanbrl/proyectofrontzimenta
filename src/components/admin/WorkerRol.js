@@ -77,7 +77,7 @@ function WorkerRol() {
                 setErrorMessage(`Error al crear trabajador: ${response.statusText || 'Error desconocido'}`);
             }
         } catch (error) {
-            console.error("Error al crear el trabajador:", error);
+
             if (error.response) {
                 setErrorMessage(
                     `Error: ${error.response.data.message || error.response.data || error.response.statusText || "Error al conectar con el servidor"}`
@@ -202,7 +202,7 @@ function WorkerRol() {
                                     <option value="2">Trabajador</option>    {/* ID 2 para Trabajador */}
                                 </Form.Select>
                                 <Form.Control.Feedback type="invalid">
-                                    {/* Aquí puedes añadir validación de Formik si lo integras */}
+                                   
                                 </Form.Control.Feedback>
                             </Form.Group>
                         </Col>

@@ -18,7 +18,6 @@ const ProjectInfo = ({
               <BsGeoAltFill className="me-3 project-info-icon" size={20} />
               <div className="flex-grow-1">
                 {" "}
-                {/* KEEP flex-grow-1 here */}
                 <div className="fw-bold project-info-label">Dirección</div>
                 <div className="text-muted project-info-value">
                   {buildingAddress || "Dirección no disponible"}
@@ -29,7 +28,6 @@ const ProjectInfo = ({
               <BsCalendarFill className="me-3 project-info-icon" size={20} />
               <div className="flex-grow-1">
                 {" "}
-                {/* KEEP flex-grow-1 here */}
                 <div className="fw-bold project-info-label">
                   Fecha de inicio
                 </div>
@@ -42,7 +40,6 @@ const ProjectInfo = ({
               <BsClockFill className="me-3 project-info-icon" size={20} />
               <div className="flex-grow-1">
                 {" "}
-                {/* RE-ADD flex-grow-1 here to align with others */}
                 <div className="fw-bold project-info-label">
                   Fecha de fin prevista
                 </div>

@@ -37,11 +37,11 @@ function Warranty() {
           const data = await response.json();
           setCategorias(data);
         } else {
-          console.error('Error al cargar las categorías:', response.status);
+   
           setError('Error al cargar las categorías.');
         }
       } catch (error) {
-        console.error('Error de red al cargar las categorías:', error);
+   
         setError('Error de red al cargar las categorías.');
       }
     };
@@ -53,11 +53,11 @@ function Warranty() {
           const data = await response.json();
           setEstancias(data);
         } else {
-          console.error('Error al cargar las estancias:', response.status);
+
           setError('Error al cargar las estancias.');
         }
       } catch (error) {
-        console.error('Error de red al cargar las estancias:', error);
+
         setError('Error de red al cargar las estancias.');
       }
     };
@@ -109,11 +109,11 @@ function Warranty() {
         setImagen(null);
       } else {
         const errorText = await response.text();
-        console.error('Error al registrar la incidencia:', response.status, errorText);
+
         setError(`Hubo un error al registrar la incidencia: ${errorText}`);
       }
     } catch (error) {
-      console.error('Error de red al registrar la incidencia:', error);
+
       setError('Error de red al registrar la incidencia.');
     } finally {
       setIsSubmitting(false);

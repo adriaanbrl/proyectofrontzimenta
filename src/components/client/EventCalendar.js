@@ -58,11 +58,11 @@ const EventCalendar = () => {
     0
   );
   const numeroDeDias = ultimoDiaDelMes.getDate();
-  const primerDiaSemana = primerDiaDelMes.getDay(); // 0 for Sunday, 1 for Monday
+  const primerDiaSemana = primerDiaDelMes.getDay(); 
 
   const diasDelMes = [];
   // Ajusta el inicio para que el lunes sea el primer día de la semana
-  const espaciosNecesarios = primerDiaSemana === 0 ? 6 : primerDiaSemana - 1; // Si es domingo (0), necesitamos 6 espacios para que Lunes sea el 1er día
+  const espaciosNecesarios = primerDiaSemana === 0 ? 6 : primerDiaSemana - 1; 
   for (let i = 0; i < espaciosNecesarios; i++) {
     diasDelMes.push("");
   }
@@ -129,10 +129,7 @@ const EventCalendar = () => {
       try {
         const decodedToken = jwtDecode(token);
         setBuildingId(decodedToken.building_id || "");
-        console.log(
-          "building_id recibido del customer (JWT):",
-          decodedToken.building_id
-        );
+       
 
         if (decodedToken.building_id) {
           fetchBuildingEvents(
@@ -142,7 +139,7 @@ const EventCalendar = () => {
           );
         }
       } catch (error) {
-        console.error("Error al decodificar el token:", error);
+
         setError("Error al autenticar al usuario.");
       }
     } else {
@@ -430,7 +427,6 @@ const EventCalendar = () => {
             </Modal.Body>
             <Modal.Footer className="border-0 pt-0 d-flex justify-content-center">
               {" "}
-              {/* Added d-flex justify-content-center here */}
               <Button variant="outline-custom" onClick={handleCloseModal}>
                 Cerrar
               </Button>

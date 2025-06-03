@@ -26,11 +26,10 @@ function ContactList() {
       if (token) {
         try {
           const decodedToken = jwtDecode(token);
-          console.log("Decoded Token:", decodedToken);
+
           setBuildingId(decodedToken.building_id);
           setAuthToken(token);
         } catch (decodeError) {
-          console.error("Error decoding token:", decodeError);
           setError("Error al decodificar el token.");
           setLoading(false);
         }
@@ -46,21 +45,18 @@ function ContactList() {
   useEffect(() => {
     const fetchWorkers = async () => {
       if (!buildingId) {
-        console.warn("buildingId is undefined or null. Cannot fetch.");
         setError("ID del edificio no encontrado.");
         setLoading(false);
         return;
       }
 
       if (!authToken) {
-        console.warn("authToken is undefined or null. Cannot fetch.");
         setError("Token de autenticación no encontrado.");
         setLoading(false);
         return;
       }
 
       try {
-        console.log(`Fetching workers for building ID: ${buildingId}`);
         const response = await fetch(
           `http://localhost:8080/auth/worker/buildings/${buildingId}/workersInBuilding`,
           {
@@ -72,19 +68,16 @@ function ContactList() {
         );
         if (!response.ok) {
           const errorText = await response.text();
-          console.error(
-            `HTTP error! status: ${response.status}, response: ${errorText}`
-          );
+
           throw new Error(
             `Error HTTP: ${response.status}, Mensaje: ${errorText}`
           );
         }
         const data = await response.json();
-        console.log("Received data:", data);
+
         setWorkers(data);
         setLoading(false);
       } catch (error) {
-        console.error("Error al obtener datos:", error);
         setError(error);
         setLoading(false);
       }
@@ -120,7 +113,7 @@ function ContactList() {
 
   const handleChatClick = (worker) => {
     // Recibimos el objeto worker completo
-    navigate(`/chat?workerId=${worker.id}&workerName=${worker.username}`); // Asumiendo que la propiedad del nombre de usuario es 'username'
+    navigate(`/chat?workerId=${worker.id}&workerName=${worker.username}`);
   };
 
   return (

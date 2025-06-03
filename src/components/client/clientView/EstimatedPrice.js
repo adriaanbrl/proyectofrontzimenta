@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react"; // Re-import useState, useEffect
-import { EyeFill, EyeSlashFill } from "react-bootstrap-icons"; // Re-import icons
+import React, { useState, useEffect } from "react"; 
+import { EyeFill, EyeSlashFill } from "react-bootstrap-icons"; 
 import { Col, Row } from "react-bootstrap";
-import { jwtDecode } from 'jwt-decode'; // Import jwtDecode
+import { jwtDecode } from 'jwt-decode'; 
 import "./ClientView.css";
 
-// Now accepts only 'precio' prop, building title will come from token
+
 const EstimatedPrice = ({ precio }) => {
     const [verPrecio, setVerPrecio] = useState(false);
-    const [buildingTitleFromToken, setBuildingTitleFromToken] = useState("Cargando título..."); // New state for building title
+    const [buildingTitleFromToken, setBuildingTitleFromToken] = useState("Cargando título..."); 
 
     const toggleVerPrecio = () => setVerPrecio(!verPrecio);
 
@@ -22,7 +22,7 @@ const EstimatedPrice = ({ precio }) => {
         if (token) {
             try {
                 const decodedToken = jwtDecode(token);
-                if (decodedToken.userType === "customer" && decodedToken.building_title) { // Changed from building_address to building_title
+                if (decodedToken.userType === "customer" && decodedToken.building_title) { 
                     setBuildingTitleFromToken(decodedToken.building_title.toUpperCase());
                 } else {
                     setBuildingTitleFromToken("TÍTULO NO DISPONIBLE");
@@ -34,7 +34,7 @@ const EstimatedPrice = ({ precio }) => {
         } else {
             setBuildingTitleFromToken("TÍTULO NO DISPONIBLE");
         }
-    }, []); // Run once on component mount
+    }, []); 
 
     return (
         <div>

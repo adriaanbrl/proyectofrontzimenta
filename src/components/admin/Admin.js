@@ -11,8 +11,8 @@ import WorkerRoleAssignment from "./WorkerRoleAssignment";
 import AdminSidebar from './AdminSidebar';
 import { Outlet } from 'react-router-dom';
 
-// Import your default image directly from the same folder
-import defaultAvatar from './perfilPredeterminado.png'; // <--- UPDATED PATH
+
+import defaultAvatar from './perfilPredeterminado.png'; 
 
 
 const AdminView = () => {
@@ -24,9 +24,9 @@ const AdminView = () => {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [defaultImageBase64, setDefaultImageBase64] = useState(''); // New state for base64 image
+  const [defaultImageBase64, setDefaultImageBase64] = useState(''); 
 
-  // Function to convert image to Base64
+  
   const convertImageToBase64 = async (imageUrl) => {
     try {
       const response = await fetch(imageUrl);
@@ -38,12 +38,11 @@ const AdminView = () => {
         reader.readAsDataURL(blob);
       });
     } catch (error) {
-      console.error("Error converting image to base64:", error);
       return null;
     }
   };
 
-  // Effect to load the default image as Base64 when the component mounts
+  
   React.useEffect(() => {
     const loadImage = async () => {
       const base64 = await convertImageToBase64(defaultAvatar);
@@ -52,7 +51,7 @@ const AdminView = () => {
       }
     };
     loadImage();
-  }, []); // Run once on component mount
+  }, []); 
 
   const customerFormik = useFormik({
     initialValues: {
@@ -62,8 +61,7 @@ const AdminView = () => {
       surname: "",
       password: "",
       building_id: "",
-      // Add a field for the image data
-      profile_image: "", // This will store the Base64 string
+      profile_image: "",
     },
     validationSchema: Yup.object({
       email: Yup.string().email("Correo electrónico inválido").required("El correo electrónico es obligatorio."),
@@ -72,7 +70,6 @@ const AdminView = () => {
       surname: Yup.string().required("El apellido es obligatorio."),
       password: Yup.string().min(6, "La contraseña debe tener al menos 6 caracteres.").required("La contraseña es obligatoria."),
       building_id: Yup.number().nullable().min(1, "El ID del edificio debe ser un número positivo."),
-      // No validation needed for profile_image if it's always default
     }),
     onSubmit: async (values) => {
       setLoading(true);
@@ -86,10 +83,10 @@ const AdminView = () => {
           return;
         }
 
-        // Prepare the data to send, including the default image
+   
         const dataToSend = {
           ...values,
-          profile_image: defaultImageBase64, // Assign the Base64 string here
+          profile_image: defaultImageBase64,
         };
 
         const response = await axios.post("http://localhost:8080/auth/register/client", dataToSend, {
@@ -104,7 +101,6 @@ const AdminView = () => {
           setErrorMessage("Error al crear el cliente.");
         }
       } catch (error) {
-        console.error("Error creating customer:", error);
         setErrorMessage(
             error.response?.data?.message || "Error al crear el cliente."
         );
@@ -150,7 +146,6 @@ const AdminView = () => {
           setErrorMessage("Error al crear la construcción.");
         }
       } catch (error) {
-        console.error("Error creating construction:", error);
         setErrorMessage(
             error.response?.data?.message || "Error al crear la construcción."
         );
@@ -209,7 +204,7 @@ const AdminView = () => {
           );
         }
       } catch (error) {
-        console.error("Error al asignar trabajador:", error);
+
         if (error.response) {
           setErrorMessage(
               `Error: ${error.response.data.message || error.response.status || "Error desconocido del servidor"}`
@@ -261,7 +256,7 @@ const AdminView = () => {
           setErrorMessage("Error al crear el trabajador.");
         }
       } catch (error) {
-        console.error("Error creating worker:", error);
+
         if (error.response) {
           setErrorMessage(`Error: ${error.response.data.message || error.response.statusText || 'Error desconocido del servidor.'}`);
         } else if (error.request) {
@@ -319,7 +314,7 @@ const AdminView = () => {
           );
         }
       } catch (error) {
-        console.error("Error al asignar rol:", error);
+
         if (error.response) {
           setErrorMessage(
               `Error: ${error.response.data.message || error.response.status || "Error desconocido del servidor"}`

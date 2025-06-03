@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Card, Form, Button, ListGroup, InputGroup, Container } from "react-bootstrap";
+import {
+  Card,
+  Form,
+  Button,
+  ListGroup,
+  InputGroup,
+  Container,
+} from "react-bootstrap";
 import { useLocation } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import moment from "moment";
@@ -18,7 +25,6 @@ function ClientChat() {
   const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
 
   useEffect(() => {
-    console.log("useEffect con location.search ejecutado (Client)");
     const queryParams = new URLSearchParams(location.search);
     setWorkerId(queryParams.get("workerId"));
     const fetchedWorkerName = queryParams.get("workerName");
@@ -28,43 +34,31 @@ function ClientChat() {
 
     const fetchCustomerIdAndHistory = async () => {
       const token = localStorage.getItem("authToken");
-      console.log("Token recuperado (Client):", token);
+
       if (token) {
         setAuthToken(token);
         try {
           const decodedToken = jwtDecode(token);
           setCustomerId(decodedToken.id);
-          console.log(
-            "workerId (Client):",
-            workerId,
-            "customerId (Client):",
-            customerId
-          );
 
           // Establecer la conexión WebSocket aquí, cuando authToken está disponible
           websocket.current = new WebSocket("ws://localhost:8080/chat");
 
           websocket.current.onopen = () => {
-            console.log("Conexión WebSocket establecida (Client).");
             setIsWebSocketConnected(true);
           };
 
           websocket.current.onmessage = (event) => {
             const messageData = JSON.parse(event.data);
-            console.log(
-              "Mensaje recibido por WebSocket (Client):",
-              messageData
-            );
+
             setMessages((prevMessages) => [...prevMessages, messageData]);
           };
 
           websocket.current.onclose = () => {
-            console.log("Conexión WebSocket cerrada (Client).");
             setIsWebSocketConnected(false);
           };
 
           websocket.current.onerror = (error) => {
-            console.error("Error en la conexión WebSocket (Client):", error);
             setIsWebSocketConnected(false);
           };
 
@@ -76,9 +70,7 @@ function ClientChat() {
               websocket.current.close();
             }
           };
-        } catch (decodeError) {
-          console.error("Error decoding token (Client):", decodeError);
-        }
+        } catch (decodeError) {}
       }
     };
     fetchCustomerIdAndHistory();
@@ -91,7 +83,6 @@ function ClientChat() {
   }, [workerId, customerId, authToken]);
 
   const loadChatHistory = async (user1Id, user1Type, user2Id, user2Type) => {
-    console.log("authToken en loadChatHistory (Client):", authToken);
     if (authToken) {
       try {
         const response = await fetch(
@@ -105,17 +96,10 @@ function ClientChat() {
         );
         if (response.ok) {
           const history = await response.json();
-          console.log("Historial cargado (Client):", history);
           setMessages(history);
         } else {
-          console.error(
-            "Error al cargar el historial del chat (Client):",
-            response.status
-          );
         }
-      } catch (error) {
-        console.error("Error al cargar el historial del chat (Client):", error);
-      }
+      } catch (error) {}
     }
   };
 
@@ -150,9 +134,6 @@ function ClientChat() {
 
       setNewMessage("");
     } else if (!isWebSocketConnected) {
-      console.log(
-        "La conexión WebSocket no está activa. Intenta reconectar o espera."
-      );
     }
   };
 

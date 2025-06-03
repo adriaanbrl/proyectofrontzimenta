@@ -30,7 +30,7 @@ export default function Profile() {
       const token = localStorage.getItem("authToken"); // Obtener el token
 
       if (!token) {
-        console.error("No se encontró el token de autenticación.");
+      
         return;
       }
 
@@ -47,7 +47,7 @@ export default function Profile() {
       // Actualiza el estado 'building' con los datos recibidos de la API
       setBuilding(response.data);
     } catch (error) {
-      console.error("Error al obtener los datos del edificio:", error);
+
     }
   };
 
@@ -60,15 +60,12 @@ export default function Profile() {
         setUsername(decodedToken.name || "Usuario");
         setSurname(decodedToken.surname || "");
         setBuildingId(decodedToken.building_id || "");
-        console.log(
-            "building_id recibido del customer (JWT):",
-            decodedToken.building_id
-        );
+      
         if (decodedToken.building_id) {
           fetchBuildingData(decodedToken.building_id);
         }
       } catch (error) {
-        console.error("Error al decodificar el token:", error);
+
         setUsername("Usuario");
         setSurname("");
         setBuildingId("");
@@ -103,13 +100,13 @@ export default function Profile() {
 
   const handleUploadImage = async () => {
     if (!selectedImage) {
-      console.warn("No se ha seleccionado ninguna imagen.");
+
       return;
     }
 
     const token = localStorage.getItem("authToken");
     if (!token) {
-      console.error("No se encontró el token de autenticación.");
+   
       return;
     }
 
@@ -128,13 +125,13 @@ export default function Profile() {
           }
       );
 
-      console.log("Imagen subida con éxito:", response.data);
+
       setShowModal(false);
       setSelectedImage(null);
 
       window.location.reload();
     } catch (error) {
-      console.error("Error al subir la imagen:", error);
+
     }
   };
 

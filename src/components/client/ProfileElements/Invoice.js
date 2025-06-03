@@ -10,23 +10,20 @@ import {
   ListGroup,
 } from "react-bootstrap";
 import { ChevronLeft, File } from "lucide-react";
-import { jwtDecode } from "jwt-decode"; // Import jwtDecode
-import axios from "axios"; // Import axios for consistent API calls
+import { jwtDecode } from "jwt-decode"; 
+import axios from "axios"; 
 
 function InvoicesDoc() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [buildingId, setBuildingId] = useState(0); // Initialize as 0 or null, will be set from token
-  // Removed buildingName state
+  const [buildingId, setBuildingId] = useState(0); 
   const [pdfDataListWithInfo, setPdfDataListWithInfo] = useState([]);
   const [error, setError] = useState(null);
-  const [loadingInvoices, setLoadingInvoices] = useState(false); // Specific loading for invoices
-  // Removed loadingBuildingName state
-  const [initialLoading, setInitialLoading] = useState(true); // Overall initial loading
+  const [loadingInvoices, setLoadingInvoices] = useState(false); 
+  const [initialLoading, setInitialLoading] = useState(true);
 
-  // Removed Function to fetch building name (fetchBuildingName)
 
-  // Function to fetch all invoices
+  
   const fetchInvoices = useCallback(async (id) => {
     setLoadingInvoices(true);
     setError(null);
@@ -82,7 +79,7 @@ function InvoicesDoc() {
           if (typeof pdfData.data !== 'string' || !pdfData.data) {
             return {
               filename: pdfData.filename || 'Archivo desconocido',
-              title: pdfData.title || 'Título no disponible', // Added title with fallback
+              title: pdfData.title || 'Título no disponible', 
               url: null,
               dateInfo: pdfData.dateInfo || 'Fecha desconocida',
               error: 'Datos PDF no válidos'
@@ -99,14 +96,14 @@ function InvoicesDoc() {
             const url = URL.createObjectURL(fileBlob);
             return {
               filename: pdfData.filename,
-              title: pdfData.title || pdfData.filename, // Use title, fallback to filename
+              title: pdfData.title || pdfData.filename, 
               url: url,
               dateInfo: pdfData.dateInfo,
             };
           } catch (e) {
             return {
               filename: pdfData.filename || 'Archivo desconocido',
-              title: pdfData.title || 'Título no disponible', // Added title with fallback
+              title: pdfData.title || 'Título no disponible', 
               url: null,
               dateInfo: pdfData.dateInfo || 'Fecha desconocida',
               error: 'Error al decodificar PDF'
@@ -144,9 +141,9 @@ function InvoicesDoc() {
           }
         } else {
           const decodedToken = jwtDecode(token);
-          const id = decodedToken.building_id; // Assuming 'building_id' is the claim name
+          const id = decodedToken.building_id; 
           if (id) {
-            setBuildingId(Number(id)); // Ensure it's a number for your backend
+            setBuildingId(Number(id)); 
           } else {
             throw new Error("No se encontró 'building_id' en el token de autenticación.");
           }
@@ -159,17 +156,17 @@ function InvoicesDoc() {
     };
 
     getBuildingIdFromToken();
-  }, [location.state]); // Re-run if location state changes, as a fallback/initial trigger
+  }, [location.state]); 
 
-  // Effect to call fetch functions once buildingId is set
+ 
   useEffect(() => {
-    if (buildingId > 0) { // Only proceed if buildingId is a valid number
-      // Removed fetchBuildingName(buildingId);
+    if (buildingId > 0) { 
+
       fetchInvoices(buildingId);
     }
-  }, [buildingId, fetchInvoices]); // Removed fetchBuildingName from dependencies
+  }, [buildingId, fetchInvoices]); 
 
-  // Cleanup function to revoke object URLs
+  
   useEffect(() => {
     return () => {
       pdfDataListWithInfo.forEach((item) => {
@@ -199,19 +196,19 @@ function InvoicesDoc() {
                 <ChevronLeft size={20} color="orange" />
               </Button>
               <h2 className="mb-0 text-center">
-                Facturas {/* Reverted title to static "Facturas" */}
+                Facturas 
               </h2>
             </div>
 
             {error && <Alert variant="danger">{error}</Alert>}
-            {(initialLoading || loadingInvoices) && ( // Removed loadingBuildingName from condition
+            {(initialLoading || loadingInvoices) && ( 
                 <div className="d-flex justify-content-center">
                   <Spinner animation="border" role="status">
                     <span className="visually-hidden">Cargando...</span>
                   </Spinner>
                 </div>
             )}
-            {!initialLoading && !loadingInvoices && pdfDataListWithInfo.length > 0 && ( // Removed loadingBuildingName from condition
+            {!initialLoading && !loadingInvoices && pdfDataListWithInfo.length > 0 && ( 
                 <ListGroup>
                   {pdfDataListWithInfo.map((item, index) => (
                       <ListGroup.Item
@@ -221,7 +218,7 @@ function InvoicesDoc() {
                         <div className="d-flex align-items-center">
                           <File size={24} className="me-3 text-custom" />
                           <span>
-                      {/* Display item.title, fallback to item.filename if title is not available */}
+                 
                             {item.title || item.filename} ({item.dateInfo})
                     </span>
                         </div>
@@ -232,7 +229,7 @@ function InvoicesDoc() {
                               if (item.url) {
                                 window.open(item.url, "_blank");
                               } else {
-                                console.error('No valid URL to open for this PDF.');
+                 
                                 alert('No se pudo abrir el documento. Datos no válidos.');
                               }
                             }}
@@ -244,7 +241,7 @@ function InvoicesDoc() {
                   ))}
                 </ListGroup>
             )}
-            {!initialLoading && !loadingInvoices && !pdfDataListWithInfo.length && !error && buildingId > 0 && ( // Removed loadingBuildingName from condition
+            {!initialLoading && !loadingInvoices && !pdfDataListWithInfo.length && !error && buildingId > 0 && ( 
                 <p className="text-muted text-center">
                   No hay facturas disponibles para este edificio.
                 </p>

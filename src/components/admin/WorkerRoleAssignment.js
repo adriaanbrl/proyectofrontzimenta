@@ -29,7 +29,7 @@ const WorkerRoleAssignment = ({ setLoading, setSuccessMessage, setErrorMessage, 
                     setErrorMessage("Error al cargar la lista de trabajadores.");
                 }
             } catch (error) {
-                console.error("Error fetching workers:", error);
+
                 setErrorMessage(error.response?.data?.message || "Error al cargar la lista de trabajadores.");
             }
 
@@ -46,7 +46,7 @@ const WorkerRoleAssignment = ({ setLoading, setSuccessMessage, setErrorMessage, 
                     setErrorMessage("Error al cargar la lista de roles.");
                 }
             } catch (error) {
-                console.error("Error fetching roles:", error);
+ 
                 setErrorMessage(error.response?.data?.message || "Error al cargar la lista de roles.");
             }
         };

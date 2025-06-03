@@ -15,17 +15,17 @@ const ClientData = () => {
   const [eventLoading, setEventLoading] = useState(false);
   const [eventError, setEventError] = useState(null);
   const [eventMonth, setEventMonth] = useState(new Date());
-  const [budgetAmount, setBudgetAmount] = useState(null); // Puede ser null inicialmente
+  const [budgetAmount, setBudgetAmount] = useState(null); 
   const [budgetLoading, setBudgetLoading] = useState(false);
   const [budgetError, setBudgetError] = useState(null);
-  const [invoiceAmount, setInvoiceAmount] = useState(0); // Ensure initial state is number
+  const [invoiceAmount, setInvoiceAmount] = useState(0); 
   const [invoiceLoading, setInvoiceLoading] = useState(false);
   const [invoiceError, setInvoiceError] = useState(null);
   const [lastInvoice, setLastInvoice] = useState(null);
   const [lastInvoiceLoading, setLastInvoiceLoading] = useState(false);
   const [lastInvoiceError, setLastInvoiceError] = useState(null);
 
-  // Helper to format dates
+
   const formatDate = (dateString) => {
     if (!dateString) return "No disponible";
     try {
@@ -38,7 +38,7 @@ const ClientData = () => {
         })
         .replace(/ de /g, " ");
     } catch (error) {
-      console.error("Error formatting date:", error);
+     
       return "Fecha inválida";
     }
   };
@@ -72,7 +72,7 @@ const ClientData = () => {
         `http://localhost:8080/api/budget/${buildingId}/budget`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      // Ensure the amount is a number, default to null if not present
+     
       setBudgetAmount(response.data?.amount !== undefined ? Number(response.data.amount) : null);
     } catch (err) {
       setBudgetError(err);
@@ -92,7 +92,7 @@ const ClientData = () => {
         `http://localhost:8080/api/invoices/building/${buildingId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      // Ensure the amount is a number, default to 0 if not a valid number
+      
       setInvoiceAmount(Number(response.data) || 0);
     } catch (err) {
       setInvoiceError(err);
@@ -120,7 +120,7 @@ const ClientData = () => {
       }
       setLastInvoice(response.data || null);
     } catch (err) {
-      console.error("Error fetching last invoice:", err);
+
       setLastInvoiceError(err);
       setLastInvoice(null);
     } finally {
@@ -148,7 +148,7 @@ const ClientData = () => {
           `http://localhost:8080/auth/building/${id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        setProjectData(projectResponse.data || null); // projectData?.estimatedPrice might be here
+        setProjectData(projectResponse.data || null); 
 
         await fetchBudget(id);
         await fetchInvoiceAmount(id);
@@ -173,7 +173,7 @@ const ClientData = () => {
     }
   }, [buildingId, eventMonth, fetchEvents]);
 
-  // Use budgetAmount directly as the estimated price
+
   const estimatedPrice = budgetAmount !== null ? Number(budgetAmount) : 0;
   const paidAmount = Number(invoiceAmount) || 0;
   const pendingAmountValue = estimatedPrice - paidAmount;
@@ -221,8 +221,8 @@ const ClientData = () => {
     eventError,
     eventMonth,
     setEventMonth,
-    budgetAmount: estimatedPrice, // Return the processed estimatedPrice (budgetAmount)
-    invoiceAmount: paidAmount,   // Return the processed paidAmount
+    budgetAmount: estimatedPrice, 
+    invoiceAmount: paidAmount,   
     lastInvoice,
     lastInvoiceLoading,
     lastInvoiceError,

@@ -32,11 +32,10 @@ const WorkerAssigment = ({ formik, loading, successMessage, errorMessage }) => {
                 dataToSet = [responseData];
             }
 
-            console.log(`Data from ${url}:`, dataToSet);
+         
             setter(dataToSet);
 
         } catch (err) {
-            console.error(`Error fetching data from ${url}:`, err);
             errorSetter(err);
             setter([]);
         } finally {

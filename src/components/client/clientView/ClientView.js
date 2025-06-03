@@ -20,6 +20,7 @@
         pendingAmountValue,
         lastInvoice,
         timelineItems,
+        buildingId,
         fetchLastInvoice,
     } = ClientData();
 
@@ -52,6 +53,7 @@
             pendingAmountValue={pendingAmountValue}
             lastInvoice={lastInvoice}
             fetchLastInvoice={fetchLastInvoice}
+            buildingId={buildingId}
             />
         </Row>
 

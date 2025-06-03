@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   ListGroup,
@@ -16,6 +16,7 @@ import {
   FileEarmarkTextFill,
 } from "react-bootstrap-icons";
 import EstimatedPrice from "./EstimatedPrice"; // Importa EstimatedPrice aquí
+import { CalendarEventFill } from "react-bootstrap-icons"; // Importa el icono aquí
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -77,8 +78,13 @@ const ClientOverview = ({
   pendingAmountValue,
   lastInvoice,
   fetchLastInvoice,
+  buildingId, 
 }) => {
+   console.log("Building ID recibido:", buildingId); 
   const [verDetallePago, setVerDetallePago] = useState(false);
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [loadingEvents, setLoadingEvents] = useState(true);
+  const [errorEvents, setErrorEvents] = useState(null);
 
   const toggleVerDetallePago = () => setVerDetallePago(!verDetallePago);
 
@@ -155,6 +161,44 @@ const ClientOverview = ({
     },
   };
 
+  useEffect(() => {
+    const fetchUpcomingEvents = async () => {
+      if (!buildingId) {
+        setLoadingEvents(false);
+        return;
+      }
+
+      setLoadingEvents(true);
+      setErrorEvents(null);
+      const token = localStorage.getItem("authToken");
+
+      try {
+        const response = await fetch(
+          `http://localhost:8080/auth/building/${buildingId}/events`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setUpcomingEvents(data);
+        } else {
+          setErrorEvents("Error al cargar los próximos eventos.");
+          console.error("Error al obtener los próximos eventos:", response.status);
+        }
+      } catch (error) {
+        setErrorEvents("Error de conexión al cargar los próximos eventos.");
+        console.error("Error al obtener los próximos eventos:", error);
+      } finally {
+        setLoadingEvents(false);
+      }
+    };
+
+    fetchUpcomingEvents();
+  }, [buildingId]); // Dependencia en buildingId para recargar si cambia
+
   return (
     <Row className="h-100 ">
       <Col md={6} xs={12}>
@@ -177,11 +221,7 @@ const ClientOverview = ({
                     style={{ cursor: "pointer" }}
                     onClick={toggleVerDetallePago}
                   >
-                    {verDetallePago ? (
-                      <EyeFill size={20} />
-                    ) : (
-                      <EyeSlashFill size={20} />
-                    )}
+                    {verDetallePago ? <EyeFill size={20} /> : <EyeSlashFill size={20} />}
                     Visualizar
                   </div>
                 </div>
@@ -216,14 +256,12 @@ const ClientOverview = ({
           </Card.Body>
         </Card>
       </Col>
-       <Col md={6} xs={12} className="d-flex flex-column gap-3">
+      <Col md={6} xs={12} className="d-flex flex-column gap-3">
         <Card className="shadow-sm">
-          {" "}
           <Card.Body className="d-flex flex-column justify-content-between">
-            {" "}
             <div>
               <Card.Title className="mb-3 fw-semibold d-flex align-items-center">
-                <FileEarmarkTextFill className="me-2 text-custom" size={20} />{" "}
+                <FileEarmarkTextFill className="me-2 text-custom" size={20} />
                 Última Factura
               </Card.Title>
               {lastInvoice ? (
@@ -253,12 +291,12 @@ const ClientOverview = ({
             {lastInvoice?.id && (
               <div>
                 <Button
-                  variant="primary"
+                  variant="outline-custom"
                   size="md"
                   onClick={handleOpenPdf}
                   className="rounded-pill mt-3"
                 >
-                  <FileEarmarkTextFill className="me-2" /> Ver Factura
+                  <FileEarmarkTextFill className="me-2 " /> Ver Factura
                 </Button>
               </div>
             )}
@@ -266,54 +304,53 @@ const ClientOverview = ({
         </Card>
 
         <Card className="shadow-sm">
-          {" "}
           <Card.Body className="d-flex flex-column justify-content-between">
-            {" "}
             <div>
               <Card.Title className="mb-3 fw-semibold d-flex align-items-center">
-                <FileEarmarkTextFill className="me-2 text-custom" size={20} />{" "}
-                Última Factura
+                <CalendarEventFill className="me-2 text-custom " size={20} />
+                Próximos Eventos
               </Card.Title>
-              {lastInvoice ? (
-                <Stack gap={1}>
-                  <div>
-                    <span className="text-muted">Mes:</span>{" "}
-                    <Badge pill bg="light" text="custom" className="ms-1">
-                      {lastInvoice.title}
-                    </Badge>
-                  </div>
-                  <div>
-                    <span className="text-muted">Monto:</span>{" "}
-                    <span className="text-custom fw-bold">
-                      {new Intl.NumberFormat("es-ES", {
-                        style: "currency",
-                        currency: "EUR",
-                      }).format(lastInvoice.amount)}
-                    </span>
-                  </div>
-                </Stack>
+              {loadingEvents ? (
+                <div className="text-muted small">Cargando eventos...</div>
+              ) : errorEvents ? (
+                <div className="text-danger small">{errorEvents}</div>
+              ) : upcomingEvents.length > 0 ? (
+                <ListGroup variant="flush">
+                  {upcomingEvents.map((event) => (
+                    <ListGroup.Item key={event.id}>
+                      <div className="fw-bold">{event.title}</div>
+                      <div className="text-muted small">
+                        {new Date(event.date).toLocaleDateString("es-ES", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </div>
+                      {event.description && <div className="text-muted small">{event.description}</div>}
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
               ) : (
-                <div className="text-muted small">
-                  No hay facturas disponibles.
-                </div>
+                <div className="text-muted small">No hay eventos para este edificio.</div>
               )}
             </div>
-            {lastInvoice?.id && (
+            {upcomingEvents.length > 0 && (
               <div>
                 <Button
-                  variant="primary"
+                  variant="outline-custom"
                   size="md"
-                  onClick={handleOpenPdf}
                   className="rounded-pill mt-3"
+                  onClick={() => {
+                    console.log("Ver todos los eventos del edificio");
+                  }}
                 >
-                  <FileEarmarkTextFill className="me-2" /> Ver Factura
+                  Ver Todos los Eventos
                 </Button>
               </div>
             )}
           </Card.Body>
         </Card>
       </Col>
-      
     </Row>
   );
 };

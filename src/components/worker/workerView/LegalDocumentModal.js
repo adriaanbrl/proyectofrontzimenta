@@ -1,4 +1,3 @@
-// components/LegalDocumentModal.jsx
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Button, Spinner, Alert } from 'react-bootstrap';
 
@@ -24,6 +23,13 @@ const LegalDocumentModal = ({ show, onHide, buildingId, buildingTitle }) => {
         setError(null);
         setSuccess(false);
 
+        // Client-side validation for file type
+        if (documentFile && documentFile.type !== 'application/pdf') {
+            setError('Por favor, sube solo archivos PDF.');
+            setLoading(false);
+            return;
+        }
+
         const formData = new FormData();
         formData.append('title', documentTitle);
         formData.append('file', documentFile);
@@ -47,6 +53,8 @@ const LegalDocumentModal = ({ show, onHide, buildingId, buildingTitle }) => {
 
             await response.json();
             setSuccess(true);
+            // Optionally, you might want to call onHide() here to close the modal on success
+            // onHide();
         } catch (err) {
             setError(err.message);
         } finally {
@@ -76,6 +84,7 @@ const LegalDocumentModal = ({ show, onHide, buildingId, buildingTitle }) => {
                         <Form.Label>Archivo</Form.Label>
                         <Form.Control
                             type="file"
+                            accept="application/pdf" // <--- This attribute restricts file selection to PDFs
                             onChange={(e) => setDocumentFile(e.target.files[0])}
                             required
                         />

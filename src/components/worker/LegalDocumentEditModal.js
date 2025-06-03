@@ -1,35 +1,39 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Button, Form, Spinner, Alert } from 'react-bootstrap';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Modal, Form, Button, Spinner, Alert } from 'react-bootstrap';
 import axios from 'axios';
 
 const LegalDocumentEditModal = ({ show, onHide, documentData, onSave, isLoading, error, setLoading, setError }) => {
     const [formData, setFormData] = useState({
         title: '',
         building_id: '',
-        documentBase64: null 
+        documentBase64: null // Initialize documentBase64 in formData
     });
 
+    // Removed selectedFile state as file will be handled as base64 in formData
+
     useEffect(() => {
-        if (documentData) {
+        if (show && documentData) {
             setFormData({
                 title: documentData.title || '',
                 building_id: documentData.building_id || '',
-                documentBase64: null 
+                documentBase64: null // Reset file input when modal opens
             });
+            setError(null);
+            setLoading(false);
         }
-        setError(null);
-        setLoading(false);
-    }, [documentData, setError, setLoading]);
+    }, [show, documentData, setError, setLoading]);
 
     const handleChange = (e) => {
         const { name, value, type, files } = e.target;
+
         if (type === 'file' && files && files[0]) {
             const file = files[0];
+            // No client-side PDF type check here, relying on 'accept' attribute and backend validation
             const reader = new FileReader();
             reader.onloadend = () => {
                 setFormData(prev => ({
                     ...prev,
-                    documentBase64: reader.result.split(',')[1] 
+                    documentBase64: reader.result.split(',')[1] // Store base64 string
                 }));
             };
             reader.readAsDataURL(file);
@@ -42,7 +46,10 @@ const LegalDocumentEditModal = ({ show, onHide, documentData, onSave, isLoading,
     };
 
     const handleSubmit = async () => {
-        if (!documentData || !documentData.id) return;
+        if (!documentData || !documentData.id) {
+            setError("No se pudo obtener la información del documento para actualizar.");
+            return;
+        }
 
         setLoading(true);
         setError(null);
@@ -51,22 +58,32 @@ const LegalDocumentEditModal = ({ show, onHide, documentData, onSave, isLoading,
             const token = localStorage.getItem("authToken");
             const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
+            // Construct payload similar to InvoiceEditModal
             const payload = {
                 title: formData.title,
-                documentBase64: formData.documentBase64
+                documentBase64: formData.documentBase64, // Send base64 string
+                // Include buildingId if your backend requires it for updates
+                buildingId: parseInt(formData.building_id, 10)
             };
 
-            await axios.put(`http://localhost:8080/api/legal_documentation/${documentData.id}`, payload, {
-                headers: {
-                    ...headers,
-                    'Content-Type': 'application/json'
+            // Make the PUT request with application/json content type
+            await axios.put(
+                `http://localhost:8080/api/legal_documentation/${documentData.id}`,
+                payload,
+                {
+                    headers: {
+                        ...headers,
+                        'Content-Type': 'application/json' // Explicitly set for JSON payload
+                    }
                 }
-            });
+            );
+
             onSave(documentData.building_id);
             onHide();
         } catch (err) {
             console.error("Error al actualizar el documento legal:", err.response?.data || err.message);
-            setError(err.response?.data?.message || "Error al actualizar el documento legal.");
+            const errorMessage = err.response?.data?.message || err.response?.data?.error || err.message || "Error al actualizar el documento legal.";
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -81,7 +98,6 @@ const LegalDocumentEditModal = ({ show, onHide, documentData, onSave, isLoading,
                 {error && <Alert variant="danger">{error}</Alert>}
                 {documentData && (
                     <Form>
-                        
                         <Form.Group className="mb-3">
                             <Form.Label className="fw-semibold">Título</Form.Label>
                             <Form.Control
@@ -99,7 +115,7 @@ const LegalDocumentEditModal = ({ show, onHide, documentData, onSave, isLoading,
                                 type="file"
                                 name="documentFile"
                                 onChange={handleChange}
-                                accept="application/pdf" 
+                                accept="application/pdf"
                             />
                             <Form.Text className="text-muted">
                                 Selecciona un nuevo PDF para reemplazar el documento actual (opcional).

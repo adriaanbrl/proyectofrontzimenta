@@ -150,10 +150,15 @@
   font-weight: bold;
 }
 
+
 .modal-footer {
   border-top: none;
 }
 
+
+.break{
+  word-break: break-word;
+}
 @media (min-width: 768px) {
   .calendario-eventos {
     max-width: 350px;

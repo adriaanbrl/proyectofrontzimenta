@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="1c29f3f7-7e79-4237-83d9-142b03059660" name="Changes" comment="crear estancias y categorias">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/worker/WorkerChat.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/worker/WorkerChat.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -280,14 +279,6 @@
       <workItem from="1748454357452" duration="2088000" />
       <workItem from="1748500499004" duration="9705000" />
       <workItem from="1748518618476" duration="8093000" />
-    </task>
-    <task id="LOCAL-00054" summary="Vista admin">
-      <option name="closed" value="true" />
-      <created>1747749338336</created>
-      <option name="number" value="00054" />
-      <option name="presentableId" value="LOCAL-00054" />
-      <option name="project" value="LOCAL" />
-      <updated>1747749338336</updated>
     </task>
     <task id="LOCAL-00055" summary="Vista admin">
       <option name="closed" value="true" />
@@ -673,7 +664,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748871595576</updated>
     </task>
-    <option name="localTasksCounter" value="103" />
+    <task id="LOCAL-00103" summary="crear estancias y categorias">
+      <option name="closed" value="true" />
+      <created>1748875152471</created>
+      <option name="number" value="00103" />
+      <option name="presentableId" value="LOCAL-00103" />
+      <option name="project" value="LOCAL" />
+      <updated>1748875152471</updated>
+    </task>
+    <option name="localTasksCounter" value="104" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, Form, Button, ListGroup, InputGroup } from 'react-bootstrap';
-import { useLocation } from 'react-router-dom'; // Asumiendo que react-router-dom está disponible en tu entorno
-import { jwtDecode } from 'jwt-decode'; // Asumiendo que jwt-decode está disponible en tu entorno
+import { useLocation } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 import moment from 'moment';
 import 'moment/locale/es';
-import 'bootstrap/dist/css/bootstrap.min.css'; // El CSS de Bootstrap sigue siendo necesario y se importa aquí.
 
 
-// El componente WorkerChat es ahora la exportación predeterminada
 export default function WorkerChat() {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
@@ -20,9 +18,6 @@ export default function WorkerChat() {
     const [contactName, setContactName] = useState("");
     const [isWebSocketConnected, setIsWebSocketConnected] = useState(false);
 
-    // No se añaden scripts de Tailwind CSS ni bloques <style> personalizados.
-
-    // Efecto para analizar los parámetros de consulta y establecer la conexión WebSocket
     useEffect(() => {
         console.log('useEffect con location.search ejecutado (Worker)');
         const queryParams = new URLSearchParams(location.search);
@@ -42,8 +37,7 @@ export default function WorkerChat() {
                     setWorkerId(decodedToken.id);
                     console.log('contactId (Worker):', contactId, 'workerId (Worker):', workerId);
 
-                    // Inicializar la conexión WebSocket
-                    websocket.current = new WebSocket('ws://localhost:8080/chat'); // Endpoint: SIN CAMBIOS
+                    websocket.current = new WebSocket('ws://localhost:8080/chat'); 
 
                     websocket.current.onopen = () => {
                         console.log('Conexión WebSocket establecida (Worker).');
@@ -65,7 +59,6 @@ export default function WorkerChat() {
                         setIsWebSocketConnected(false);
                     };
 
-                    // Función de limpieza para WebSocket
                     return () => {
                         if (websocket.current && websocket.current.readyState === WebSocket.OPEN) {
                             websocket.current.close();
@@ -77,9 +70,8 @@ export default function WorkerChat() {
             }
         };
         fetchWorkerIdAndHistory();
-    }, [location.search]); // Se ejecuta de nuevo si los parámetros de búsqueda de la ubicación cambian
-
-    // Efecto para cargar el historial del chat una vez que contactId, workerId y authToken estén disponibles
+    }, [location.search]); 
+    
     useEffect(() => {
         if (contactId && workerId && authToken) {
             loadChatHistory(workerId, 'worker', parseInt(contactId), 'customer');

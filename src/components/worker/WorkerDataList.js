@@ -248,7 +248,7 @@ const WorkerDataList = () => {
                             <Accordion.Header>Eventos</Accordion.Header>
                             <Accordion.Body>
                               {loadingEvents[construction.id] ? (
-                                  <div className="text-center my-3">
+                                  <div className="text-left my-3">
                                     <Spinner animation="border" size="sm" /> Cargando
                                     eventos...
                                   </div>
@@ -265,13 +265,13 @@ const WorkerDataList = () => {
                                                 key={event.id}
                                                 className="mb-2 p-2 shadow-sm"
                                             >
-                                              <Card.Body className="d-flex justify-content-between align-items-center py-2">
+                                              <Card.Body className="d-flex justify-content-between py-2">
                                                 <div>
-                                                  <h6 className="mb-1">{event.title}</h6>
+                                                  <h6 className="text-start mb-1">{event.title}</h6>
                                                   <p className="mb-0 text-muted small">
                                                     {event.description}
                                                   </p>
-                                                  <p className="mb-0 text-muted small">
+                                                  <p className="text-start mb-0 text-muted small">
                                                     Fecha: {formatDate(event.date)}
                                                   </p>
                                                 </div>

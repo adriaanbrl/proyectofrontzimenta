@@ -7,6 +7,7 @@ import {
   Button,
   Alert,
   ListGroup,
+  Spinner
 } from "react-bootstrap";
 import { ChevronLeft, File } from "lucide-react";
 
@@ -25,10 +26,19 @@ function LegDoc() {
       setBuildingId(location.state.building_id);
     } else {
       setError("No se proporcionó el ID del edificio. Volviendo a la página anterior...");
+      // navigate(-1); // Consider uncommenting this if you want to automatically go back
     }
   }, [location.state, navigate]);
 
+  // Make sure `fetchLegalDocuments` depends on `buildingId`
   const fetchLegalDocuments = useCallback(async (id) => {
+    // This `id` parameter should be the `buildingId`
+    if (!id) { // Add a check to ensure `id` is not null/undefined
+      console.log("Building ID is not available yet for fetching documents.");
+      setLoading(false); // Ensure loading is off if no ID
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setPdfDataList([]);
@@ -42,8 +52,8 @@ function LegDoc() {
     }
 
     try {
-      const responseIds = await fetch(
-          `http://localhost:8080/auth/building/${id}/legalDocumentsIds`,
+      const responseDocs = await fetch(
+          `http://localhost:8080/api/building/${id}/legal_documentation`, // Ensure 'id' here is a number
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -51,63 +61,28 @@ function LegDoc() {
           }
       );
 
-      if (!responseIds.ok) {
-        const errorData = await responseIds.json().catch(() => ({ message: "Error desconocido" }));
+      if (!responseDocs.ok) {
+        const errorData = await responseDocs.json().catch(() => ({ message: "Error desconocido" }));
         throw new Error(
-            `Error al obtener la lista de documentos: ${responseIds.status} - ${errorData.message || responseIds.statusText}`
+            `Error al obtener la lista de documentos: ${responseDocs.status} - ${errorData.message || responseDocs.statusText}`
         );
       }
 
-      const idList = await responseIds.json();
+      const documentInfoList = await responseDocs.json();
 
-      if (Array.isArray(idList) && idList.length > 0) {
-        const responsePdfs = await fetch(
-            `http://localhost:8080/legaldocuments/pdfs`,
-            {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(idList),
-            }
-        );
-
-        if (!responsePdfs.ok) {
-          const errorData = await responsePdfs.json().catch(() => ({ message: "Error desconocido" }));
-          throw new Error(
-              `Error al descargar los documentos: ${responsePdfs.status} - ${errorData.message || responsePdfs.statusText}`
-          );
-        }
-
-        const pdfDataListFromServer = await responsePdfs.json();
-
-        const pdfsWithInfo = pdfDataListFromServer.map((pdfData) => {
-          if (!pdfData.data || !pdfData.filename) {
-            console.warn("Datos de PDF incompletos recibidos:", pdfData);
-            return null;
-          }
-          try {
-            const byteString = atob(pdfData.data);
-            const byteArray = new Uint8Array(byteString.length);
-            for (let i = 0; i < byteString.length; i++) {
-              byteArray[i] = byteString.charCodeAt(i);
-            }
-            const fileBlob = new Blob([byteArray], { type: "application/pdf" });
-            const url = URL.createObjectURL(fileBlob);
-            return { filename: pdfData.filename, url: url };
-          } catch (e) {
-            console.error("Error al decodificar o crear Blob para:", pdfData.filename, e);
-            return null;
-          }
-        }).filter(Boolean);
-
-        setPdfDataList(pdfsWithInfo);
-      } else if (Array.isArray(idList) && idList.length === 0) {
+      if (Array.isArray(documentInfoList) && documentInfoList.length > 0) {
+        // Here, we create the URLs directly because the backend serves the PDF via GET /api/legal_documentation/pdf/{id}
+        const pdfsReadyForDisplay = documentInfoList.map(doc => ({
+          filename: doc.title,
+          url: `http://localhost:8080/api/legal_documentation/pdf/${doc.id}` // Use doc.id from the fetched list
+        }));
+        setPdfDataList(pdfsReadyForDisplay);
+        setError(null);
+      } else if (Array.isArray(documentInfoList) && documentInfoList.length === 0) {
         setError("No hay documentos legales disponibles para este edificio.");
       } else {
         setError(
-            "Respuesta inesperada del servidor al obtener IDs: Se esperaba una lista."
+            "Respuesta inesperada del servidor al obtener documentos: Se esperaba una lista."
         );
       }
     } catch (err) {
@@ -116,14 +91,19 @@ function LegDoc() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, []); // The `id` parameter here makes `useCallback` linting happy, but the actual `buildingId` is passed below.
 
+  // This useEffect ensures fetchLegalDocuments is called when buildingId changes
   useEffect(() => {
-    if (buildingId) {
-      fetchLegalDocuments(buildingId);
+    if (buildingId) { // Only call if buildingId is not null
+      fetchLegalDocuments(buildingId); // Pass the actual buildingId from state
     }
-  }, [buildingId, fetchLegalDocuments]);
+  }, [buildingId, fetchLegalDocuments]); // Depend on buildingId and fetchLegalDocuments
 
+  // We are now using direct PDF URLs, so revokeObjectURL is NOT needed.
+  // The backend sends the actual PDF content, not a Base64 string to be converted to Blob.
+  // The `window.open` will simply navigate to the PDF URL.
+  /*
   useEffect(() => {
     return () => {
       pdfDataList.forEach((item) => {
@@ -133,6 +113,7 @@ function LegDoc() {
       });
     };
   }, [pdfDataList]);
+  */
 
   const handleGoBack = () => {
     navigate(-1);
@@ -157,9 +138,9 @@ function LegDoc() {
 
             {loading && (
                 <div className="d-flex justify-content-center my-4">
-                  <div className="spinner-border text-primary" role="status">
+                  <Spinner animation="border" role="status" className="text-primary">
                     <span className="visually-hidden">Cargando documentos...</span>
-                  </div>
+                  </Spinner>
                   <p className="ms-2 text-muted">Cargando documentos...</p>
                 </div>
             )}
@@ -170,7 +151,7 @@ function LegDoc() {
                 <ListGroup>
                   {pdfDataList.map((item, index) => (
                       <ListGroup.Item
-                          key={index}
+                          key={item.url || index} // Use item.url as key (unique for each PDF URL)
                           className="d-flex justify-content-between align-items-center"
                       >
                         <div className="d-flex align-items-center">

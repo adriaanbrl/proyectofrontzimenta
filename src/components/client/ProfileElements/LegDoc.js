@@ -53,6 +53,7 @@ function LegDoc() {
       const responseIds = await fetch(
         `http://localhost:8080/auth/building/${id}/legalDocumentsIds`,
         {
+          method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },

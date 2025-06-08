@@ -6,12 +6,11 @@ import { jwtDecode } from 'jwt-decode';
 
 import UploadImageModal from './UploadImageModal';
 import BuildingIncidentsSection from './BuildingIncidentsSection';
-
-
 import EventDayModal from './EventDayModal';
 import LegalDocumentModal from './LegalDocumentModal';
 import InvoiceUploadModal from './InvoiceUploadModal';
 import BudgetUploadForm from './BudgetUploadForm';
+import ManualUploadModal from './ManualUploadModal'; 
 import { Link } from 'react-router-dom';
 
 const WorkerView = () => {
@@ -40,6 +39,10 @@ const WorkerView = () => {
 
     const [showIncidentsHistoryModal, setShowIncidentsHistoryModal] = useState(false);
     const [selectedBuildingForIncidents, setSelectedBuildingForIncidents] = useState(null);
+
+    const [showManualUploadModal, setShowManualUploadModal] = useState(false);
+    const [selectedBuildingForManualUpload, setSelectedBuildingForManualUpload] = useState(null);
+
 
     const fetchWorkerConstructions = useCallback(async (id, token) => {
         setLoadingConstructions(true);
@@ -165,6 +168,16 @@ const WorkerView = () => {
         setSelectedBuildingForIncidents(null);
     };
 
+    const handleManualUploadClick = (building) => {
+        setSelectedBuildingForManualUpload(building);
+        setShowManualUploadModal(true);
+    };
+
+    const handleCloseManualUploadModal = () => {
+        setShowManualUploadModal(false);
+        setSelectedBuildingForManualUpload(null);
+    };
+
     return (
         <Container className="container mt-4">
             <div className="bg-light p-4 rounded shadow-sm mb-4 d-flex align-items-center justify-content-between">
@@ -204,6 +217,8 @@ const WorkerView = () => {
                                     <Row className="mb-2"><Col md={4}>Documentos legales:</Col><Col><Button onClick={() => handleLegalDocumentClick(construction)} className="w-50">Subir</Button></Col></Row>
                                     <Row className="mb-2"><Col md={4}>Facturas:</Col><Col><Button onClick={() => handleInvoiceUploadClick(construction)} className="w-50">Subir</Button></Col></Row>
                                     <Row className="mb-2"><Col md={4}>Presupuesto:</Col><Col><Button onClick={() => handleBudgetUploadClick(construction)} className="w-50">Subir Excel</Button></Col></Row>
+                                    {/* New button for Manual Upload */}
+                                    <Row className="mb-2"><Col md={4}>Manuales de Usuario:</Col><Col><Button onClick={() => handleManualUploadClick(construction)} className="w-50">Subir</Button></Col></Row>
                                     <Row className="mb-2"><Col md={4}>Incidencias:</Col><Col><Button onClick={() => handleViewIncidentsClick(construction)} className="w-50">Ver</Button></Col></Row>
                                 </Accordion.Body>
                             </Accordion.Item>
@@ -255,7 +270,6 @@ const WorkerView = () => {
                 <Modal show={showBudgetUploadModal} onHide={handleCloseBudgetUploadModal} size="md" centered>
                     <Modal.Header closeButton>
                         <Modal.Title>
-                         
                             Subir Presupuesto Excel para {selectedBuildingForBudgetUpload ? (selectedBuildingForBudgetUpload.title || selectedBuildingForBudgetUpload.address) : 'Edificio Seleccionado'}
                         </Modal.Title>
                     </Modal.Header>
@@ -270,6 +284,17 @@ const WorkerView = () => {
                         <Button variant="secondary" onClick={handleCloseBudgetUploadModal}>Cerrar</Button>
                     </Modal.Footer>
                 </Modal>
+            )}
+
+            {/* New ManualUploadModal component */}
+            {selectedBuildingForManualUpload && (
+                <ManualUploadModal
+                    show={showManualUploadModal}
+                    onHide={handleCloseManualUploadModal}
+                    buildingId={selectedBuildingForManualUpload.id}
+                    buildingTitle={selectedBuildingForManualUpload.title || selectedBuildingForManualUpload.address}
+                    onUploadSuccess={handleCloseManualUploadModal} // Or a function to refresh data
+                />
             )}
 
             {selectedBuildingForIncidents && (
@@ -289,9 +314,9 @@ const WorkerView = () => {
             )}
             <div className="mt-4">
                 <Link to="/login" className={`btn  btn-outline-custom`}>
-                  Volver a Inicio de Sesión
+                    Volver a Inicio de Sesión
                 </Link>
-              </div>
+            </div>
         </Container>
     );
 };

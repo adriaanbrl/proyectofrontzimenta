@@ -6,10 +6,6 @@ import {
   Accordion,
   Spinner,
   Alert,
-  Modal,
-  Form,
-  Row,
-  Col,
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -23,7 +19,10 @@ import LegalDocumentDeleteConfirmModal from "./LegalDocumentDeleteConfirmModal";
 import EstanciasList from "./EstanciasList";
 import CategoriasList from "./CategoriasList";
 import BuildingImagesList from "./BuildingImagesList";
-import BudgetDisplay from "./BudgetDisplay"; 
+import BudgetDisplay from "./BudgetDisplay";
+
+import EditManualModal from "./EditManualModal";
+import DeleteManualModal from "./DeleteManualModal";
 
 const formatDate = (dateString) => {
   if (!dateString) return "";
@@ -46,6 +45,9 @@ const WorkerDataList = () => {
     legalDocumentsByBuilding,
     loadingLegalDocuments,
     errorLegalDocuments,
+    manualsByBuilding,
+    loadingManuals,
+    errorManuals,
     currentPdfUrl,
     loadingPdf,
     pdfError,
@@ -53,9 +55,12 @@ const WorkerDataList = () => {
     invoiceActionError,
     loadingLegalDocAction,
     legalDocActionError,
+    loadingManualAction,
+    manualActionError,
     fetchEventsForBuilding,
     fetchInvoicesForBuilding,
     fetchLegalDocumentsForBuilding,
+    fetchManualsForBuilding,
     handleViewPdf,
     handleInvoiceUpdate,
     handleInvoiceDelete,
@@ -63,6 +68,8 @@ const WorkerDataList = () => {
     handleEventDelete,
     handleLegalDocumentUpdate,
     handleLegalDocumentDelete,
+    handleManualUpdate,
+    handleManualDelete,
     handleClosePdfModal,
     setLoadingPdf,
     setPdfError,
@@ -70,6 +77,8 @@ const WorkerDataList = () => {
     setInvoiceActionError,
     setLoadingLegalDocAction,
     setLegalDocActionError,
+    setLoadingManualAction,
+    setManualActionError,
   } = useWorkerData();
 
   const [activeAccordionKey, setActiveAccordionKey] = useState(null);
@@ -92,6 +101,12 @@ const WorkerDataList = () => {
   const [legalDocToDeleteId, setLegalDocToDeleteId] = useState(null);
 
   const [showPdfModal, setShowPdfModal] = useState(false);
+
+  const [showEditManualModal, setShowEditManualModal] = useState(false);
+  const [currentManualToEdit, setCurrentManualToEdit] = useState(null);
+
+  const [showDeleteManualModal, setShowDeleteManualModal] = useState(false);
+  const [manualToDelete, setManualToDelete] = useState(null);
 
   const handleAccordionSelect = (eventKey) => {
     setActiveAccordionKey(eventKey);
@@ -127,6 +142,14 @@ const WorkerDataList = () => {
           errorLegalDocuments[buildingId]
       ) {
         fetchLegalDocumentsForBuilding(buildingId);
+      }
+    } else if (innerEventKey === "manuals-section") {
+      if (
+          !manualsByBuilding[buildingId] ||
+          manualsByBuilding[buildingId].length === 0 ||
+          errorManuals[buildingId]
+      ) {
+        fetchManualsForBuilding(buildingId);
       }
     }
   };
@@ -174,8 +197,8 @@ const WorkerDataList = () => {
     setInvoiceActionError(null);
   };
 
-  const handleInvoiceDeleteConfirmed = (deletedInvoiceId) => {
-    handleInvoiceDelete(deletedInvoiceId);
+  const handleInvoiceDeleteConfirmed = (deletedInvoiceId, buildingId) => {
+    handleInvoiceDelete(deletedInvoiceId, buildingId);
     setShowDeleteInvoiceModal(false);
   };
 
@@ -211,6 +234,28 @@ const WorkerDataList = () => {
     setShowPdfModal(false);
   };
 
+  const handleManualEdit = (manual) => {
+    setCurrentManualToEdit(manual);
+    setShowEditManualModal(true);
+    setManualActionError(null);
+  };
+
+  const handleManualEditSaved = (buildingId) => {
+    handleManualUpdate(buildingId);
+    setShowEditManualModal(false);
+  };
+
+  const handleManualDeleteRequest = (manual) => {
+    setManualToDelete(manual);
+    setShowDeleteManualModal(true);
+    setManualActionError(null);
+  };
+
+  const handleManualDeleteConfirmed = (deletedManualId, buildingId) => {
+    handleManualDelete(deletedManualId, buildingId);
+    setShowDeleteManualModal(false);
+  };
+
   return (
       <Container className="my-4 p-4 rounded shadow-lg bg-light">
         <h4 className="mb-4 text-center text-custom">
@@ -243,7 +288,6 @@ const WorkerDataList = () => {
                                 handleInnerAccordionSelect(construction.id, key)
                             }
                         >
-                          {/* Sección de Eventos */}
                           <Accordion.Item eventKey="events-section">
                             <Accordion.Header>Eventos</Accordion.Header>
                             <Accordion.Body>
@@ -304,7 +348,6 @@ const WorkerDataList = () => {
                             </Accordion.Body>
                           </Accordion.Item>
 
-                          {/* Sección de Facturas */}
                           <Accordion.Item eventKey="invoices-section">
                             <Accordion.Header>Facturas</Accordion.Header>
                             <Accordion.Body>
@@ -419,7 +462,6 @@ const WorkerDataList = () => {
                             </Accordion.Body>
                           </Accordion.Item>
 
-                          {/* Sección de Documentación Legal */}
                           <Accordion.Item eventKey="legal-documentation-section">
                             <Accordion.Header>Documentación Legal</Accordion.Header>
                             <Accordion.Body>
@@ -523,7 +565,109 @@ const WorkerDataList = () => {
                             </Accordion.Body>
                           </Accordion.Item>
 
-                          {/* New Section for Images */}
+                          <Accordion.Item eventKey="manuals-section">
+                            <Accordion.Header>Manuales de Usuario</Accordion.Header>
+                            <Accordion.Body>
+                              {loadingManuals[construction.id] ? (
+                                  <div className="text-center my-3">
+                                    <Spinner animation="border" size="sm" /> Cargando
+                                    manuales...
+                                  </div>
+                              ) : errorManuals[construction.id] ? (
+                                  <Alert variant="danger">
+                                    {errorManuals[construction.id]}
+                                  </Alert>
+                              ) : (
+                                  <>
+                                    {manualsByBuilding[construction.id] &&
+                                    manualsByBuilding[construction.id].length > 0 ? (
+                                        manualsByBuilding[construction.id].map(
+                                            (manual) => (
+                                                <Card
+                                                    key={manual.id}
+                                                    className="mb-2 p-2 shadow-sm"
+                                                >
+                                                  <Card.Body className="d-flex justify-content-between align-items-center py-2">
+                                                    <div>
+                                                      {/* !!! CAMBIO AQUÍ: Usar manual.displayTitle !!! */}
+                                                      <h6 className="mb-1">{manual.displayTitle}</h6>
+                                                    </div>
+                                                    <div className="d-flex flex-column flex-md-row">
+                                                      <Button
+                                                          variant="outline-info"
+                                                          size="sm"
+                                                          className="mb-2 mb-md-0 me-md-2"
+                                                          onClick={() =>
+                                                              handlePdfViewerOpen(
+                                                                  "user_manual",
+                                                                  manual.id
+                                                              )
+                                                          }
+                                                          disabled={loadingPdf}
+                                                      >
+                                                        {loadingPdf ? (
+                                                            <Spinner
+                                                                animation="border"
+                                                                size="sm"
+                                                            />
+                                                        ) : (
+                                                            "📄 Ver PDF"
+                                                        )}
+                                                      </Button>
+                                                      <Button
+                                                          variant="outline-primary"
+                                                          size="sm"
+                                                          className="mb-2 mb-md-0 me-md-2"
+                                                          onClick={() =>
+                                                              handleManualEdit(manual)
+                                                          }
+                                                          disabled={loadingManualAction}
+                                                      >
+                                                        {loadingManualAction ? (
+                                                            <Spinner
+                                                                animation="border"
+                                                                size="sm"
+                                                            />
+                                                        ) : (
+                                                            "✏️ Editar"
+                                                        )}
+                                                      </Button>
+                                                      <Button
+                                                          variant="outline-danger"
+                                                          size="sm"
+                                                          onClick={() =>
+                                                              handleManualDeleteRequest(
+                                                                  manual
+                                                              )
+                                                          }
+                                                          disabled={loadingManualAction}
+                                                      >
+                                                        {loadingManualAction ? (
+                                                            <Spinner
+                                                                animation="border"
+                                                                size="sm"
+                                                            />
+                                                        ) : (
+                                                            "🗑️ Borrar"
+                                                        )}
+                                                      </Button>
+                                                    </div>
+                                                  </Card.Body>
+                                                </Card>
+                                            )
+                                        )
+                                    ) : (
+                                        <Alert variant="info">
+                                          No hay manuales de usuario registrados para esta
+                                          construcción.
+                                        </Alert>
+                                    )}
+                                  </>
+                              )}
+                            </Accordion.Body>
+                          </Accordion.Item>
+
+
                           <Accordion.Item eventKey="images-section">
                             <Accordion.Header>Imágenes</Accordion.Header>
                             <Accordion.Body>
@@ -531,11 +675,9 @@ const WorkerDataList = () => {
                             </Accordion.Body>
                           </Accordion.Item>
 
-                          {/* New Section for Presupuesto (Budget) */}
                           <Accordion.Item eventKey="budget-section">
                             <Accordion.Header>Presupuesto</Accordion.Header>
                             <Accordion.Body>
-                              {/* Pass the construction.id as buildingId prop to BudgetDisplay */}
                               <BudgetDisplay buildingId={construction.id} />
                             </Accordion.Body>
                           </Accordion.Item>
@@ -644,6 +786,24 @@ const WorkerDataList = () => {
             setLoading={setLoadingLegalDocAction}
             setError={setLegalDocActionError}
         />
+
+        {currentManualToEdit && (
+            <EditManualModal
+                show={showEditManualModal}
+                onHide={() => setShowEditManualModal(false)}
+                manual={currentManualToEdit}
+                onEditSuccess={() => handleManualEditSaved(currentManualToEdit.building_id)}
+            />
+        )}
+
+        {manualToDelete && (
+            <DeleteManualModal
+                show={showDeleteManualModal}
+                onHide={() => setShowDeleteManualModal(false)}
+                manual={manualToDelete}
+                onDeleteSuccess={() => handleManualDeleteConfirmed(manualToDelete.id, manualToDelete.building_id)}
+            />
+        )}
       </Container>
   );
 };
